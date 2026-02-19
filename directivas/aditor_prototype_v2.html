@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aditor AI — Prototipo v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --coral: #FF6B6B;
+    --yellow: #FFE66D;
+    --mint: #4ECDC4;
+    --blue: #74B9FF;
+    --dark: #1A1A2E;
+    --dark2: #16213E;
+    --white: #FAFAFA;
+    --gray: #8892A4;
+    --border: rgba(255,255,255,0.1);
+    --card: rgba(255,255,255,0.06);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--dark); color:var(--white); min-height:100vh; overflow-x:hidden; }
+
+  /* NAV */
+  nav {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 24px;
+    background:rgba(26,26,46,0.97);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+    position:sticky; top:0; z-index:100;
+    flex-wrap:wrap; gap:10px;
+  }
+  .nav-logo { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; background:linear-gradient(135deg,var(--coral),var(--yellow)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .nav-screens { display:flex; gap:5px; flex-wrap:wrap; }
+  .nav-btn { padding:5px 12px; border-radius:20px; border:1px solid var(--border); background:transparent; color:var(--gray); font-size:11px; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all 0.2s; font-weight:600; }
+  .nav-btn.active, .nav-btn:hover { background:var(--coral); color:white; border-color:var(--coral); }
+
+  /* FLOW BAR */
+  .flow-bar {
+    padding:20px 24px 24px;
+    overflow-x:auto; scrollbar-width:none;
+  }
+  .flow-bar::-webkit-scrollbar { display:none; }
+  .flow-inner { display:flex; align-items:flex-start; gap:0; min-width:max-content; margin:0 auto; }
+
+  .flow-node {
+    display:flex; flex-direction:column; align-items:center;
+    cursor:pointer; padding:0 10px;
+    transition:all 0.2s;
+  }
+  .flow-node-circle {
+    width:44px; height:44px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px;
+    border:2px solid var(--border);
+    background:rgba(255,255,255,0.04);
+    transition:all 0.25s;
+  }
+  .flow-node.active .flow-node-circle { border-color:var(--coral); background:rgba(255,107,107,0.18); transform:scale(1.12); }
+  .flow-node-label { font-size:9px; color:var(--gray); font-weight:600; text-align:center; max-width:72px; line-height:1.3; margin-top:6px; }
+  .flow-node.active .flow-node-label { color:var(--white); }
+
+  .flow-arrow { color:var(--gray); font-size:14px; padding:0 2px; margin-top:12px; }
+
+  /* NEW BADGE */
+  .new-badge { display:inline-block; background:rgba(255,230,109,0.2); border:1px solid rgba(255,230,109,0.4); color:var(--yellow); font-size:8px; font-weight:800; letter-spacing:1.5px; padding:2px 7px; border-radius:6px; margin-left:6px; vertical-align:middle; text-transform:uppercase; }
+
+  /* SCREEN */
+  .screen { display:none; animation:fadeUp 0.3s ease; }
+  .screen.active { display:block; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+  .screen-label { text-align:center; padding:16px 16px 6px; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--gray); font-weight:700; }
+
+  .phone-wrap { display:flex; justify-content:center; padding:12px 16px 48px; gap:20px; flex-wrap:wrap; }
+
+  .phone {
+    width:358px; min-height:660px;
+    background:var(--dark2);
+    border-radius:38px;
+    border:2px solid rgba(255,255,255,0.11);
+    overflow:hidden;
+    box-shadow:0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+  }
+  .notch { width:110px; height:26px; background:var(--dark); border-radius:0 0 18px 18px; margin:0 auto; }
+
+  /* UTILS */
+  .px { padding-left:20px; padding-right:20px; }
+  .cta { width:100%; padding:13px; background:linear-gradient(135deg,var(--coral),#ff8e53); border:none; border-radius:14px; color:white; font-size:14px; font-weight:700; font-family:'DM Sans',sans-serif; cursor:pointer; box-shadow:0 6px 20px rgba(255,107,107,0.35); transition:transform 0.2s; }
+  .cta:hover { transform:scale(1.02); }
+  .cta-ghost { width:100%; padding:12px; background:transparent; border:1px solid var(--border); border-radius:14px; color:var(--white); font-size:14px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; }
+  .syne { font-family:'Syne',sans-serif; }
+  .tag { display:inline-block; font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:3px 9px; border-radius:6px; }
+
+  /* BOTTOM NAV */
+  .bnav { display:flex; justify-content:space-around; padding:10px 4px 12px; border-top:1px solid var(--border); background:rgba(22,33,62,0.97); }
+  .bnav-item { display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px; color:var(--gray); cursor:pointer; padding:4px 12px; border-radius:10px; }
+  .bnav-item.active { color:var(--coral); background:rgba(255,107,107,0.1); }
+  .bnav-item .ic { font-size:17px; }
+
+  /* ===== SCREEN 1: LANDING ===== */
+  .hero { background:linear-gradient(155deg,var(--dark2) 0%,#0d1b3e 100%); padding:28px 22px 24px; text-align:center; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; width:180px; height:180px; background:radial-gradient(circle,rgba(255,107,107,0.25),transparent 70%); top:-30px; right:-30px; border-radius:50%; }
+  .hero-badge { display:inline-block; background:rgba(255,230,109,0.15); border:1px solid rgba(255,230,109,0.3); color:var(--yellow); font-size:10px; font-weight:700; letter-spacing:1.5px; padding:5px 14px; border-radius:20px; margin-bottom:14px; text-transform:uppercase; }
+  .hero h1 { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; line-height:1.1; margin-bottom:8px; }
+  .hero h1 span { background:linear-gradient(135deg,var(--coral),var(--yellow)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero p { font-size:12px; color:var(--gray); line-height:1.6; margin-bottom:18px; }
+  .stat-row { display:flex; gap:8px; justify-content:center; margin-bottom:18px; }
+  .stat-chip { background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:12px; padding:8px 10px; text-align:center; }
+  .stat-chip .n { font-family:'Syne',sans-serif; font-size:17px; font-weight:800; color:var(--coral); }
+  .stat-chip .l { font-size:9px; color:var(--gray); display:block; }
+
+  .feat-list { padding:16px 20px 0; }
+  .feat { display:flex; gap:12px; padding:11px 0; border-bottom:1px solid var(--border); align-items:flex-start; }
+  .feat:last-child { border:none; }
+  .feat-ic { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+  .feat-t h4 { font-size:12px; font-weight:600; margin-bottom:2px; }
+  .feat-t p { font-size:11px; color:var(--gray); line-height:1.4; }
+
+  /* ===== SCREEN 2: CONNECT FIRST (NEW) ===== */
+  .conn-hero { padding:28px 22px 20px; text-align:center; }
+  .conn-hero .step-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,107,107,0.12); border:1px solid rgba(255,107,107,0.25); border-radius:20px; padding:5px 14px; font-size:10px; color:var(--coral); font-weight:700; margin-bottom:16px; letter-spacing:0.5px; }
+  .conn-hero h2 { font-family:'Syne',sans-serif; font-size:21px; font-weight:800; margin-bottom:6px; line-height:1.2; }
+  .conn-hero p { font-size:12px; color:var(--gray); line-height:1.5; }
+
+  .free-highlight { margin:0 20px 16px; background:linear-gradient(135deg,rgba(78,205,196,0.12),rgba(116,185,255,0.12)); border:1px solid rgba(78,205,196,0.25); border-radius:16px; padding:14px 16px; }
+  .free-highlight h4 { font-size:13px; font-weight:700; color:var(--mint); margin-bottom:4px; }
+  .free-highlight p { font-size:11px; color:var(--gray); line-height:1.4; }
+
+  .perm-list { padding:0 20px 16px; }
+  .perm-label { font-size:10px; color:var(--gray); font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; }
+  .perm-item { display:flex; align-items:center; gap:10px; padding:9px 12px; background:rgba(255,255,255,0.04); border-radius:12px; margin-bottom:7px; }
+  .perm-item .ck { font-size:13px; }
+  .perm-item .pt strong { font-size:12px; display:block; margin-bottom:1px; }
+  .perm-item .pt span { font-size:10px; color:var(--gray); }
+
+  .meta-btn { margin:0 20px 10px; width:calc(100% - 40px); padding:13px; background:linear-gradient(135deg,#1877F2,#0a5fd8); border:none; border-radius:14px; color:white; font-size:14px; font-weight:700; font-family:'DM Sans',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(24,119,242,0.35); }
+
+  /* ===== SCREEN 3: TEASER (NEW) ===== */
+  .teaser-header { padding:22px 20px 14px; }
+  .teaser-header h2 { font-family:'Syne',sans-serif; font-size:19px; font-weight:800; margin-bottom:4px; }
+  .teaser-header p { font-size:11px; color:var(--gray); }
+
+  .teaser-score { margin:0 20px 14px; background:linear-gradient(135deg,rgba(255,107,107,0.12),rgba(255,142,83,0.12)); border:1px solid rgba(255,107,107,0.25); border-radius:18px; padding:16px; display:flex; align-items:center; gap:14px; }
+  .score-ring { width:64px; height:64px; border-radius:50%; background:conic-gradient(var(--yellow) 0deg 210deg,rgba(255,255,255,0.08) 210deg 360deg); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .score-inner2 { width:46px; height:46px; background:var(--dark2); border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .score-inner2 .sn { font-family:'Syne',sans-serif; font-size:16px; font-weight:800; color:var(--yellow); line-height:1; }
+  .score-inner2 .sl { font-size:8px; color:var(--gray); }
+  .score-text h3 { font-family:'Syne',sans-serif; font-size:15px; font-weight:800; margin-bottom:3px; }
+  .score-text p { font-size:11px; color:var(--gray); line-height:1.4; }
+
+  .teaser-findings { padding:0 20px 14px; }
+  .teaser-title { font-size:11px; font-weight:700; color:var(--gray); letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; }
+
+  .finding-preview { border-radius:14px; padding:12px 14px; margin-bottom:8px; border:1px solid; position:relative; }
+  .finding-preview.red { background:rgba(255,107,107,0.08); border-color:rgba(255,107,107,0.2); }
+  .finding-preview.green { background:rgba(78,205,196,0.08); border-color:rgba(78,205,196,0.2); }
+  .finding-preview.yellow { background:rgba(255,230,109,0.08); border-color:rgba(255,230,109,0.2); }
+  .finding-preview.locked { filter:blur(3.5px); pointer-events:none; user-select:none; }
+
+  .fp-top { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+  .fp-badge { font-size:9px; font-weight:700; letter-spacing:1px; padding:2px 8px; border-radius:5px; text-transform:uppercase; }
+  .fp-badge.red { background:rgba(255,107,107,0.2); color:var(--coral); }
+  .fp-badge.green { background:rgba(78,205,196,0.2); color:var(--mint); }
+  .fp-badge.yellow { background:rgba(255,230,109,0.2); color:var(--yellow); }
+  .fp-name { font-size:12px; font-weight:600; flex:1; }
+  .fp-desc { font-size:11px; color:var(--gray); line-height:1.4; }
+
+  .lock-overlay { position:relative; }
+  .lock-banner { margin:4px 20px 14px; background:rgba(26,26,46,0.95); border:1px solid rgba(255,107,107,0.3); border-radius:16px; padding:16px; text-align:center; backdrop-filter:blur(8px); }
+  .lock-banner .lock-ic { font-size:28px; margin-bottom:8px; }
+  .lock-banner h3 { font-family:'Syne',sans-serif; font-size:15px; font-weight:800; margin-bottom:4px; }
+  .lock-banner p { font-size:11px; color:var(--gray); margin-bottom:12px; line-height:1.4; }
+
+  /* ===== SCREEN 4: REGISTER ===== */
+  .reg-header { padding:22px 20px 14px; text-align:center; }
+  .reg-header h2 { font-family:'Syne',sans-serif; font-size:21px; font-weight:800; margin-bottom:4px; }
+  .reg-header p { font-size:12px; color:var(--gray); }
+
+  .trial-pill { margin:0 20px 14px; background:linear-gradient(135deg,rgba(78,205,196,0.12),rgba(116,185,255,0.12)); border:1px solid rgba(78,205,196,0.25); border-radius:14px; padding:11px 14px; display:flex; align-items:center; gap:10px; }
+  .trial-pill .ic { font-size:20px; }
+  .trial-pill .txt div { font-size:11px; color:var(--mint); font-weight:700; }
+  .trial-pill .txt small { font-size:10px; color:var(--gray); }
+
+  .form-g { padding:0 20px 10px; }
+  .form-lbl { font-size:10px; font-weight:700; color:var(--gray); margin-bottom:5px; display:block; letter-spacing:0.5px; text-transform:uppercase; }
+  .form-inp { width:100%; padding:11px 14px; background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:12px; color:var(--white); font-size:13px; font-family:'DM Sans',sans-serif; }
+  .form-inp::placeholder { color:var(--gray); }
+  .form-inp:focus { outline:none; border-color:var(--coral); }
+
+  .social-btn { width:100%; padding:11px; background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:12px; color:var(--white); font-size:12px; font-family:'DM Sans',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:600; margin-bottom:12px; }
+  .divider { text-align:center; font-size:11px; color:var(--gray); margin:0 0 12px; position:relative; }
+  .divider::before,.divider::after { content:''; position:absolute; top:50%; width:30%; height:1px; background:var(--border); }
+  .divider::before { left:20px; } .divider::after { right:20px; }
+
+  /* ===== SCREEN 5: DASHBOARD ===== */
+  .dash-head { padding:18px 20px 14px; display:flex; align-items:center; justify-content:space-between; }
+  .dash-greet { font-family:'Syne',sans-serif; font-size:17px; font-weight:800; }
+  .dash-greet span { color:var(--coral); }
+  .dash-sub { font-size:10px; color:var(--gray); margin-top:2px; }
+  .notif { width:34px; height:34px; background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:15px; position:relative; cursor:pointer; }
+  .ndot { position:absolute; top:5px; right:5px; width:7px; height:7px; background:var(--coral); border-radius:50%; }
+
+  /* WEEKLY CARD */
+  .weekly-card { margin:0 20px 14px; background:linear-gradient(135deg,rgba(116,185,255,0.12),rgba(78,205,196,0.12)); border:1px solid rgba(116,185,255,0.25); border-radius:18px; padding:14px 16px; }
+  .weekly-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+  .weekly-top h4 { font-size:12px; font-weight:700; color:var(--blue); }
+  .weekly-badge { font-size:9px; background:rgba(116,185,255,0.2); color:var(--blue); padding:3px 9px; border-radius:20px; font-weight:700; }
+  .weekly-card p { font-size:11px; color:var(--gray); line-height:1.4; }
+
+  .metrics-row { display:flex; gap:9px; padding:0 20px 14px; overflow-x:auto; scrollbar-width:none; }
+  .mc { flex-shrink:0; width:105px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:14px; padding:12px 10px; }
+  .mc .ic { font-size:16px; margin-bottom:5px; }
+  .mc .val { font-family:'Syne',sans-serif; font-size:18px; font-weight:800; margin-bottom:2px; }
+  .mc .lbl { font-size:9px; color:var(--gray); text-transform:uppercase; letter-spacing:0.5px; }
+  .mc .tr { font-size:10px; margin-top:3px; font-weight:600; }
+  .mc .tr.up { color:var(--mint); } .mc .tr.dn { color:var(--coral); }
+
+  .audit-cta { margin:0 20px 14px; background:linear-gradient(135deg,rgba(255,107,107,0.13),rgba(255,142,83,0.13)); border:1px solid rgba(255,107,107,0.28); border-radius:18px; padding:16px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .act-t h3 { font-family:'Syne',sans-serif; font-size:14px; font-weight:800; margin-bottom:3px; }
+  .act-t p { font-size:10px; color:var(--gray); line-height:1.4; }
+  .act-btn { flex-shrink:0; padding:9px 14px; background:linear-gradient(135deg,var(--coral),#ff8e53); border:none; border-radius:11px; color:white; font-size:11px; font-weight:700; font-family:'DM Sans',sans-serif; cursor:pointer; white-space:nowrap; box-shadow:0 4px 14px rgba(255,107,107,0.35); }
+
+  .sec-t { padding:0 20px 9px; font-family:'Syne',sans-serif; font-size:13px; font-weight:700; }
+  .camp-list { padding:0 20px; }
+  .camp { display:flex; align-items:center; gap:9px; padding:9px 0; border-bottom:1px solid var(--border); }
+  .camp:last-child { border:none; }
+  .cs { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .cs.g { background:var(--mint); box-shadow:0 0 6px rgba(78,205,196,0.6); }
+  .cs.r { background:var(--coral); box-shadow:0 0 6px rgba(255,107,107,0.6); }
+  .cs.y { background:var(--yellow); box-shadow:0 0 6px rgba(255,230,109,0.6); }
+  .ci { flex:1; }
+  .ci strong { font-size:12px; display:block; margin-bottom:1px; }
+  .ci span { font-size:10px; color:var(--gray); }
+  .cr { text-align:right; }
+  .cr .v { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; }
+  .cr .l { font-size:9px; color:var(--gray); }
+
+  /* ===== SCREEN 6: REPORT ===== */
+  .rep-head { padding:18px 20px 12px; }
+  .rep-head h2 { font-family:'Syne',sans-serif; font-size:19px; font-weight:800; margin-bottom:3px; }
+  .rep-meta { font-size:11px; color:var(--gray); }
+  .rep-auto { margin:0 20px 14px; display:flex; align-items:center; gap:8px; background:rgba(116,185,255,0.1); border:1px solid rgba(116,185,255,0.2); border-radius:12px; padding:10px 14px; }
+  .rep-auto span { font-size:18px; }
+  .rep-auto div { font-size:11px; color:var(--blue); font-weight:600; }
+  .rep-auto small { font-size:10px; color:var(--gray); display:block; }
+
+  .score-wrap { display:flex; justify-content:center; padding:0 20px 14px; }
+  .sc-ring { width:110px; height:110px; border-radius:50%; background:conic-gradient(var(--yellow) 0deg 230deg,rgba(255,255,255,0.07) 230deg 360deg); display:flex; align-items:center; justify-content:center; }
+  .sc-in { width:80px; height:80px; background:var(--dark2); border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .sc-in .n { font-family:'Syne',sans-serif; font-size:26px; font-weight:800; color:var(--yellow); line-height:1; }
+  .sc-in .l { font-size:9px; color:var(--gray); }
+
+  .find-list { padding:0 20px; }
+  .find { border-radius:14px; padding:13px; margin-bottom:9px; border:1px solid; }
+  .find.r { background:rgba(255,107,107,0.08); border-color:rgba(255,107,107,0.22); }
+  .find.g { background:rgba(78,205,196,0.08); border-color:rgba(78,205,196,0.22); }
+  .find.y { background:rgba(255,230,109,0.08); border-color:rgba(255,230,109,0.22); }
+  .find-top { display:flex; align-items:center; gap:7px; margin-bottom:5px; }
+  .fbadge { font-size:9px; font-weight:700; letter-spacing:1px; padding:2px 8px; border-radius:5px; text-transform:uppercase; }
+  .fbadge.r { background:rgba(255,107,107,0.2); color:var(--coral); }
+  .fbadge.g { background:rgba(78,205,196,0.2); color:var(--mint); }
+  .fbadge.y { background:rgba(255,230,109,0.2); color:var(--yellow); }
+  .fname { font-size:12px; font-weight:600; flex:1; }
+  .fdesc { font-size:11px; color:var(--gray); line-height:1.4; margin-bottom:7px; }
+  .faction { font-size:11px; font-weight:700; }
+  .faction.r { color:var(--coral); } .faction.g { color:var(--mint); } .faction.y { color:var(--yellow); }
+
+  /* ===== SCREEN 7: HOOKS ===== */
+  .hook-head { padding:18px 20px 12px; }
+  .hook-head h2 { font-family:'Syne',sans-serif; font-size:19px; font-weight:800; margin-bottom:3px; }
+  .hook-head p { font-size:12px; color:var(--gray); }
+  .filter-row { display:flex; gap:7px; padding:0 20px 12px; overflow-x:auto; scrollbar-width:none; }
+  .filter-chip { flex-shrink:0; padding:5px 13px; border-radius:20px; font-size:11px; font-weight:600; cursor:pointer; border:1px solid; }
+  .filter-chip.active { background:rgba(255,107,107,0.15); border-color:rgba(255,107,107,0.4); color:var(--coral); }
+  .filter-chip.off { background:transparent; border-color:var(--border); color:var(--gray); }
+
+  .hook-c { margin:0 20px 9px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:14px; padding:13px 13px 13px 16px; position:relative; overflow:hidden; }
+  .hook-c::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; }
+  .hk1::before { background:var(--coral); }
+  .hk2::before { background:var(--mint); }
+  .hk3::before { background:var(--yellow); }
+  .hk4::before { background:var(--blue); }
+  .hook-type { font-size:9px; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; font-weight:700; }
+  .hook-text { font-size:13px; line-height:1.5; font-weight:500; }
+  .hook-score { margin-top:8px; display:flex; align-items:center; gap:7px; }
+  .hs-bar { flex:1; height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .hs-fill { height:100%; background:linear-gradient(90deg,var(--coral),var(--yellow)); border-radius:2px; }
+  .hs-val { font-size:10px; color:var(--gray); font-weight:700; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Aditor AI</div>
+  <div class="nav-screens">
+    <button class="nav-btn active" onclick="go(0)">① Landing</button>
+    <button class="nav-btn" onclick="go(1)">② Conectar <span class="new-badge">nuevo</span></button>
+    <button class="nav-btn" onclick="go(2)">③ Teaser <span class="new-badge">nuevo</span></button>
+    <button class="nav-btn" onclick="go(3)">④ Registro</button>
+    <button class="nav-btn" onclick="go(4)">⑤ Dashboard</button>
+    <button class="nav-btn" onclick="go(5)">⑥ Auditoría</button>
+    <button class="nav-btn" onclick="go(6)">⑦ Hooks IA</button>
+  </div>
+</nav>
+
+<!-- FLOW BAR -->
+<div class="flow-bar">
+  <div class="flow-inner">
+    <div class="flow-node active" onclick="go(0)" id="fn0"><div class="flow-node-circle">🚀</div><div class="flow-node-label">Landing</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" onclick="go(1)" id="fn1"><div class="flow-node-circle">🔗</div><div class="flow-node-label">Conectar Meta</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" onclick="go(2)" id="fn2"><div class="flow-node-circle">👀</div><div class="flow-node-label">Teaser gratis</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" onclick="go(3)" id="fn3"><div class="flow-node-circle">📝</div><div class="flow-node-label">Registro + Trial</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" onclick="go(4)" id="fn4"><div class="flow-node-circle">📊</div><div class="flow-node-label">Dashboard</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" onclick="go(5)" id="fn5"><div class="flow-node-circle">🔍</div><div class="flow-node-label">Auditoría semanal</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" onclick="go(6)" id="fn6"><div class="flow-node-circle">✨</div><div class="flow-node-label">Hooks IA</div></div>
+  </div>
+</div>
+
+<!-- ===== S1: LANDING ===== -->
+<div class="screen active" id="s0">
+  <div class="screen-label">Pantalla 1 — Landing Page</div>
+  <div class="phone-wrap"><div class="phone">
+    <div class="notch"></div>
+    <div class="hero">
+      <div class="hero-badge">⚡ Primera auditoría gratis</div>
+      <h1>Tu Director de<br><span>Performance en IA</span></h1>
+      <p>Conectá tu Meta Ads gratis. En 3 minutos la IA te dice exactamente qué pausar, qué escalar y qué cambiar.</p>
+      <div class="stat-row">
+        <div class="stat-chip"><div class="n">Gratis</div><span class="l">1ra auditoría</span></div>
+        <div class="stat-chip"><div class="n">$47</div><span class="l">/ mes luego</span></div>
+        <div class="stat-chip"><div class="n">Auto</div><span class="l">cada semana</span></div>
+      </div>
+      <button class="cta" onclick="go(1)">Auditar mis campañas gratis →</button>
+      <div style="text-align:center;font-size:11px;color:var(--gray);margin-top:10px">Sin tarjeta. <strong style="color:var(--mint)">Sin registro todavía.</strong></div>
+    </div>
+    <div class="feat-list">
+      <div class="feat">
+        <div class="feat-ic" style="background:rgba(255,107,107,0.15)">🔍</div>
+        <div class="feat-t"><h4>Detecta campañas que pierden plata</h4><p>Identifica qué campañas consumen presupuesto sin retorno.</p></div>
+      </div>
+      <div class="feat">
+        <div class="feat-ic" style="background:rgba(78,205,196,0.15)">📈</div>
+        <div class="feat-t"><h4>Dice qué escalar con confianza</h4><p>Encuentra oportunidades con ROAS alto y presupuesto bajo.</p></div>
+      </div>
+      <div class="feat">
+        <div class="feat-ic" style="background:rgba(255,230,109,0.15)">🔁</div>
+        <div class="feat-t"><h4>Auditoría automática cada lunes</h4><p>Nunca más te olvidés de revisar tus campañas.</p></div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ===== S2: CONNECT FIRST (NEW) ===== -->
+<div class="screen" id="s1">
+  <div class="screen-label">Pantalla 2 — Conectar Meta Ads (sin registro) ✨ Nuevo flujo</div>
+  <div class="phone-wrap"><div class="phone">
+    <div class="notch"></div>
+    <div class="conn-hero">
+      <div class="step-pill">🎁 Paso 1 de 2 — Completamente gratis</div>
+      <h2>Conectá tu cuenta de Meta Ads</h2>
+      <p style="margin-bottom:0">Solo necesitás un clic. Vas a ver los primeros hallazgos gratis, sin registrarte.</p>
+    </div>
+    <div class="free-highlight">
+      <h4>¿Qué vas a recibir gratis?</h4>
+      <p>Un resumen de los 3 problemas más urgentes de tu cuenta. Para ver el reporte completo con todas las recomendaciones, vas a poder crear tu cuenta.</p>
+    </div>
+    <div class="perm-list">
+      <div class="perm-label">Permisos solicitados</div>
+      <div class="perm-item"><span class="ck">✅</span><div class="pt"><strong>Leer campañas y métricas</strong><span>ROAS, CTR, CPM, CPC — solo lectura</span></div></div>
+      <div class="perm-item"><span class="ck">✅</span><div class="pt"><strong>Ver creativos activos</strong><span>Para analizar fatiga y frecuencia</span></div></div>
+      <div class="perm-item" style="opacity:0.45"><span>❌</span><div class="pt"><strong>Modificar campañas</strong><span>Aditor nunca toca tus campañas</span></div></div>
+    </div>
+    <button class="meta-btn" onclick="go(2)"><span style="font-weight:900;font-size:16px">f</span> Conectar con Facebook</button>
+    <div style="text-align:center;font-size:10px;color:var(--gray);padding:0 20px 16px">No guardamos contraseñas. Conexión encriptada vía OAuth 2.0.</div>
+  </div></div>
+</div>
+
+<!-- ===== S3: TEASER (NEW) ===== -->
+<div class="screen" id="s2">
+  <div class="screen-label">Pantalla 3 — Teaser gratuito (3 hallazgos + blur) ✨ Nuevo flujo</div>
+  <div class="phone-wrap"><div class="phone">
+    <div class="notch"></div>
+    <div class="teaser-header">
+      <h2>Tu análisis está listo 🎉</h2>
+      <p>Analizamos 23 campañas · Hace un momento</p>
+    </div>
+
+    <div class="teaser-score">
+      <div class="score-ring"><div class="score-inner2"><div class="sn">64</div><div class="sl">/100</div></div></div>
+      <div class="score-text">
+        <h3>Salud de cuenta: Regular</h3>
+        <p>Encontramos <strong style="color:var(--coral)">4 problemas urgentes</strong> y <strong style="color:var(--mint)">2 oportunidades</strong> de escalar.</p>
+      </div>
+    </div>
+
+    <div class="teaser-findings">
+      <div class="teaser-title">Lo que encontramos</div>
+
+      <!-- 3 visible -->
+      <div class="finding-preview red">
+        <div class="fp-top"><div class="fp-badge red">🔴 Pausar</div><div class="fp-name">Intereses — Ropa Mujer</div></div>
+        <div class="fp-desc">Gastó $340 en 7 días con ROAS 0.8x. Está perdiendo dinero sin retorno.</div>
+      </div>
+      <div class="finding-preview green">
+        <div class="fp-top"><div class="fp-badge green">🟢 Escalar</div><div class="fp-name">Carrito abandonado</div></div>
+        <div class="fp-desc">ROAS 5.1x con solo $180. Tiene margen para triplicar presupuesto.</div>
+      </div>
+      <div class="finding-preview yellow">
+        <div class="fp-top"><div class="fp-badge yellow">🟡 Atención</div><div class="fp-name">Video testimonial #3</div></div>
+        <div class="fp-desc">Frecuencia 6.8. Tu audiencia está saturada con este creativo.</div>
+      </div>
+
+      <!-- Blurred locked ones -->
+      <div style="position:relative">
+        <div class="finding-preview red locked">
+          <div class="fp-top"><div class="fp-badge red">🔴 Pausar</div><div class="fp-name">Campaña Lookalike 2%</div></div>
+          <div class="fp-desc">CPM muy alto sin conversiones en los últimos 5 días.</div>
+        </div>
+        <div class="finding-preview green locked" style="margin-top:8px">
+          <div class="fp-top"><div class="fp-badge green">🟢 Escalar</div><div class="fp-name">Retargeting 3 días</div></div>
+          <div class="fp-desc">ROAS 3.8x con frecuencia baja. Listo para escalar.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lock-banner">
+      <div class="lock-ic">🔒</div>
+      <h3>+3 hallazgos más + reporte completo</h3>
+      <p>Creá tu cuenta gratis para ver todas las recomendaciones y activar la auditoría automática semanal.</p>
+      <button class="cta" onclick="go(3)">Ver reporte completo gratis →</button>
+      <div style="font-size:10px;color:var(--gray);margin-top:8px">7 días gratis · Sin tarjeta de crédito</div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ===== S4: REGISTER ===== -->
+<div class="screen" id="s3">
+  <div class="screen-label">Pantalla 4 — Registro (Clerk) — Ya vieron el valor, ahora se registran</div>
+  <div class="phone-wrap"><div class="phone">
+    <div class="notch"></div>
+    <div class="reg-header">
+      <h2>Crear cuenta gratis</h2>
+      <p>Para ver el reporte completo y activar tu trial</p>
+    </div>
+    <div class="trial-pill">
+      <span class="ic">🎁</span>
+      <div class="txt"><div>7 días completamente gratis</div><small>Luego $47/mes · Cancelá cuando quieras</small></div>
+    </div>
+    <div class="px" style="margin-bottom:12px">
+      <button class="social-btn">🔵 Continuar con Google</button>
+    </div>
+    <div class="divider">o con tu email</div>
+    <div class="form-g"><label class="form-lbl">Nombre</label><input class="form-inp" type="text" placeholder="Martín García"></div>
+    <div class="form-g"><label class="form-lbl">Email</label><input class="form-inp" type="email" placeholder="martin@miecommerce.com"></div>
+    <div class="form-g"><label class="form-lbl">Contraseña</label><input class="form-inp" type="password" placeholder="Mínimo 8 caracteres"></div>
+    <div class="form-g" style="margin-top:6px"><button class="cta" onclick="go(4)">Crear cuenta y ver reporte →</button></div>
+    <div style="text-align:center;font-size:10px;color:var(--gray);padding:10px 20px">Al registrarte aceptás los Términos de servicio y la Política de privacidad.</div>
+  </div></div>
+</div>
+
+<!-- ===== S5: DASHBOARD ===== -->
+<div class="screen" id="s4">
+  <div class="screen-label">Pantalla 5 — Dashboard Principal</div>
+  <div class="phone-wrap"><div class="phone">
+    <div class="notch"></div>
+    <div class="dash-head">
+      <div><div class="dash-greet">Hola, <span>Martín</span> 👋</div><div class="dash-sub">23 campañas activas · Última auditoría: hoy</div></div>
+      <div class="notif">🔔<div class="ndot"></div></div>
+    </div>
+
+    <div class="weekly-card">
+      <div class="weekly-top"><h4>🔁 Auditoría automática</h4><div class="weekly-badge">Activa</div></div>
+      <p>Tu próxima auditoría automática es el <strong style="color:var(--white)">lunes 24 de feb</strong>. Recibirás un email cuando esté lista.</p>
+    </div>
+
+    <div class="metrics-row">
+      <div class="mc"><div class="ic">💰</div><div class="val" style="color:var(--yellow)">2.4x</div><div class="lbl">ROAS Total</div><div class="tr dn">▼ -0.3 sem. ant.</div></div>
+      <div class="mc"><div class="ic">🖱️</div><div class="val" style="color:var(--mint)">1.8%</div><div class="lbl">CTR Prom.</div><div class="tr up">▲ +0.2%</div></div>
+      <div class="mc"><div class="ic">📣</div><div class="val" style="color:var(--coral)">$14.2</div><div class="lbl">CPM Prom.</div><div class="tr dn">▼ Alto</div></div>
+      <div class="mc"><div class="ic">💸</div><div class="val" style="color:var(--blue)">$1,240</div><div class="lbl">Gasto 7d</div><div class="tr up">▲</div></div>
+    </div>
+
+    <div class="audit-cta">
+      <div class="act-t"><h3>Generar Auditoría</h3><p>Análisis manual fuera del ciclo semanal.</p></div>
+      <button class="act-btn" onclick="go(5)">✨ Auditar</button>
+    </div>
+
+    <div class="sec-t">Tus campañas</div>
+    <div class="camp-list">
+      <div class="camp"><div class="cs g"></div><div class="ci"><strong>Retargeting 7 días</strong><span>$340 · ROAS 4.2x</span></div><div class="cr"><div class="v" style="color:var(--mint)">4.2x</div><div class="l">ROAS</div></div></div>
+      <div class="camp"><div class="cs y"></div><div class="ci"><strong>Lookalike 1% compradores</strong><span>$280 · ROAS 1.9x</span></div><div class="cr"><div class="v" style="color:var(--yellow)">1.9x</div><div class="l">ROAS</div></div></div>
+      <div class="camp"><div class="cs r"></div><div class="ci"><strong>Intereses — Ropa Mujer</strong><span>$340 · ROAS 0.8x</span></div><div class="cr"><div class="v" style="color:var(--coral)">0.8x</div><div class="l">ROAS</div></div></div>
+      <div class="camp"><div class="cs g"></div><div class="ci"><strong>Carrito abandonado</strong><span>$180 · ROAS 5.1x</span></div><div class="cr"><div class="v" style="color:var(--mint)">5.1x</div><div class="l">ROAS</div></div></div>
+    </div>
+    <div class="bnav">
+      <div class="bnav-item active"><div class="ic">📊</div>Dashboard</div>
+      <div class="bnav-item"><div class="ic">🔍</div>Auditorías</div>
+      <div class="bnav-item"><div class="ic">✨</div>Hooks IA</div>
+      <div class="bnav-item"><div class="ic">⚙️</div>Config</div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ===== S6: REPORT ===== -->
+<div class="screen" id="s5">
+  <div class="screen-label">Pantalla 6 — Reporte de Auditoría (automática semanal)</div>
+  <div class="phone-wrap"><div class="phone">
+    <div class="notch"></div>
+    <div class="rep-head">
+      <h2>Auditoría Semanal 🔍</h2>
+      <div class="rep-meta">23 campañas · Lunes 24 feb · 08:00 hs</div>
+    </div>
+    <div class="rep-auto">
+      <span>🔁</span>
+      <div><div>Generada automáticamente</div><small>Próxima auditoría: lunes 3 de marzo</small></div>
+    </div>
+    <div class="score-wrap">
+      <div style="text-align:center">
+        <div class="sc-ring"><div class="sc-in"><div class="n">64</div><div class="l">/100</div></div></div>
+        <div style="font-size:11px;color:var(--gray);margin-top:7px">Score de salud de tu cuenta</div>
+      </div>
+    </div>
+    <div class="find-list">
+      <div class="find r">
+        <div class="find-top"><div class="fbadge r">🔴 Pausar</div><div class="fname">Intereses — Ropa Mujer</div></div>
+        <div class="fdesc">Gastó $340 en 7 días con ROAS 0.8x. Cada venta te cuesta más de lo que ingresa.</div>
+        <div class="faction r">→ Pausar esta campaña hoy</div>
+      </div>
+      <div class="find g">
+        <div class="find-top"><div class="fbadge g">🟢 Escalar</div><div class="fname">Carrito abandonado</div></div>
+        <div class="fdesc">ROAS 5.1x con solo $180 de presupuesto. Frecuencia 2.1 — tiene margen.</div>
+        <div class="faction g">→ Duplicar presupuesto esta semana</div>
+      </div>
+      <div class="find y">
+        <div class="find-top"><div class="fbadge y">🟡 Atención</div><div class="fname">Lookalike 1% compradores</div></div>
+        <div class="fdesc">CTR alto (2.4%) pero pocas conversiones. El problema está después del clic.</div>
+        <div class="faction y">→ Optimizar landing page</div>
+      </div>
+      <div class="find r">
+        <div class="find-top"><div class="fbadge r">🔴 Fatiga</div><div class="fname">Video testimonial #3</div></div>
+        <div class="fdesc">Frecuencia 6.8. CTR cayó 40% en los últimos 5 días. Audiencia saturada.</div>
+        <div class="faction r">→ Rotar creativo esta semana</div>
+      </div>
+    </div>
+    <div style="padding:12px 20px 0"><button class="cta" onclick="go(6)">Ver Hooks y Ángulos sugeridos →</button></div>
+    <div class="bnav">
+      <div class="bnav-item"><div class="ic">📊</div>Dashboard</div>
+      <div class="bnav-item active"><div class="ic">🔍</div>Auditorías</div>
+      <div class="bnav-item"><div class="ic">✨</div>Hooks IA</div>
+      <div class="bnav-item"><div class="ic">⚙️</div>Config</div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ===== S7: HOOKS ===== -->
+<div class="screen" id="s6">
+  <div class="screen-label">Pantalla 7 — Hooks y Ángulos IA</div>
+  <div class="phone-wrap"><div class="phone">
+    <div class="notch"></div>
+    <div class="hook-head">
+      <h2>✨ Hooks sugeridos</h2>
+      <p>Basados en tus creativos con mejor CTR. Listos para testear.</p>
+    </div>
+    <div class="filter-row">
+      <div class="filter-chip active">Dolor</div>
+      <div class="filter-chip off">Curiosidad</div>
+      <div class="filter-chip off">Prueba social</div>
+      <div class="filter-chip off">Contraste</div>
+    </div>
+    <div class="hook-c hk1">
+      <div class="hook-type">Hook de dolor — Alta probabilidad</div>
+      <div class="hook-text">"¿Cuánto dinero perdiste esta semana en campañas que no convierten?"</div>
+      <div class="hook-score"><div class="hs-bar"><div class="hs-fill" style="width:92%"></div></div><div class="hs-val">92%</div></div>
+    </div>
+    <div class="hook-c hk2">
+      <div class="hook-type">Hook de identidad — Media probabilidad</div>
+      <div class="hook-text">"Si gastas en Meta Ads y no sabés tu ROAS de memoria, esto es para vos."</div>
+      <div class="hook-score"><div class="hs-bar"><div class="hs-fill" style="width:78%"></div></div><div class="hs-val">78%</div></div>
+    </div>
+    <div class="hook-c hk3">
+      <div class="hook-type">Hook de curiosidad — Alta probabilidad</div>
+      <div class="hook-text">"La IA auditó mis 23 campañas en 2 minutos. Lo que encontró me sorprendió."</div>
+      <div class="hook-score"><div class="hs-bar"><div class="hs-fill" style="width:88%"></div></div><div class="hs-val">88%</div></div>
+    </div>
+    <div class="hook-c hk4">
+      <div class="hook-type">Hook de contraste — Media probabilidad</div>
+      <div class="hook-text">"Mi agencia cobraba $1,500/mes. Aditor hace lo mismo en 3 minutos por $47."</div>
+      <div class="hook-score"><div class="hs-bar"><div class="hs-fill" style="width:83%"></div></div><div class="hs-val">83%</div></div>
+    </div>
+    <div class="bnav">
+      <div class="bnav-item"><div class="ic">📊</div>Dashboard</div>
+      <div class="bnav-item"><div class="ic">🔍</div>Auditorías</div>
+      <div class="bnav-item active"><div class="ic">✨</div>Hooks IA</div>
+      <div class="bnav-item"><div class="ic">⚙️</div>Config</div>
+    </div>
+  </div></div>
+</div>
+
+<script>
+function go(i) {
+  document.querySelectorAll('.screen').forEach((s,j) => s.classList.toggle('active', j===i));
+  document.querySelectorAll('.nav-btn').forEach((b,j) => b.classList.toggle('active', j===i));
+  document.querySelectorAll('.flow-node').forEach((n,j) => n.classList.toggle('active', j===i));
+  window.scrollTo({top:180, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
