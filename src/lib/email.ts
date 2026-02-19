@@ -1,20 +1,29 @@
 
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('RESEND_API_KEY not configured');
+    return null;
+  }
+  return new Resend(process.env.RESEND_API_KEY);
+};
 
 export async function sendAuditReadyEmail(
-    email: string,
-    auditId: string,
-    score: number,
-    hallazgosCount: number
+  email: string,
+  auditId: string,
+  score: number,
+  hallazgosCount: number
 ) {
-    try {
-        const { data, error } = await resend.emails.send({
-            from: 'Aditor AI <hola@aditorai.com>',
-            to: email,
-            subject: `Tu auditoría semanal está lista — ${hallazgosCount} hallazgos detectados 🔍`,
-            html: `
+  const resend = getResend();
+  if (!resend) return { success: false, error: 'Resend not configured' };
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'Aditor AI <hola@aditorai.com>',
+      to: email,
+      subject: `Tu auditoría semanal está lista — ${hallazgosCount} hallazgos detectados 🔍`,
+      html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #1A1A2E; color: #FAFAFA; padding: 40px; border-radius: 16px;">
           <h1 style="color: #E94560; font-size: 24px; margin-bottom: 8px;">Tu auditoría semanal está lista</h1>
           <p style="color: #8892A4; margin-bottom: 24px;">Analizamos tus campañas de Meta Ads. Acá está el resumen:</p>
@@ -36,16 +45,16 @@ export async function sendAuditReadyEmail(
           </p>
         </div>
       `
-        });
+    });
 
-        if (error) {
-            console.error('Error sending email:', error);
-            return { success: false, error };
-        }
-
-        return { success: true, data };
-    } catch (e) {
-        console.error('Exception sending email:', e);
-        return { success: false, error: e };
+    if (error) {
+      console.error('Error sending email:', error);
+      return { success: false, error };
     }
+
+    return { success: true, data };
+  } catch (e) {
+    console.error('Exception sending email:', e);
+    return { success: false, error: e };
+  }
 }
