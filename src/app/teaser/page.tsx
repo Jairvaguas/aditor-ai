@@ -1,7 +1,102 @@
 
 import Link from 'next/link';
+import { supabaseAdmin } from '@/lib/supabase';
+import { redirect } from 'next/navigation';
 
-export default function TeaserPage() {
+async function getAuditData(auditId: string) {
+    const { data, error } = await supabaseAdmin
+        .from('auditorias')
+        .select('*')
+        .eq('id', auditId)
+        .single();
+
+    if (error || !data) return null;
+    return data;
+}
+
+function parseAuditXML(xml: string) {
+    // Parser simple y robusto para extraer datos clave del XML
+    const extract = (tag: string) => {
+        // pattern: <tag>content</tag> matching newlines
+        const regex = new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`);
+        const match = xml.match(regex);
+        return match ? match[1].trim() : '';
+    };
+
+    const score = parseInt(extract('valor'), 10) || 0;
+    const nivel = extract('nivel');
+    const resumen = extract('resumen');
+
+    // Extraer hallazgos (simple regex loop)
+    const hallazgos = [];
+    const hallazgoRegex = /<hallazgo id="(\d+)">([\s\S]*?)<\/hallazgo>/g;
+    let match;
+    while ((match = hallazgoRegex.exec(xml)) !== null) {
+        const content = match[2];
+        const extractInner = (tag: string) => {
+            const r = new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`);
+            const m = content.match(r);
+            return m ? m[1].trim() : '';
+        };
+        hallazgos.push({
+            id: match[1],
+            tipo: extractInner('tipo'),
+            urgencia: extractInner('urgencia'),
+            campana: extractInner('campana_nombre'),
+            diagnostico: extractInner('diagnostico'),
+            accion: extractInner('accion_concreta')
+        });
+    }
+
+    return { score, nivel, resumen, hallazgos };
+}
+
+export default async function TeaserPage({ searchParams }: { searchParams: { auditId: string } }) {
+    const { auditId } = searchParams;
+
+    if (!auditId) {
+        // Si no hay ID, redirigir a conectar (o mostrar error)
+        redirect('/conectar');
+    }
+
+    const auditData = await getAuditData(auditId);
+
+    if (!auditData) {
+        return (
+            <div className="min-h-screen bg-[#1A1A2E] text-white flex items-center justify-center p-4">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold mb-2">Auditoría no encontrada 😕</h1>
+                    <p className="text-[#8892A4] mb-4">No pudimos encontrar el reporte solicitado.</p>
+                    <Link href="/conectar" className="text-[#E94560] underline">Volver a intentar</Link>
+                </div>
+            </div>
+        );
+    }
+
+    const { score, nivel, resumen, hallazgos } = parseAuditXML(auditData.xml_raw || '');
+
+    // Separamos hallazgos visibles (loss primeros 3) de los ocultos
+    const visibleHallazgos = hallazgos.slice(0, 3);
+    const hiddenHallazgosCount = Math.max(0, hallazgos.length - 3);
+
+    // Tipos de color segun urgencia/tipo
+    const getColors = (tipo: string, urgencia: string) => {
+        const t = tipo.toLowerCase();
+        const u = urgencia.toLowerCase();
+        if (t.includes('pausa') || u.includes('alta')) return {
+            bg: 'bg-[#FF6B6B]/8', border: 'border-[#FF6B6B]/20',
+            badgeBg: 'bg-[#FF6B6B]/20', badgeText: 'text-[#FF6B6B]', emoji: '🔴'
+        };
+        if (t.includes('escala') || u.includes('oportunidad')) return {
+            bg: 'bg-[#4ECDC4]/8', border: 'border-[#4ECDC4]/20',
+            badgeBg: 'bg-[#4ECDC4]/20', badgeText: 'text-[#4ECDC4]', emoji: '🟢'
+        };
+        return {
+            bg: 'bg-[#FFE66D]/8', border: 'border-[#FFE66D]/20',
+            badgeBg: 'bg-[#FFE66D]/20', badgeText: 'text-[#FFE66D]', emoji: '🟡'
+        };
+    };
+
     return (
         <main className="min-h-screen bg-[#1A1A2E] text-white font-sans pb-20">
             {/* Background Gradients */}
@@ -17,94 +112,75 @@ export default function TeaserPage() {
                 {/* Header */}
                 <div className="pt-12 px-5 pb-4">
                     <h2 className="text-[19px] font-extrabold font-syne mb-1">Tu análisis está listo 🎉</h2>
-                    <p className="text-[11px] text-[#8892A4]">Analizamos 23 campañas · Hace un momento</p>
+                    <p className="text-[11px] text-[#8892A4]">Analizamos tus campañas recientes · Hace un momento</p>
                 </div>
 
                 {/* Score Card */}
                 <div className="mx-5 mb-4 bg-gradient-to-br from-[#FF6B6B]/12 to-[#FF8E53]/12 border border-[#FF6B6B]/25 rounded-[18px] p-4 flex items-center gap-3.5">
                     {/* Circular Score */}
-                    <div className="w-16 h-16 rounded-full flex items-center justify-center shrink-0 relative" style={{ background: 'conic-gradient(#FFE66D 0deg 230deg, rgba(255,255,255,0.08) 230deg 360deg)' }}>
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center shrink-0 relative"
+                        style={{ background: `conic-gradient(${score > 70 ? '#4ECDC4' : score > 40 ? '#FFE66D' : '#FF6B6B'} 0deg ${score * 3.6}deg, rgba(255,255,255,0.08) ${score * 3.6}deg 360deg)` }}>
                         <div className="w-[46px] h-[46px] bg-[#16213E] rounded-full flex flex-col items-center justify-center">
-                            <span className="text-base font-extrabold text-[#FFE66D] font-syne leading-none">64</span>
+                            <span className={`text-base font-extrabold font-syne leading-none ${score > 70 ? 'text-[#4ECDC4]' : score > 40 ? 'text-[#FFE66D]' : 'text-[#FF6B6B]'}`}>{score}</span>
                             <span className="text-[8px] text-[#8892A4]">/100</span>
                         </div>
                     </div>
 
                     <div className="flex-1">
-                        <h3 className="text-[15px] font-extrabold font-syne mb-1">Salud de cuenta: Regular</h3>
+                        <h3 className="text-[15px] font-extrabold font-syne mb-1">Salud de cuenta: {nivel}</h3>
                         <p className="text-[11px] text-[#8892A4] leading-snug">
-                            Encontramos <strong className="text-[#FF6B6B]">4 problemas urgentes</strong> y <strong className="text-[#4ECDC4]">2 oportunidades</strong> de escalar.
+                            {resumen.substring(0, 120)}...
                         </p>
                     </div>
                 </div>
 
                 {/* Findings List */}
                 <div className="px-5 pb-4">
-                    <div className="text-[11px] font-bold text-[#8892A4] tracking-widest uppercase mb-2.5">Lo que encontramos</div>
+                    <div className="text-[11px] font-bold text-[#8892A4] tracking-widest uppercase mb-2.5">Hallazgos Principales ({hallazgos.length})</div>
 
-                    {/* Red Finding */}
-                    <div className="bg-[#FF6B6B]/8 border border-[#FF6B6B]/20 rounded-[14px] p-3 mb-2">
-                        <div className="flex items-center gap-2 mb-1.5">
-                            <div className="px-2 py-0.5 rounded-[5px] bg-[#FF6B6B]/20 text-[#FF6B6B] text-[9px] font-bold tracking-wider uppercase">🔴 Pausar</div>
-                            <div className="text-[12px] font-semibold flex-1">Intereses — Ropa Mujer</div>
-                        </div>
-                        <p className="text-[11px] text-[#8892A4] leading-snug">Gastó $340 en 7 días con ROAS 0.8x. Está perdiendo dinero sin retorno.</p>
-                    </div>
-
-                    {/* Green Finding */}
-                    <div className="bg-[#4ECDC4]/8 border border-[#4ECDC4]/20 rounded-[14px] p-3 mb-2">
-                        <div className="flex items-center gap-2 mb-1.5">
-                            <div className="px-2 py-0.5 rounded-[5px] bg-[#4ECDC4]/20 text-[#4ECDC4] text-[9px] font-bold tracking-wider uppercase">🟢 Escalar</div>
-                            <div className="text-[12px] font-semibold flex-1">Carrito abandonado</div>
-                        </div>
-                        <p className="text-[11px] text-[#8892A4] leading-snug">ROAS 5.1x con solo $180. Tiene margen para triplicar presupuesto.</p>
-                    </div>
-
-                    {/* Yellow Finding */}
-                    <div className="bg-[#FFE66D]/8 border border-[#FFE66D]/20 rounded-[14px] p-3 mb-2">
-                        <div className="flex items-center gap-2 mb-1.5">
-                            <div className="px-2 py-0.5 rounded-[5px] bg-[#FFE66D]/20 text-[#FFE66D] text-[9px] font-bold tracking-wider uppercase">🟡 Atención</div>
-                            <div className="text-[12px] font-semibold flex-1">Video testimonial #3</div>
-                        </div>
-                        <p className="text-[11px] text-[#8892A4] leading-snug">Frecuencia 6.8. Tu audiencia está saturada con este creativo.</p>
-                    </div>
-
-                    {/* Locked/Blurred Findings */}
-                    <div className="relative mt-2">
-                        <div className="absolute inset-0 z-10"></div> {/* Click blocker */}
-
-                        {/* Blurred Content */}
-                        <div className="opacity-50 filter blur-[4px] pointer-events-none select-none">
-                            <div className="bg-[#FF6B6B]/8 border border-[#FF6B6B]/20 rounded-[14px] p-3 mb-2">
+                    {visibleHallazgos.map((hallazgo, idx) => {
+                        const styles = getColors(hallazgo.tipo, hallazgo.urgencia);
+                        return (
+                            <div key={idx} className={`${styles.bg} border ${styles.border} rounded-[14px] p-3 mb-2`}>
                                 <div className="flex items-center gap-2 mb-1.5">
-                                    <div className="px-2 py-0.5 rounded-[5px] bg-[#FF6B6B]/20 text-[#FF6B6B] text-[9px] font-bold tracking-wider uppercase">🔴 Pausar</div>
-                                    <div className="text-[12px] font-semibold flex-1">Campaña Lookalike 2%</div>
+                                    <div className={`px-2 py-0.5 rounded-[5px] ${styles.badgeBg} ${styles.badgeText} text-[9px] font-bold tracking-wider uppercase`}>
+                                        {styles.emoji} {hallazgo.tipo}
+                                    </div>
+                                    <div className="text-[12px] font-semibold flex-1 truncate">{hallazgo.campana}</div>
                                 </div>
-                                <div className="text-[11px] text-[#8892A4]">CPM muy alto sin conversiones en los últimos 5 días.</div>
+                                <p className="text-[11px] text-[#8892A4] leading-snug">{hallazgo.diagnostico}</p>
+                            </div>
+                        );
+                    })}
+
+                    {/* Locked/Blurred Findings if any */}
+                    {hiddenHallazgosCount > 0 && (
+                        <div className="relative mt-2">
+                            {/* Lock Overlay Banner */}
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] bg-[#1A1A2E]/95 backdrop-blur-md border border-[#FF6B6B]/30 rounded-[16px] p-4 text-center z-20 shadow-2xl">
+                                <div className="text-2xl mb-2">🔒</div>
+                                <h3 className="text-[15px] font-extrabold font-syne mb-1 text-white">+{hiddenHallazgosCount} hallazgos más</h3>
+                                <p className="text-[11px] text-[#8892A4] mb-3 leading-snug">
+                                    Creá tu cuenta gratis para ver todas las recomendaciones y activar la auditoría semanal.
+                                </p>
+                                <Link href="/registro" className="block w-full py-3 bg-gradient-to-br from-[#E94560] to-[#ff8e53] rounded-[14px] text-white text-[14px] font-bold shadow-[0_6px_20px_rgba(255,107,107,0.35)] hover:scale-[1.02] transition-transform">
+                                    Ver reporte completo gratis →
+                                </Link>
+                                <div className="text-[10px] text-[#8892A4] mt-2">7 días gratis · Sin tarjeta de crédito</div>
                             </div>
 
-                            <div className="bg-[#4ECDC4]/8 border border-[#4ECDC4]/20 rounded-[14px] p-3 mb-2">
-                                <div className="flex items-center gap-2 mb-1.5">
-                                    <div className="px-2 py-0.5 rounded-[5px] bg-[#4ECDC4]/20 text-[#4ECDC4] text-[9px] font-bold tracking-wider uppercase">🟢 Escalar</div>
-                                    <div className="text-[12px] font-semibold flex-1">Retargeting 3 días</div>
+                            {/* Fake Blurred Content for visual effect */}
+                            <div className="opacity-50 filter blur-[4px] pointer-events-none select-none">
+                                <div className="bg-[#4ECDC4]/8 border border-[#4ECDC4]/20 rounded-[14px] p-3 mb-2">
+                                    <div className="flex items-center gap-2 mb-1.5">
+                                        <div className="px-2 py-0.5 rounded-[5px] bg-[#4ECDC4]/20 text-[#4ECDC4] text-[9px] font-bold tracking-wider uppercase">🟢 Escalar</div>
+                                        <div className="text-[12px] font-semibold flex-1">Retargeting 3 días</div>
+                                    </div>
+                                    <div className="text-[11px] text-[#8892A4]">ROAS 3.8x con frecuencia baja. Listo para escalar.</div>
                                 </div>
-                                <div className="text-[11px] text-[#8892A4]">ROAS 3.8x con frecuencia baja. Listo para escalar.</div>
                             </div>
                         </div>
-
-                        {/* Lock Overlay Banner */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] bg-[#1A1A2E]/95 backdrop-blur-md border border-[#FF6B6B]/30 rounded-[16px] p-4 text-center z-20 shadow-2xl">
-                            <div className="text-2xl mb-2">🔒</div>
-                            <h3 className="text-[15px] font-extrabold font-syne mb-1 text-white">+3 hallazgos más</h3>
-                            <p className="text-[11px] text-[#8892A4] mb-3 leading-snug">
-                                Creá tu cuenta gratis para ver todas las recomendaciones y activar la auditoría semanal.
-                            </p>
-                            <Link href="/registro" className="block w-full py-3 bg-gradient-to-br from-[#E94560] to-[#ff8e53] rounded-[14px] text-white text-[14px] font-bold shadow-[0_6px_20px_rgba(255,107,107,0.35)] hover:scale-[1.02] transition-transform">
-                                Ver reporte completo gratis →
-                            </Link>
-                            <div className="text-[10px] text-[#8892A4] mt-2">7 días gratis · Sin tarjeta de crédito</div>
-                        </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </main>

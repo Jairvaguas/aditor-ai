@@ -61,3 +61,88 @@ export async function checkAdAccountTrial(adAccountId: string): Promise<TrialChe
         return { allowed: false, reason: 'error' };
     }
 }
+
+// Interfaces
+interface TokenResponse {
+    access_token: string;
+    token_type: string;
+    expires_in: number;
+}
+
+interface AdAccount {
+    id: string;
+    account_id: string;
+    name: string;
+    currency: string;
+}
+
+interface MetaUser {
+    id: string;
+    name: string;
+}
+
+// Graph API Helpers
+const GRAPH_API_VERSION = 'v19.0';
+const BASE_URL = `https://graph.facebook.com/${GRAPH_API_VERSION}`;
+
+export async function exchangeCodeForToken(code: string): Promise<string> {
+    const params = new URLSearchParams({
+        client_id: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID!,
+        client_secret: process.env.FACEBOOK_APP_SECRET!,
+        redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
+        code,
+    });
+
+    const res = await fetch(`${BASE_URL}/oauth/access_token?${params}`);
+    const data = await res.json();
+
+    if (data.error) {
+        throw new Error(`Meta OAuth Error: ${data.error.message}`);
+    }
+
+    return data.access_token;
+}
+
+export async function getMetaUser(accessToken: string): Promise<MetaUser> {
+    const res = await fetch(`${BASE_URL}/me?fields=id,name&access_token=${accessToken}`);
+    const data = await res.json();
+
+    if (data.error) throw new Error(data.error.message);
+    return data as MetaUser;
+}
+
+export async function getAdAccounts(accessToken: string): Promise<AdAccount[]> {
+    const res = await fetch(`${BASE_URL}/me/adaccounts?fields=name,account_id,currency&access_token=${accessToken}`);
+    const data = await res.json();
+
+    if (data.error) throw new Error(data.error.message);
+    return data.data || [];
+}
+
+export async function getCampaignInsights(accessToken: string, adAccountId: string) {
+    // Definimos campos clave para el analisis. 
+    // account_id es el prefijo "act_<num>" normalmente
+    const accountId = adAccountId.startsWith('act_') ? adAccountId : `act_${adAccountId}`;
+
+    const fields = [
+        'campaign_name',
+        'spend',
+        'cpc',
+        'ctr',
+        'cpm',
+        'frequency',
+        'actions',
+        'action_values',
+        'roas', // derived often, but let's see if api provides 'purchase_roas'
+        'objective',
+    ].join(',');
+
+    // Last 30 days
+    const res = await fetch(
+        `${BASE_URL}/${accountId}/insights?fields=${fields}&date_preset=last_30d&level=campaign&access_token=${accessToken}`
+    );
+    const data = await res.json();
+
+    if (data.error) throw new Error(data.error.message);
+    return data.data || [];
+}

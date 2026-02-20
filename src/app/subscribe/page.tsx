@@ -1,0 +1,63 @@
+import SubscribeButton from '@/components/SubscribeButton';
+
+export default function SubscribePage() {
+    return (
+        <div className="min-h-screen bg-gray-50 py-20">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center bg-white rounded-2xl shadow-xl overflow-hidden pt-12 pb-16">
+                <h1 className="text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
+                    Aditor AI - Plan Profesional
+                </h1>
+                <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto">
+                    Lleva tus auditorías de Meta Ads al siguiente nivel. Obtén acceso ilimitado a todas nuestras herramientas impulsadas por IA.
+                </p>
+
+                <div className="bg-gray-50 border border-gray-100 rounded-xl p-8 max-w-lg mx-auto mb-10 text-left shadow-sm">
+                    <ul className="space-y-4 mb-8 text-gray-700">
+                        <li className="flex items-center">
+                            <svg className="h-6 w-6 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Auditorías de campañas ilimitadas
+                        </li>
+                        <li className="flex items-center">
+                            <svg className="h-6 w-6 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Análisis profundo con IA avanzada
+                        </li>
+                        <li className="flex items-center">
+                            <svg className="h-6 w-6 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Generación de hooks y copys optimizados
+                        </li>
+                        <li className="flex items-center">
+                            <svg className="h-6 w-6 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Soporte prioritario
+                        </li>
+                    </ul>
+
+                    <div className="text-center mb-6">
+                        <span className="text-5xl font-extrabold text-gray-900">$185.000 COP</span>
+                        <span className="text-xl font-medium text-gray-500"> / mes</span>
+                        <div className="text-sm font-medium text-gray-400 mt-2">≈ USD $47</div>
+                    </div>
+
+                    <p className="text-center text-sm text-green-600 font-semibold mb-6">
+                        ¡Incluye 7 días de prueba gratis!
+                    </p>
+
+                    <div className="flex justify-center">
+                        <SubscribeButton />
+                    </div>
+                </div>
+
+                <p className="text-sm text-gray-400">
+                    Cancela en cualquier momento. El cobro se realizará automáticamente al finalizar tu periodo de prueba.
+                </p>
+            </div>
+        </div>
+    );
+}

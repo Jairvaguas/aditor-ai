@@ -49,3 +49,8 @@ create table if not exists audit_logs (
   detalle jsonb,
   created_at timestamp with time zone default now()
 );
+
+-- Mercado Pago Subscriptions
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_subscribed boolean DEFAULT false;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS subscription_id text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS trial_ends_at timestamptz;

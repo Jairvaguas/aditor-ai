@@ -2,6 +2,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { checkSubscription } from "@/lib/checkSubscription";
 import {
     Bell,
     Search,
@@ -20,6 +21,11 @@ export default async function DashboardPage() {
 
     if (!user) {
         redirect("/registro");
+    }
+
+    const hasAccess = await checkSubscription(user.id);
+    if (!hasAccess) {
+        redirect("/subscribe");
     }
 
     // Determine displayName
