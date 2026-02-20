@@ -1,11 +1,21 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 
 export default function SubscribeButton() {
     const [isLoading, setIsLoading] = useState(false);
+    const { userId } = useAuth();
+    const router = useRouter();
 
     const handleSubscribe = async () => {
+        if (!userId) {
+            // Si no está registrado, mandarlo al registro (o login) para que se cree la cuenta primero
+            router.push('/registro?redirect_url=/subscribe');
+            return;
+        }
+
         try {
             setIsLoading(true);
             const res = await fetch('/api/payments/create-subscription', {
