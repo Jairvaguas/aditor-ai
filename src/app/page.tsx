@@ -131,21 +131,21 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="flex flex-col items-center text-center">
+            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-[#131D2E] border border-white/10 rounded-3xl flex items-center justify-center mb-6 text-[#FF6B6B] shadow-lg">
                 <Search className="w-10 h-10" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Diagnóstico Profundo</h3>
               <p className="text-gray-400 text-lg">Analizamos el funnel completo: desde el CTR del anuncio hasta la tasa de conversión en tu landing page.</p>
             </div>
-            <div className="flex flex-col items-center text-center">
+            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-[#131D2E] border border-white/10 rounded-3xl flex items-center justify-center mb-6 text-[#00D4AA] shadow-lg">
                 <TrendingUp className="w-10 h-10" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Plan de Acción Claro</h3>
               <p className="text-gray-400 text-lg">Nada de dashboards confusos. Te decimos "Sube un 15% aquí" y "Pausa este creativo urgente".</p>
             </div>
-            <div className="flex flex-col items-center text-center">
+            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-[#131D2E] border border-white/10 rounded-3xl flex items-center justify-center mb-6 text-yellow-400 shadow-lg">
                 <Repeat className="w-10 h-10" />
               </div>
@@ -194,7 +194,7 @@ export default function Home() {
               ))}
             </ul>
 
-            <Link href="/subscribe" className="block w-full text-center bg-white text-[#0B1120] hover:bg-gray-100 px-8 py-5 rounded-xl text-xl font-bold transition-colors shadow-lg">
+            <Link href="/subscribe" className="block w-full text-center bg-[#FF6B6B] hover:bg-[#ff5252] text-white px-8 py-5 rounded-xl text-xl font-bold transition-all shadow-[0_4px_14px_0_rgba(255,107,107,0.39)] hover:shadow-[0_6px_20px_rgba(255,107,107,0.23)] hover:-translate-y-0.5">
               Iniciar prueba gratis
             </Link>
           </div>
