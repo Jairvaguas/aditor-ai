@@ -1,7 +1,11 @@
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
 export default function TerminosYCondiciones() {
     return (
-        <div className="min-h-screen bg-[#1A1A2E] text-gray-200 py-16 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto bg-[#16213E] rounded-2xl shadow-xl overflow-hidden p-8 sm:p-12 border border-blue-900/30">
+        <div className="flex flex-col min-h-screen bg-[#0B1120] text-[#F0F0F0] font-sans selection:bg-[#FF6B6B]/30 pt-32">
+            <Navbar />
+            <main className="flex-grow max-w-3xl mx-auto bg-[#131D2E] rounded-2xl shadow-xl overflow-hidden p-8 sm:p-12 border border-slate-800 w-full mb-12">
                 <h1 className="text-3xl font-extrabold text-white mb-8 border-b border-blue-800 pb-4">
                     Términos y Condiciones — Aditor AI
                 </h1>
@@ -64,7 +68,8 @@ export default function TerminosYCondiciones() {
                         </p>
                     </section>
                 </div>
-            </div>
+            </main>
+            <Footer />
         </div>
     );
 }

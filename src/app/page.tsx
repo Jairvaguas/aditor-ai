@@ -1,33 +1,13 @@
 import Link from "next/link";
 import { ArrowRight, Search, TrendingUp, Clock, AlertTriangle, CheckCircle2, Zap, Repeat } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col bg-[#0B1120] text-[#F0F0F0] font-sans selection:bg-[#FF6B6B]/30">
       {/* 1. Navbar Fija */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 py-4">
-        <div className="max-w-7xl mx-auto px-6 h-12 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#FF6B6B] to-[#ff8e53] flex items-center justify-center font-bold text-white text-xl">A</div>
-            <span className="text-2xl font-bold tracking-tight">Aditor AI</span>
-          </div>
-
-          <div className="hidden md:flex gap-8 text-base font-medium text-gray-400">
-            <a href="#como-funciona" className="hover:text-white transition-colors">Cómo funciona</a>
-            <a href="#caracteristicas" className="hover:text-white transition-colors">Beneficios</a>
-            <a href="#precios" className="hover:text-white transition-colors">Precios</a>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <Link href="/registro" className="hidden sm:block text-base font-medium text-gray-300 hover:text-white transition-colors">
-              Iniciar sesión
-            </Link>
-            <Link href="/conectar" className="bg-[#FF6B6B] hover:bg-[#ff5252] text-white px-6 py-3 rounded-full text-base font-bold transition-all shadow-[0_0_15px_rgba(255,107,107,0.3)] hover:shadow-[0_0_25px_rgba(255,107,107,0.5)]">
-              Empezar gratis
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* 2. Hero Section (2 Columnas) */}
       <section className="relative min-h-screen pt-20 pb-20 overflow-hidden w-full">
@@ -63,7 +43,7 @@ export default function Home() {
             <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6 shadow-2xl relative transform lg:rotate-2 lg:hover:rotate-0 transition-transform duration-500">
               <div className="flex items-center gap-2 mb-4 pb-4 border-b border-slate-800">
                 <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
-                <span className="text-slate-400 text-sm font-mono">aditor_report.json</span>
+                <span className="text-green-400 text-sm font-medium">En vivo</span>
               </div>
 
               <div className="space-y-4">
@@ -222,27 +202,7 @@ export default function Home() {
       </section>
 
       {/* 6. Footer */}
-      <footer className="bg-[#0B1120] py-24 border-t border-white/5 w-full">
-        <div className="max-w-7xl mx-auto px-6 w-full">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded bg-gray-800 flex items-center justify-center font-bold text-gray-400 text-sm">A</div>
-              <span className="font-bold text-gray-400 text-lg">Aditor AI</span>
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-8 text-base text-gray-500">
-              <Link href="/privacidad" className="hover:text-white transition-colors">Privacidad</Link>
-              <Link href="/terminos" className="hover:text-white transition-colors">Términos</Link>
-              <Link href="/eliminar-datos" className="hover:text-white transition-colors">Eliminar Datos</Link>
-              <a href="mailto:info@aditor-ai.com" className="hover:text-white transition-colors">Contacto</a>
-            </div>
-
-            <div className="text-sm text-gray-600">
-              © {new Date().getFullYear()} Aditor AI.
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }
