@@ -2,11 +2,22 @@ import SubscribeButton from '@/components/SubscribeButton';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-export default function SubscribePage() {
+// Definimos la prop searchParams para atrapar '?canceled=true'
+export default function SubscribePage({ searchParams }: { searchParams: { canceled?: string } }) {
     return (
         <div className="flex flex-col min-h-screen bg-[#0B1120] text-[#F0F0F0] font-sans selection:bg-[#FF6B6B]/30 pt-32">
             <Navbar />
             <main className="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center bg-[#131D2E] text-white rounded-2xl shadow-xl overflow-hidden pt-12 pb-16 border border-slate-800 w-full mb-12">
+
+                {/* Cancelation Message Banner */}
+                {searchParams?.canceled === 'true' && (
+                    <div className="bg-green-500/10 border border-green-500/30 text-green-400 p-4 rounded-xl mb-8 max-w-2xl mx-auto flex items-center justify-center gap-2 font-medium">
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Tu suscripción fue cancelada exitosamente.
+                    </div>
+                )}
                 <h1 className="text-4xl font-extrabold text-white mb-4 tracking-tight">
                     Aditor AI - Plan Profesional
                 </h1>

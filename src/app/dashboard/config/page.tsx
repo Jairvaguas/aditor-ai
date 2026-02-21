@@ -15,8 +15,10 @@ import {
     CreditCard,
     User,
     LogOut,
-    Unplug
+    Unplug,
+    AlertTriangle
 } from "lucide-react";
+import { CancelSubscriptionCard } from "@/components/CancelSubscriptionCard";
 
 export default async function ConfigPage() {
     const user = await currentUser();
@@ -164,6 +166,11 @@ export default async function ConfigPage() {
                             </div>
                         </div>
                     </div>
+
+                    {/* Zona de Peligro / Cancelar */}
+                    {isSubscribed && (
+                        <CancelSubscriptionCard />
+                    )}
 
                     {/* Acciones de cuenta */}
                     <div className="bg-[#1A1A2E]/80 border border-slate-800 rounded-3xl p-8 flex flex-col sm:flex-row gap-6 items-center justify-between">
