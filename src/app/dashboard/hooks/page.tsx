@@ -9,12 +9,9 @@ import {
     Search,
     Sparkles,
     Settings,
-    BarChart2,
-    Wand2,
-    Copy,
-    LayoutTemplate,
-    Lightbulb
+    BarChart2
 } from "lucide-react";
+import { HooksGenerator } from "@/components/HooksGenerator";
 
 export default async function HooksPage() {
     const user = await currentUser();
@@ -30,27 +27,7 @@ export default async function HooksPage() {
 
     const displayName = user.firstName || user.username || "Usuario";
 
-    // Static examples of hooks for layout visualization
-    const hooksList = [
-        {
-            id: 1,
-            type: "Atención al Dolor",
-            content: "«¿Sientes que el ROAS cae aunque subas tu presupuesto? Este error en tu retargeting te está robando ventas.»",
-            angle: "Contraintuitivo / Miedo a la pérdida"
-        },
-        {
-            id: 2,
-            type: "Prueba Social Directa",
-            content: "«Cómo 3,450 tiendas dejaron de depender del tráfico frío y aumentaron su LTV en 45 días.»",
-            angle: "Curiosidad por casos de éxito"
-        },
-        {
-            id: 3,
-            type: "Oferta Irresistible",
-            content: "«Deja de regalar descuentos. Así es como estructuramos una oferta que tus clientes se sientan tontos si la rechazan.»",
-            angle: "Educacional / Valor percibo"
-        }
-    ];
+
 
     return (
         <main className="min-h-screen bg-[#0B1120] text-white font-sans flex overflow-hidden">
@@ -121,47 +98,7 @@ export default async function HooksPage() {
                 {/* Content */}
                 <div className="p-8 pb-32 flex flex-col gap-8 max-w-6xl mx-auto w-full">
 
-                    {/* Explicación y CTA */}
-                    <div className="bg-gradient-to-r from-slate-900 to-[#131D2E] border border-slate-800 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
-                        <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#00D4AA]/10 rounded-full blur-[40px] pointer-events-none"></div>
-                        <div className="relative z-10 max-w-xl">
-                            <h2 className="text-xl font-bold font-syne text-white mb-2 flex items-center gap-2">
-                                <Lightbulb className="w-6 h-6 text-[#00D4AA]" />
-                                Ideación de Copywriting Creativo
-                            </h2>
-                            <p className="text-sm text-slate-400 leading-relaxed">
-                                Genera hooks y copies para tus anuncios basados en los datos y el rendimiento técnico de tus campañas analizadas por Aditor AI.
-                            </p>
-                        </div>
-                        <button className="whitespace-nowrap flex items-center gap-2 py-3.5 px-6 rounded-xl bg-[#FF6B6B] hover:bg-[#ff5252] text-white font-bold text-sm shadow-[0_4px_14px_rgba(255,107,107,0.35)] hover:scale-[1.02] transition-transform relative z-10">
-                            <Wand2 className="w-4 h-4" /> Generar nuevo hook
-                        </button>
-                    </div>
-
-                    {/* Grid de Ejemplos */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {hooksList.map((hook) => (
-                            <div key={hook.id} className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col group hover:border-[#00D4AA]/40 transition-colors">
-                                <div className="flex justify-between items-start mb-4">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-[#00D4AA]/10 text-[#00D4AA] border border-[#00D4AA]/20 line-clamp-1">
-                                        {hook.type}
-                                    </span>
-                                    <div className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-800 cursor-pointer transition-colors" title="Copiar al portapapeles">
-                                        <Copy className="w-4 h-4" />
-                                    </div>
-                                </div>
-                                <div className="flex-1 bg-slate-800/30 rounded-xl p-4 mb-4 border border-slate-800">
-                                    <p className="text-sm text-slate-200 font-medium italic leading-relaxed">
-                                        {hook.content}
-                                    </p>
-                                </div>
-                                <div className="flex items-center gap-2 text-xs text-slate-500 mt-auto pt-2 border-t border-slate-800/80">
-                                    <LayoutTemplate className="w-3.5 h-3.5" />
-                                    <span>Ángulo: <strong className="text-slate-400">{hook.angle}</strong></span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <HooksGenerator />
 
                 </div>
             </div>
