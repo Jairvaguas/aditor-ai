@@ -180,8 +180,7 @@ export default function Home() {
                 <span className="text-6xl font-extrabold text-white">$47</span>
                 <span className="text-gray-500 font-medium text-xl">USD / mes</span>
               </div>
-              <div className="text-sm font-medium text-gray-400 mt-2">Incluye 1 cuenta publicitaria · Cuentas adicionales a $15 USD/mes</div>
-              <div className="text-sm font-medium text-gray-400 mt-1">≈ $185.000 COP</div>
+              <div className="text-sm font-medium text-gray-400 mt-2">Incluye 1 cuenta publicitaria</div>
               <p className="text-base text-[#00D4AA] font-medium mt-3 flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5" /> Incluye 7 días de prueba gratis
               </p>
