@@ -1,7 +1,7 @@
-
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { checkSubscription } from "@/lib/checkSubscription";
 import { supabaseAdmin } from "@/lib/supabase";
 import {
@@ -12,10 +12,8 @@ import {
     BarChart2,
     TrendingUp,
     TrendingDown,
-    DollarSign,
-    MousePointer,
-    Megaphone,
-    CheckCircle2
+    CheckCircle2,
+    ChevronRight
 } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -30,10 +28,8 @@ export default async function DashboardPage() {
         redirect("/subscribe");
     }
 
-    // Determine displayName
     const displayName = user.firstName || user.username || "Usuario";
 
-    // 1. Fetch user profile from Supabase to check Meta connection status
     const { data: profile } = await supabaseAdmin
         .from('profiles')
         .select('meta_access_token')
@@ -43,206 +39,335 @@ export default async function DashboardPage() {
     const isConnectedToMeta = !!profile?.meta_access_token;
 
     return (
-        <main className="min-h-screen bg-[#1A1A2E] text-white font-sans pb-24 relative overflow-hidden">
-            {/* Background Gradients */}
-            <div className="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 opacity-20 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#E94560] rounded-full blur-[120px]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[#4ECDC4] rounded-full blur-[120px]" />
+        <main className="min-h-screen bg-[#0B1120] text-white font-sans flex overflow-hidden">
+            {/* Background Effects */}
+            <div className="fixed top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-[#FF6B6B] opacity-[0.03] rounded-full blur-[150px]" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[#00D4AA] opacity-[0.03] rounded-full blur-[150px]" />
             </div>
 
-            <div className="max-w-md mx-auto">
-                {/* Notch simulation */}
-                <div className="w-[110px] h-[26px] bg-[#1A1A2E] rounded-b-[18px] mx-auto absolute top-0 left-1/2 -translate-x-1/2 z-50"></div>
-
-                {/* 1. Header */}
-                <div className="pt-20 px-5 pb-6 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-xl font-extrabold font-syne">
-                            Hola, <span className="text-white">{displayName}</span> 👋
-                        </h1>
-                        <p className="text-[11px] text-[#8892A4] mt-1">23 campañas activas · Última auditoría: hoy</p>
-                    </div>
-                    <div className="w-[34px] h-[34px] bg-white/5 border border-white/10 rounded-[10px] flex items-center justify-center relative cursor-pointer">
-                        <Bell className="w-4 h-4 text-white" />
-                        <div className="absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF6B6B] rounded-full"></div>
-                    </div>
-                </div>
-
-                {/* Meta Connect Status Card */}
-                <div className="mx-5 mb-4">
-                    {isConnectedToMeta ? (
-                        <div className="bg-slate-900/50 border border-green-500/30 rounded-[18px] p-4 flex flex-col items-center justify-center text-center">
-                            <div className="flex items-center gap-2 mb-2">
-                                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                                <span className="font-bold text-green-500 text-sm">Meta Ads conectado</span>
-                            </div>
-                            <p className="text-xs text-slate-400 mb-3 block">Analizando tus campañas de forma segura.</p>
-                            <Link href="/conectar" className="text-xs bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-full transition-colors border border-slate-700">
-                                Reconectar cuenta
-                            </Link>
-                        </div>
-                    ) : (
-                        <div className="bg-slate-900 border border-[#FF6B6B] rounded-2xl p-6 flex flex-col items-center justify-center text-center shadow-lg">
-                            <h3 className="text-lg font-bold text-white mb-2 font-syne">Conectar Meta Ads</h3>
-                            <p className="text-sm text-slate-400 mb-5 px-2">
-                                Habilita la lectura de campañas para iniciar tu primera auditoría automática.
-                            </p>
-                            <Link href="/conectar" className="w-full flex items-center justify-center gap-2 bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-[14px] py-3 rounded-xl transition-transform hover:scale-[1.02] shadow-[0_4px_14px_rgba(24,119,242,0.35)]">
-                                <span className="font-bold text-[14px] leading-none mb-0.5">f</span>
-                                Conectar Meta Ads
-                            </Link>
-                        </div>
-                    )}
-                </div>
-
-                {/* 2. Auto Audit Card */}
-                <div className="mx-5 mb-4 bg-gradient-to-br from-[#74B9FF]/12 to-[#4ECDC4]/12 border border-[#74B9FF]/25 rounded-[18px] p-4">
-                    <div className="flex items-center justify-between mb-1.5">
-                        <h4 className="text-[12px] font-bold text-[#74B9FF] flex items-center gap-1.5">
-                            <span>🔁</span> Auditoría automática
-                        </h4>
-                        <div className="text-[9px] bg-[#74B9FF]/20 text-[#74B9FF] px-2.5 py-0.5 rounded-full font-bold">Activa</div>
-                    </div>
-                    <p className="text-[11px] text-[#8892A4] leading-snug">
-                        Tu próxima auditoría automática es el <strong className="text-white">lunes</strong>. Recibirás un email cuando esté lista.
-                    </p>
-                </div>
-
-                {/* 3. Metrics Row */}
-                <div className="flex gap-4 px-5 pb-6 overflow-x-auto scrollbar-hide">
-                    {/* ROAS */}
-                    <div className="shrink-0 w-[120px] bg-slate-900 border border-slate-700 rounded-2xl p-5 flex flex-col">
-                        <div className="text-xl mb-2">💰</div>
-                        <div className="text-2xl font-extrabold font-syne text-[#FFE66D] leading-none mb-1">2.4x</div>
-                        <div className="text-[10px] text-slate-400 uppercase tracking-wider font-bold mb-2">ROAS Total</div>
-                        <div className="text-xs font-semibold text-[#FF6B6B] flex items-center gap-0.5">
-                            <TrendingDown className="w-3 h-3" /> -0.3
-                        </div>
-                    </div>
-
-                    {/* CTR */}
-                    <div className="shrink-0 w-[120px] bg-slate-900 border border-slate-700 rounded-2xl p-5 flex flex-col">
-                        <div className="text-xl mb-2">🖱️</div>
-                        <div className="text-2xl font-extrabold font-syne text-[#4ECDC4] leading-none mb-1">1.8%</div>
-                        <div className="text-[10px] text-slate-400 uppercase tracking-wider font-bold mb-2">CTR Prom.</div>
-                        <div className="text-xs font-semibold text-[#4ECDC4] flex items-center gap-0.5">
-                            <TrendingUp className="w-3 h-3" /> +0.2%
-                        </div>
-                    </div>
-
-                    {/* CPM */}
-                    <div className="shrink-0 w-[120px] bg-slate-900 border border-slate-700 rounded-2xl p-5 flex flex-col">
-                        <div className="text-xl mb-2">📣</div>
-                        <div className="text-2xl font-extrabold font-syne text-[#FF6B6B] leading-none mb-1">$14.2</div>
-                        <div className="text-[10px] text-slate-400 uppercase tracking-wider font-bold mb-2">CPM Prom.</div>
-                        <div className="text-xs font-semibold text-[#FF6B6B]">
-                            ▼ Alto
-                        </div>
-                    </div>
-
-                    {/* Spend */}
-                    <div className="shrink-0 w-[120px] bg-slate-900 border border-slate-700 rounded-2xl p-5 flex flex-col">
-                        <div className="text-xl mb-2">💸</div>
-                        <div className="text-2xl font-extrabold font-syne text-[#74B9FF] leading-none mb-1">$1,240</div>
-                        <div className="text-[10px] text-slate-400 uppercase tracking-wider font-bold mb-2">Gasto 7d</div>
-                        <div className="text-xs font-semibold text-[#74B9FF] flex items-center gap-0.5">
-                            <TrendingUp className="w-3 h-3" /> +15%
-                        </div>
-                    </div>
-                </div>
-
-                {/* 4. Manual Audit Button */}
-                <div className="mx-5 mb-8">
-                    <Link href="/teaser" className="max-w-xs mx-auto flex items-center justify-center gap-2 py-3.5 rounded-[14px] bg-[#FF6B6B] hover:bg-[#ff5252] text-white font-bold text-[15px] shadow-[0_4px_14px_rgba(255,107,107,0.35)] hover:scale-[1.02] hover:-translate-y-0.5 transition-all">
-                        <Sparkles className="w-4 h-4" /> Auditar ahora
+            {/* Sidebar Fixa (Desktop) */}
+            <aside className="fixed top-0 left-0 w-64 h-full bg-[#0B1120] border-r border-slate-800 z-40 hidden lg:flex flex-col">
+                {/* Logo */}
+                <div className="h-20 flex items-center px-8 border-b border-slate-800">
+                    <Link href="/" className="flex items-center gap-3">
+                        <Image src="/favicon.ico" alt="Aditor AI" width={32} height={32} />
+                        <span className="text-xl font-bold font-syne text-white tracking-tight">Aditor AI</span>
                     </Link>
-                    <p className="text-center text-[11px] text-slate-400 mt-3">Análisis manual fuera del ciclo semanal.</p>
                 </div>
 
-                {/* 5. Campaign List */}
-                <div className="mx-5 mb-6">
-                    <h3 className="text-sm font-bold font-syne mb-4 pl-1 text-white">Tus campañas</h3>
-                    <div className="space-y-3">
+                {/* Navegación */}
+                <div className="flex-1 py-8 px-4 flex flex-col gap-2">
+                    <div className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Menú Principal</div>
 
-                        {/* Campaign 1: Green */}
-                        <div className="flex items-center gap-3 bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-800">
-                            <div className="w-2 h-2 rounded-full bg-[#4ECDC4] shadow-[0_0_6px_rgba(78,205,196,0.6)] shrink-0"></div>
-                            <div className="flex-1 min-w-0">
-                                <div className="text-sm font-bold truncate text-white">Retargeting 7 días</div>
-                                <div className="text-xs text-slate-400 mt-0.5">$340 · ROAS 4.2x</div>
-                            </div>
-                            <div className="text-right">
-                                <div className="text-sm font-bold font-syne text-[#4ECDC4]">4.2x</div>
-                                <div className="text-[10px] text-slate-400 uppercase font-medium mt-0.5">ROAS</div>
-                            </div>
-                        </div>
-
-                        {/* Campaign 2: Yellow */}
-                        <div className="flex items-center gap-3 bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-800">
-                            <div className="w-2 h-2 rounded-full bg-[#FFE66D] shadow-[0_0_6px_rgba(255,230,109,0.6)] shrink-0"></div>
-                            <div className="flex-1 min-w-0">
-                                <div className="text-sm font-bold truncate text-white">Lookalike 1% compradores</div>
-                                <div className="text-xs text-slate-400 mt-0.5">$280 · ROAS 1.9x</div>
-                            </div>
-                            <div className="text-right">
-                                <div className="text-sm font-bold font-syne text-[#FFE66D]">1.9x</div>
-                                <div className="text-[10px] text-slate-400 uppercase font-medium mt-0.5">ROAS</div>
-                            </div>
-                        </div>
-
-                        {/* Campaign 3: Red */}
-                        <div className="flex items-center gap-3 bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-800">
-                            <div className="w-2 h-2 rounded-full bg-[#FF6B6B] shadow-[0_0_6px_rgba(255,107,107,0.6)] shrink-0"></div>
-                            <div className="flex-1 min-w-0">
-                                <div className="text-sm font-bold truncate text-white">Intereses — Ropa Mujer</div>
-                                <div className="text-xs text-slate-400 mt-0.5">$340 · ROAS 0.8x</div>
-                            </div>
-                            <div className="text-right">
-                                <div className="text-sm font-bold font-syne text-[#FF6B6B]">0.8x</div>
-                                <div className="text-[10px] text-slate-400 uppercase font-medium mt-0.5">ROAS</div>
-                            </div>
-                        </div>
-
-                        {/* Campaign 4: Green */}
-                        <div className="flex items-center gap-3 bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-800">
-                            <div className="w-2 h-2 rounded-full bg-[#4ECDC4] shadow-[0_0_6px_rgba(78,205,196,0.6)] shrink-0"></div>
-                            <div className="flex-1 min-w-0">
-                                <div className="text-sm font-bold truncate text-white">Carrito abandonado</div>
-                                <div className="text-xs text-slate-400 mt-0.5">$180 · ROAS 5.1x</div>
-                            </div>
-                            <div className="text-right">
-                                <div className="text-sm font-bold font-syne text-[#4ECDC4]">5.1x</div>
-                                <div className="text-[10px] text-slate-400 uppercase font-medium mt-0.5">ROAS</div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                {/* 6. Bottom Navigation */}
-                <div className="fixed bottom-0 left-0 w-full bg-slate-900 border-t border-slate-700 pb-5 pt-3 flex justify-around items-center z-40 px-2 lg:hidden">
-                    <Link href="/dashboard" className="flex flex-col items-center gap-1 text-[#FF6B6B] w-16">
+                    <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#FF6B6B]/10 text-[#FF6B6B] font-medium transition-colors">
                         <BarChart2 className="w-5 h-5" />
-                        <span className="text-[10px] font-medium">Dashboard</span>
+                        <span>Dashboard</span>
                     </Link>
 
-                    <Link href="/dashboard/auditorias" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
+                    <Link href="/dashboard/auditorias" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors">
                         <Search className="w-5 h-5" />
-                        <span className="text-[10px] font-medium">Auditorías</span>
+                        <span>Auditorías</span>
                     </Link>
 
-                    <Link href="/hooks" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
+                    <Link href="/hooks" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors">
                         <Sparkles className="w-5 h-5" />
-                        <span className="text-[10px] font-medium">Hooks IA</span>
+                        <span>Hooks IA</span>
                     </Link>
 
-                    <Link href="/dashboard/config" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
+                    <Link href="/dashboard/config" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors mt-auto">
                         <Settings className="w-5 h-5" />
-                        <span className="text-[10px] font-medium">Config</span>
+                        <span>Configuración</span>
                     </Link>
                 </div>
+            </aside>
 
+            {/* Main Content Area */}
+            <div className="flex-1 lg:ml-64 relative z-10 flex flex-col h-screen overflow-y-auto w-full">
+
+                {/* Header Superior */}
+                <header className="h-20 px-8 flex items-center justify-between border-b border-slate-800/50 bg-[#0B1120]/80 backdrop-blur-md sticky top-0 z-30">
+                    <div className="flex items-center gap-4">
+                        <h1 className="text-2xl font-bold font-syne text-white">Hola, {displayName} 👋</h1>
+                        <div className="hidden sm:flex px-3 py-1 bg-gradient-to-r from-[#FF6B6B]/20 to-[#ff8e53]/20 border border-[#FF6B6B]/30 rounded-full text-[#FF6B6B] text-xs font-bold tracking-wide shadow-[0_0_10px_rgba(255,107,107,0.1)]">
+                            PLAN PRO
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center relative cursor-pointer hover:bg-slate-700 transition-colors">
+                            <Bell className="w-5 h-5 text-slate-300" />
+                            <div className="absolute top-2 right-2.5 w-2 h-2 bg-[#FF6B6B] rounded-full ring-2 ring-slate-800"></div>
+                        </div>
+                        {/* Placeholder Avatar */}
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00D4AA] to-teal-500 border-2 border-slate-700 p-0.5 cursor-pointer">
+                            <div className="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-sm font-bold">
+                                {displayName.charAt(0).toUpperCase()}
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                {/* Dashboard Content */}
+                <div className="p-8 pb-32 lg:pb-8 flex flex-col gap-8 max-w-7xl mx-auto w-full">
+
+                    {/* Metrics Row */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                        {/* ROAS */}
+                        <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col relative overflow-hidden group">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="text-slate-400 font-medium text-sm">ROAS Global</div>
+                                <div className="p-2 bg-[#ffe66d]/10 rounded-lg"><div className="text-lg">💰</div></div>
+                            </div>
+                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#ffe66d] transition-colors">2.4x</div>
+                            <div className="flex items-center gap-1.5 text-xs">
+                                <span className="flex items-center text-[#FF6B6B] font-bold"><TrendingDown className="w-3 h-3 mr-0.5" /> -0.3 </span>
+                                <span className="text-slate-500">vs semana ant.</span>
+                            </div>
+                            {/* Mini SVG Graph */}
+                            <svg className="absolute bottom-0 left-0 w-full h-12 opacity-30 text-[#ffe66d]" viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <path d="M0 30 L10 25 L30 15 L50 20 L70 10 L90 5 L100 15 L100 30 Z" fill="currentColor" />
+                            </svg>
+                        </div>
+
+                        {/* CTR */}
+                        <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col relative overflow-hidden group">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="text-slate-400 font-medium text-sm">CTR Promedio</div>
+                                <div className="p-2 bg-[#00D4AA]/10 rounded-lg"><div className="text-lg">🖱️</div></div>
+                            </div>
+                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#00D4AA] transition-colors">1.8%</div>
+                            <div className="flex items-center gap-1.5 text-xs">
+                                <span className="flex items-center text-[#00D4AA] font-bold"><TrendingUp className="w-3 h-3 mr-0.5" /> +0.2% </span>
+                                <span className="text-slate-500">vs semana ant.</span>
+                            </div>
+                            {/* Mini SVG Graph */}
+                            <svg className="absolute bottom-0 left-0 w-full h-12 opacity-30 text-[#00D4AA]" viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <path d="M0 30 L20 25 L40 10 L60 15 L80 5 L100 0 L100 30 Z" fill="currentColor" />
+                            </svg>
+                        </div>
+
+                        {/* CPM */}
+                        <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col relative overflow-hidden group">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="text-slate-400 font-medium text-sm">CPM Promedio</div>
+                                <div className="p-2 bg-[#FF6B6B]/10 rounded-lg"><div className="text-lg">📣</div></div>
+                            </div>
+                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#FF6B6B] transition-colors">$14.2</div>
+                            <div className="flex items-center gap-1.5 text-xs">
+                                <span className="flex items-center text-[#FF6B6B] font-bold">ALTO</span>
+                                <span className="text-slate-500">Requiere atención</span>
+                            </div>
+                            {/* Mini SVG Graph */}
+                            <svg className="absolute bottom-0 left-0 w-full h-12 opacity-30 text-[#FF6B6B]" viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <path d="M0 30 L15 15 L35 20 L55 5 L75 10 L100 2 L100 30 Z" fill="currentColor" />
+                            </svg>
+                        </div>
+
+                        {/* Spend */}
+                        <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col relative overflow-hidden group">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="text-slate-400 font-medium text-sm">Gasto 7 días</div>
+                                <div className="p-2 bg-[#74B9FF]/10 rounded-lg"><div className="text-lg">💸</div></div>
+                            </div>
+                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#74B9FF] transition-colors">$1,240</div>
+                            <div className="flex items-center gap-1.5 text-xs">
+                                <span className="flex items-center text-[#00D4AA] font-bold"><TrendingUp className="w-3 h-3 mr-0.5" /> +15% </span>
+                                <span className="text-slate-500">vs semana ant.</span>
+                            </div>
+                            {/* Mini SVG Graph */}
+                            <svg className="absolute bottom-0 left-0 w-full h-12 opacity-30 text-[#74B9FF]" viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <path d="M0 30 L10 28 L30 20 L50 22 L70 12 L90 10 L100 5 L100 30 Z" fill="currentColor" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    {/* Main Panels Grid */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                        {/* Left Col: Campaigns Table */}
+                        <div className="lg:col-span-2 bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden flex flex-col">
+                            <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
+                                <div>
+                                    <h2 className="text-lg font-bold font-syne text-white">Rendimiento de Campañas</h2>
+                                    <p className="text-sm text-slate-400 mt-1">Monitoreo activo por la IA.</p>
+                                </div>
+                                <button className="text-[#FF6B6B] bg-[#FF6B6B]/10 hover:bg-[#FF6B6B]/20 text-sm font-bold py-2 px-4 rounded-lg transition-colors flex items-center gap-1">
+                                    Ver todas <ChevronRight className="w-4 h-4" />
+                                </button>
+                            </div>
+
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="bg-slate-900/50 text-xs text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                                            <th className="py-4 px-6 font-medium">Campaña</th>
+                                            <th className="py-4 px-6 font-medium">Estado</th>
+                                            <th className="py-4 px-6 font-medium">Gasto</th>
+                                            <th className="py-4 px-6 font-medium text-right">ROAS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-800/60">
+
+                                        {/* Row 1 */}
+                                        <tr className="hover:bg-slate-800/40 transition-colors group cursor-pointer">
+                                            <td className="py-4 px-6">
+                                                <div className="font-bold text-white text-sm group-hover:text-[#00D4AA] transition-colors">Retargeting 7 días</div>
+                                                <div className="text-xs text-slate-500 mt-1">Última ed.: Ayer</div>
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <span className="inline-flex items-center gap-1.5 bg-[#00D4AA]/10 text-[#00D4AA] text-xs font-bold px-2.5 py-1 rounded-md border border-[#00D4AA]/20">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#00D4AA] shadow-[0_0_5px_rgba(0,212,170,0.8)]"></span> Óptimo
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-6 text-sm text-slate-300 font-medium">$340</td>
+                                            <td className="py-4 px-6 text-right">
+                                                <div className="font-bold font-syne text-[#00D4AA] text-base">4.2x</div>
+                                            </td>
+                                        </tr>
+
+                                        {/* Row 2 */}
+                                        <tr className="hover:bg-slate-800/40 transition-colors group cursor-pointer">
+                                            <td className="py-4 px-6">
+                                                <div className="font-bold text-white text-sm group-hover:text-[#ffe66d] transition-colors">Lookalike 1% compradores</div>
+                                                <div className="text-xs text-slate-500 mt-1">Última ed.: Hace 3 días</div>
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <span className="inline-flex items-center gap-1.5 bg-[#ffe66d]/10 text-[#ffe66d] text-xs font-bold px-2.5 py-1 rounded-md border border-[#ffe66d]/20">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#ffe66d] shadow-[0_0_5px_rgba(255,230,109,0.8)]"></span> En observación
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-6 text-sm text-slate-300 font-medium">$280</td>
+                                            <td className="py-4 px-6 text-right">
+                                                <div className="font-bold font-syne text-[#ffe66d] text-base">1.9x</div>
+                                            </td>
+                                        </tr>
+
+                                        {/* Row 3 */}
+                                        <tr className="hover:bg-slate-800/40 transition-colors group cursor-pointer">
+                                            <td className="py-4 px-6">
+                                                <div className="font-bold text-white text-sm group-hover:text-[#FF6B6B] transition-colors">Intereses — Ropa Mujer</div>
+                                                <div className="text-xs text-slate-500 mt-1">Última ed.: Hoy</div>
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <span className="inline-flex items-center gap-1.5 bg-[#FF6B6B]/10 text-[#FF6B6B] text-xs font-bold px-2.5 py-1 rounded-md border border-[#FF6B6B]/20">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B6B] shadow-[0_0_5px_rgba(255,107,107,0.8)]"></span> Riesgo
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-6 text-sm text-slate-300 font-medium">$340</td>
+                                            <td className="py-4 px-6 text-right">
+                                                <div className="font-bold font-syne text-[#FF6B6B] text-base">0.8x</div>
+                                            </td>
+                                        </tr>
+
+                                        {/* Row 4 */}
+                                        <tr className="hover:bg-slate-800/40 transition-colors group cursor-pointer">
+                                            <td className="py-4 px-6">
+                                                <div className="font-bold text-white text-sm group-hover:text-[#00D4AA] transition-colors">Campaña Catálogo Dinámico</div>
+                                                <div className="text-xs text-slate-500 mt-1">Última ed.: Hace 1 sem</div>
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <span className="inline-flex items-center gap-1.5 bg-[#00D4AA]/10 text-[#00D4AA] text-xs font-bold px-2.5 py-1 rounded-md border border-[#00D4AA]/20">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#00D4AA] shadow-[0_0_5px_rgba(0,212,170,0.8)]"></span> Óptimo
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-6 text-sm text-slate-300 font-medium">$520</td>
+                                            <td className="py-4 px-6 text-right">
+                                                <div className="font-bold font-syne text-[#00D4AA] text-base">6.3x</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {/* Right Col: Action Panels */}
+                        <div className="flex flex-col gap-6">
+
+                            {/* Auditar Ahora / Acciones */}
+                            <div className="bg-gradient-to-br from-slate-900 to-[#1A1A2E] border border-slate-700/50 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+                                {/* Decoración fondo */}
+                                <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FF6B6B]/10 rounded-full blur-[40px]"></div>
+
+                                <h3 className="text-lg font-bold font-syne text-white mb-2 relative z-10">Análisis bajo demanda</h3>
+                                <p className="text-sm text-slate-400 mb-6 relative z-10">Genera una auditoría instantánea de tus campañas activas.</p>
+
+                                <Link href="/teaser" className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-[#FF6B6B] hover:bg-[#ff5252] text-white font-bold text-[15px] shadow-[0_4px_14px_rgba(255,107,107,0.35)] hover:scale-[1.02] hover:-translate-y-0.5 transition-all relative z-10">
+                                    <Sparkles className="w-5 h-5" /> Iniciar Auditoría
+                                </Link>
+                            </div>
+
+                            {/* Próxima auditoría automática */}
+                            <div className="bg-slate-900/40 border border-[#00D4AA]/20 rounded-3xl p-6 relative">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="w-10 h-10 rounded-full bg-[#00D4AA]/20 flex items-center justify-center">
+                                        <span className="text-lg">🤖</span>
+                                    </div>
+                                    <span className="bg-[#00D4AA]/10 text-[#00D4AA] text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border border-[#00D4AA]/20">Programado</span>
+                                </div>
+                                <h4 className="text-base font-bold text-white mb-2">Auditoría Semanal</h4>
+                                <p className="text-sm text-slate-400 mb-0">La IA analizará tus campañas el próximo <strong className="text-white">Lunes a las 09:00 AM</strong>. Recibirás un correo con el PDF.</p>
+                            </div>
+
+                            {/* Meta Connect Card */}
+                            {isConnectedToMeta ? (
+                                <div className="bg-[#0B1120] border border-[#00D4AA]/40 rounded-3xl p-6 text-center shadow-[0_4px_20px_rgba(0,212,170,0.05)]">
+                                    <div className="w-14 h-14 bg-[#00D4AA]/10 border border-[#00D4AA]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <CheckCircle2 className="w-7 h-7 text-[#00D4AA]" />
+                                    </div>
+                                    <h3 className="text-base font-bold text-white mb-2 font-syne">Meta Ads Conectado</h3>
+                                    <p className="text-xs text-slate-400 mb-5">
+                                        Analizando campañas en tiempo real de forma segura.
+                                    </p>
+                                    <Link href="/conectar" className="inline-block text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium py-2.5 px-5 rounded-lg transition-colors border border-slate-700">
+                                        Reconectar cuenta
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="bg-[#0B1120] border border-[#FF6B6B] rounded-3xl p-6 text-center shadow-[0_4px_20px_rgba(255,107,107,0.1)] relative overflow-hidden">
+                                    {/* Subtly glow from border */}
+                                    <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-[#FF6B6B]/15 rounded-full blur-[30px]"></div>
+
+                                    <h3 className="text-base font-bold text-white mb-2 font-syne relative z-10">Conectar Meta Ads</h3>
+                                    <p className="text-xs text-slate-400 mb-5 relative z-10">
+                                        Habilita la lectura para iniciar tu primera auditoría automática.
+                                    </p>
+                                    <Link href="/conectar" className="w-full relative z-10 flex items-center justify-center gap-2 bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-[14px] py-3.5 rounded-xl transition-transform hover:scale-[1.02] shadow-[0_4px_14px_rgba(24,119,242,0.3)]">
+                                        <span className="font-bold text-lg leading-none mb-0.5">f</span>
+                                        Conectar Cuenta
+                                    </Link>
+                                </div>
+                            )}
+
+                        </div>
+                    </div>
+
+                </div>
             </div>
+
+            {/* Mobile Bottom Navigation (Only visible on tight screens if users visit on mobile) */}
+            <div className="lg:hidden fixed bottom-0 left-0 w-full bg-slate-900 border-t border-slate-800 pb-5 pt-3 flex justify-around items-center z-50 px-2 transition-transform">
+                <Link href="/dashboard" className="flex flex-col items-center gap-1 text-[#FF6B6B] w-16">
+                    <BarChart2 className="w-5 h-5" />
+                    <span className="text-[10px] font-medium">Dashboard</span>
+                </Link>
+
+                <Link href="/dashboard/auditorias" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
+                    <Search className="w-5 h-5" />
+                    <span className="text-[10px] font-medium">Auditorías</span>
+                </Link>
+
+                <Link href="/hooks" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
+                    <Sparkles className="w-5 h-5" />
+                    <span className="text-[10px] font-medium">Hooks IA</span>
+                </Link>
+
+                <Link href="/dashboard/config" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
+                    <Settings className="w-5 h-5" />
+                    <span className="text-[10px] font-medium">Config</span>
+                </Link>
+            </div>
+
         </main>
     );
 }
