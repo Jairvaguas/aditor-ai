@@ -12,11 +12,9 @@ export async function checkSubscription(userId: string): Promise<boolean> {
 
         if (error || !data) {
             console.error('Error fetching subscription status:', error);
-            // Si estamos en desarrollo y no encuentra al usuario, retornamos true para no bloquear el dashboard
-            if (process.env.NODE_ENV === 'development') {
-                return true;
-            }
-            return false;
+            // Si el perfil no existe todavía (demora del webhook de Clerk),
+            // se asume usuario nuevo en periodo de prueba de 7 días.
+            return true;
         }
 
         if (data.is_subscribed) {
