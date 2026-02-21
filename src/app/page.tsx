@@ -194,7 +194,7 @@ export default function Home() {
               ))}
             </ul>
 
-            <Link href="/subscribe" className="block w-full text-center bg-[#FF6B6B] hover:bg-[#ff5252] text-white px-8 py-5 rounded-xl text-xl font-bold transition-all shadow-[0_4px_14px_0_rgba(255,107,107,0.39)] hover:shadow-[0_6px_20px_rgba(255,107,107,0.23)] hover:-translate-y-0.5">
+            <Link href="/conectar" className="block w-full text-center bg-[#FF6B6B] hover:bg-[#ff5252] text-white px-8 py-5 rounded-xl text-xl font-bold transition-all shadow-[0_4px_14px_0_rgba(255,107,107,0.39)] hover:shadow-[0_6px_20px_rgba(255,107,107,0.23)] hover:-translate-y-0.5">
               Iniciar prueba gratis
             </Link>
           </div>
