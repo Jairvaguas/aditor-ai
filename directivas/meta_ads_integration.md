@@ -31,6 +31,7 @@ Implementar el flujo de autenticación OAuth con Facebook (Meta) para obtener ac
 - **Seguridad**: El `access_token` NUNCA debe llegar al cliente (navegador). Solo el servidor lo maneja.
 - **Base de Datos**: Usar `connected_accounts` table.
 - **Tipos**: Asegurar tipos correctos para respuestas de Meta.
+- **Frontend / Componentes**: Nota: No usar `onClick` en Server Components porque causa error de ejecución en Next.js. En su lugar, si el botón de login en `/conectar` requiere interactividad, usar `"use client";` al inicio del archivo. Si no se necesita interactividad, usar `<Link href="/api/auth/facebook">`.
 
 ## Flujo de Datos
 1. User -> `/api/auth/facebook` -> Meta Login
