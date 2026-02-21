@@ -1,4 +1,4 @@
-import SubscribeButton from '@/components/SubscribeButton';
+import DynamicPricingForm from '@/components/DynamicPricingForm';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -49,50 +49,7 @@ export default async function SubscribePage({ searchParams }: { searchParams: { 
                     Lleva tus auditorías de Meta Ads al siguiente nivel. Obtén acceso ilimitado a todas nuestras herramientas impulsadas por IA.
                 </p>
 
-                <div className="bg-slate-900 border border-slate-700 rounded-xl p-8 max-w-lg mx-auto mb-10 text-left shadow-sm">
-                    <ul className="space-y-4 mb-8 text-gray-300">
-                        <li className="flex items-center">
-                            <svg className="h-6 w-6 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Auditorías de campañas ilimitadas
-                        </li>
-                        <li className="flex items-center">
-                            <svg className="h-6 w-6 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Análisis profundo con IA avanzada
-                        </li>
-                        <li className="flex items-center">
-                            <svg className="h-6 w-6 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Generación de hooks y copys optimizados
-                        </li>
-                        <li className="flex items-center">
-                            <svg className="h-6 w-6 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Soporte prioritario
-                        </li>
-                    </ul>
-
-                    <div className="text-center mb-6">
-                        <div className="flex justify-center items-baseline gap-2">
-                            <span className="text-5xl font-extrabold text-white">$47</span>
-                            <span className="text-xl font-medium text-gray-400">USD / mes</span>
-                        </div>
-                        <div className="text-sm font-medium text-gray-500 mt-2">≈ ${formattedCop} COP</div>
-                    </div>
-
-                    <p className="text-center text-sm text-green-600 font-semibold mb-6">
-                        ¡Incluye 7 días de prueba gratis!
-                    </p>
-
-                    <div className="flex justify-center">
-                        <SubscribeButton />
-                    </div>
-                </div>
+                <DynamicPricingForm copRate={estimatedCop / 47} />
 
                 <p className="text-sm text-gray-400">
                     Cancela en cualquier momento. El cobro se realizará automáticamente al finalizar tu periodo de prueba.

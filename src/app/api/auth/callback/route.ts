@@ -66,24 +66,8 @@ export async function GET(request: Request) {
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=db_error`);
         }
 
-        // 6. Ejecutar Auditoria Inmediata (Teaser)
-        // Traemos insights de los ultimos 30 dias
-        const campaigns = await getCampaignInsights(accessToken, selectedAccount.account_id);
-
-        if (!campaigns || campaigns.length === 0) {
-            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=no_campaign_data`);
-        }
-
-        // Generamos auditoria con IA
-        // Nota: generateAudit guarda en DB tambien.
-        const auditResult = await generateAudit(
-            campaigns,
-            clerkUserId,
-            selectedAccount.currency
-        );
-
-        // 7. Redirigir al Teaser
-        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/teaser?auditId=${auditResult.id}`);
+        // 6. Redirigir a Selección de Cuentas
+        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar/cuentas`);
 
     } catch (err: any) {
         console.error('Callback Error:', err);

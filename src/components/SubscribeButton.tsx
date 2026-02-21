@@ -4,7 +4,12 @@ import { useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
-export default function SubscribeButton() {
+interface SubscribeButtonProps {
+    accountsCount: number;
+    formattedCop: string;
+}
+
+export default function SubscribeButton({ accountsCount, formattedCop }: SubscribeButtonProps) {
     const [isLoading, setIsLoading] = useState(false);
     const { userId } = useAuth();
     const router = useRouter();
@@ -20,6 +25,10 @@ export default function SubscribeButton() {
             setIsLoading(true);
             const res = await fetch('/api/payments/create-subscription', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ accountsCount })
             });
             const data = await res.json();
 
@@ -39,7 +48,7 @@ export default function SubscribeButton() {
         <button
             onClick={handleSubscribe}
             disabled={isLoading}
-            className={`px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-1 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-1 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''} w-full`}
         >
             {isLoading ? (
                 <span className="flex items-center justify-center">
@@ -50,7 +59,7 @@ export default function SubscribeButton() {
                     Procesando...
                 </span>
             ) : (
-                'Comenzar Suscripción ($185.000 COP/mes)'
+                `Comenzar Suscripción ($${formattedCop} COP/mes)`
             )}
         </button>
     );
