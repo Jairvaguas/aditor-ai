@@ -49,6 +49,7 @@ export default async function ConfigPage() {
 
     const planName = isSubscribed ? "Plan PRO Activo" : (isTrialing ? "Prueba Gratuita" : "Inactivo");
     const renewalDate = isTrialing ? `Expira: ${new Date(profile!.trial_ends_at!).toLocaleDateString()}` : "Renovación Mensual";
+    const hasActivePlan = isSubscribed || isTrialing;
 
     return (
         <main className="min-h-screen bg-[#0B1120] text-white font-sans flex overflow-hidden">
@@ -82,7 +83,7 @@ export default async function ConfigPage() {
                         <span>Auditorías</span>
                     </Link>
 
-                    <Link href="/hooks" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors">
+                    <Link href="/dashboard/hooks" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors">
                         <Sparkles className="w-5 h-5" />
                         <span>Hooks IA</span>
                     </Link>
@@ -168,7 +169,9 @@ export default async function ConfigPage() {
                     </div>
 
                     {/* Zona de Peligro / Cancelar */}
-                    <CancelSubscriptionCard />
+                    {hasActivePlan && (
+                        <CancelSubscriptionCard />
+                    )}
 
                     {/* Acciones de cuenta */}
                     <div className="bg-[#1A1A2E]/80 border border-slate-800 rounded-3xl p-8 flex flex-col sm:flex-row gap-6 items-center justify-between">
@@ -182,9 +185,13 @@ export default async function ConfigPage() {
                             <button className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-medium text-sm py-3 px-6 rounded-xl transition-colors border border-slate-700 whitespace-nowrap">
                                 <Unplug className="w-4 h-4" /> Desconectar Meta Ads
                             </button>
-                        ) : (
+                        ) : hasActivePlan ? (
                             <Link href="/conectar" className="flex items-center gap-2 bg-[#1877F2] hover:bg-[#166fe5] text-white font-medium text-sm py-3 px-6 rounded-xl transition-colors whitespace-nowrap">
                                 <span className="font-bold text-lg leading-none mb-0.5">f</span> Conectar Meta Ads
+                            </Link>
+                        ) : (
+                            <Link href="/subscribe?reactivate=true" className="flex items-center gap-2 bg-[#FF6B6B] hover:bg-[#ff5252] text-white font-medium text-sm py-3 px-6 rounded-xl transition-colors whitespace-nowrap shadow-[0_4px_14px_rgba(255,107,107,0.35)]">
+                                <CreditCard className="w-4 h-4" /> Reactivar suscripción
                             </Link>
                         )}
                     </div>
@@ -213,7 +220,7 @@ export default async function ConfigPage() {
                     <span className="text-[10px] font-medium">Auditorías</span>
                 </Link>
 
-                <Link href="/hooks" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
+                <Link href="/dashboard/hooks" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
                     <Sparkles className="w-5 h-5" />
                     <span className="text-[10px] font-medium">Hooks IA</span>
                 </Link>
