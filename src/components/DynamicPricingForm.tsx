@@ -10,8 +10,16 @@ interface DynamicPricingFormProps {
 export default function DynamicPricingForm({ copRate }: DynamicPricingFormProps) {
     const [accountsCount, setAccountsCount] = useState<number>(1);
 
-    // Formula: $47 base price (includes 1) + $15 for each additional
-    const usdPrice = 47 + ((accountsCount - 1) * 15);
+    let usdPrice = 47;
+    if (accountsCount === 1) usdPrice = 47;
+    else if (accountsCount === 2) usdPrice = 62;
+    else if (accountsCount === 3) usdPrice = 77;
+    else if (accountsCount === 4) usdPrice = 92;
+    else if (accountsCount === 5) usdPrice = 107;
+    else if (accountsCount === 10) usdPrice = 157; // 6-10 package
+    else if (accountsCount === 15) usdPrice = 197; // 11-15 package
+    else if (accountsCount === 16) usdPrice = 0;   // 16+ package (contact)
+
     const copPriceEstimate = Math.round(usdPrice * copRate);
     const formattedCop = new Intl.NumberFormat('es-CO').format(copPriceEstimate);
 
@@ -32,9 +40,12 @@ export default function DynamicPricingForm({ copRate }: DynamicPricingFormProps)
                     <option value="3">3 cuentas ($77 USD)</option>
                     <option value="4">4 cuentas ($92 USD)</option>
                     <option value="5">5 cuentas ($107 USD)</option>
+                    <option value="10">Paquete 6-10 cuentas ($157 USD)</option>
+                    <option value="15">Paquete 11-15 cuentas ($197 USD)</option>
+                    <option value="16">Más de 16 cuentas - Contáctanos</option>
                 </select>
                 <p className="text-xs text-slate-400 mt-2">
-                    Incluye 1 cuenta en el plan base. Cada cuenta adicional cuesta $15 USD / mes.
+                    Incluye 1 cuenta en el plan base. Ahorra eligiendo paquetes por volumen.
                 </p>
             </div>
 
@@ -67,18 +78,37 @@ export default function DynamicPricingForm({ copRate }: DynamicPricingFormProps)
 
             <div className="text-center mb-6">
                 <div className="flex justify-center items-baseline gap-2 transition-all">
-                    <span className="text-5xl font-extrabold text-white">${usdPrice}</span>
-                    <span className="text-xl font-medium text-gray-400">USD / mes</span>
+                    {accountsCount === 16 ? (
+                        <span className="text-4xl font-extrabold text-white">A Medida</span>
+                    ) : (
+                        <>
+                            <span className="text-5xl font-extrabold text-white">${usdPrice}</span>
+                            <span className="text-xl font-medium text-gray-400">USD / mes</span>
+                        </>
+                    )}
                 </div>
-                <div className="text-sm font-medium text-gray-500 mt-2">≈ ${formattedCop} COP</div>
+                {accountsCount !== 16 && (
+                    <div className="text-sm font-medium text-gray-500 mt-2">≈ ${formattedCop} COP</div>
+                )}
             </div>
 
             <p className="text-center text-sm text-green-600 font-semibold mb-6">
-                ¡Incluye 7 días de prueba gratis!
+                {accountsCount === 16 ? 'Armamos un plan especial para tu agencia.' : '¡Incluye 7 días de prueba gratis!'}
             </p>
 
             <div className="flex justify-center">
-                <SubscribeButton accountsCount={accountsCount} formattedCop={formattedCop} />
+                {accountsCount === 16 ? (
+                    <a
+                        href="https://wa.link/xua0ua"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-8 py-4 bg-gradient-to-r from-[#FF6B6B] to-[#ff8e53] text-white font-bold rounded-xl shadow-[0_6px_20px_rgba(255,107,107,0.35)] hover:shadow-[0_8px_25px_rgba(255,107,107,0.5)] transition-all duration-300 transform hover:-translate-y-1 w-full text-center"
+                    >
+                        Hablar con ventas
+                    </a>
+                ) : (
+                    <SubscribeButton accountsCount={accountsCount} formattedCop={formattedCop} />
+                )}
             </div>
         </div>
     );

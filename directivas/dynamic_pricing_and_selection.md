@@ -19,13 +19,22 @@ Se requieren dos nuevas columnas en la tabla `profiles`:
    - Después de guardar, continuar a `/teaser` (o equivalente).
 
 ## Lógica: Suscripción con Precio Dinámico (Flujo /subscribe)
-1. **Frontend**: `src/app/subscribe/page.tsx`
+1. **Frontend**: `src/app/subscribe/page.tsx` & `src/components/DynamicPricingForm.tsx`
    - Agregar dropdown: "¿Cuántas cuentas publicitarias quieres auditar?".
-   - Opciones: 1, 2, 3, 4, 5.
-   - Fórmula de precio USD: `$47 + (Cuentas Extra * $15)`. 
+   - Opciones y Precios USD: 
+     - 1 cuenta: $47 USD
+     - 2 cuentas: $62 USD
+     - 3 cuentas: $77 USD
+     - 4 cuentas: $92 USD
+     - 5 cuentas: $107 USD
+     - Paquete 6-10 cuentas: $157 USD
+     - Paquete 11-15 cuentas: $197 USD
+     - Más de 16 cuentas: Contactar
+   - Para la opción de "Más de 16 cuentas", no se muestra el botón de Mercado Pago. En su lugar, se muestra un botón para hablar por WhatsApp (`https://wa.link/xua0ua`).
    - Enviar este valor numérico a la API de creación de suscripción.
 2. **Backend**: `src/app/api/payments/create-subscription/route.ts`
    - Recibir validación del número de cuentas solicitadas (`ad_accounts_count`).
+   - Calcular monto en USD basado en los nuevos tiers (1 a 5, 10, o 15).
    - Calcular monto en USD y luego convertir a COP.
    - Pasar el precio dinámico a Mercado Pago al crear el registro de suscripción/preapproval.
 

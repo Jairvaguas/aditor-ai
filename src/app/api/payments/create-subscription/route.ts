@@ -35,7 +35,15 @@ export async function POST(req: Request) {
             .eq('clerk_user_id', userId);
 
         let estimatedCop = 185000;
-        const usdPrice = 47 + ((accountsCount - 1) * 15);
+        let usdPrice = 47;
+        if (accountsCount === 1) usdPrice = 47;
+        else if (accountsCount === 2) usdPrice = 62;
+        else if (accountsCount === 3) usdPrice = 77;
+        else if (accountsCount === 4) usdPrice = 92;
+        else if (accountsCount === 5) usdPrice = 107;
+        else if (accountsCount === 10) usdPrice = 157; // 6-10 package
+        else if (accountsCount === 15) usdPrice = 197; // 11-15 package
+        else if (accountsCount === 16) usdPrice = 0;   // 16+ package (contact)
         try {
             const copRes = await fetch("https://api.exchangerate-api.com/v4/latest/USD", { next: { revalidate: 3600 } });
             if (copRes.ok) {
