@@ -168,7 +168,7 @@ export default async function ConfigPage() {
                     </div>
 
                     {/* Zona de Peligro / Cancelar */}
-                    {isSubscribed && (
+                    {(isSubscribed || isTrialing) && (
                         <CancelSubscriptionCard />
                     )}
 
