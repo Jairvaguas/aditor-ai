@@ -31,6 +31,7 @@ Se requieren dos nuevas columnas en la tabla `profiles`:
      - Paquete 11-15 cuentas: $197 USD
      - Más de 16 cuentas: Contactar
    - Para la opción de "Más de 16 cuentas", no se muestra el botón de Mercado Pago. En su lugar, se muestra un botón para hablar por WhatsApp (`https://wa.link/xua0ua`).
+   - El precio en COP ya no se mostrará visualmente al usuario ni debajo del precio en USD ni dentro del botón principal; el botón dirá únicamente "Comenzar Suscripción".
    - Enviar este valor numérico a la API de creación de suscripción.
 2. **Backend**: `src/app/api/payments/create-subscription/route.ts`
    - Recibir validación del número de cuentas solicitadas (`ad_accounts_count`).

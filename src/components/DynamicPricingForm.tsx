@@ -87,9 +87,6 @@ export default function DynamicPricingForm({ copRate }: DynamicPricingFormProps)
                         </>
                     )}
                 </div>
-                {accountsCount !== 16 && (
-                    <div className="text-sm font-medium text-gray-500 mt-2">≈ ${formattedCop} COP</div>
-                )}
             </div>
 
             <p className="text-center text-sm text-green-600 font-semibold mb-6">

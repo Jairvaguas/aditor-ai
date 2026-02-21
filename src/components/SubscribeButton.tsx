@@ -59,7 +59,7 @@ export default function SubscribeButton({ accountsCount, formattedCop }: Subscri
                     Procesando...
                 </span>
             ) : (
-                `Comenzar Suscripción ($${formattedCop} COP/mes)`
+                'Comenzar Suscripción'
             )}
         </button>
     );
