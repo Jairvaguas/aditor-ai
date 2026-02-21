@@ -177,9 +177,10 @@ export default function Home() {
             <p className="text-gray-400 text-lg mb-8">Todo lo que necesitas para dominar Meta Ads.</p>
             <div className="mb-10 border-b border-white/10 pb-10">
               <div className="flex items-baseline gap-3">
-                <span className="text-6xl font-extrabold text-white">$185.000</span>
-                <span className="text-gray-500 font-medium text-xl">COP / mes</span>
+                <span className="text-6xl font-extrabold text-white">$47</span>
+                <span className="text-gray-500 font-medium text-xl">USD / mes</span>
               </div>
+              <div className="text-sm font-medium text-gray-400 mt-2">≈ $185.000 COP</div>
               <p className="text-base text-[#00D4AA] font-medium mt-3 flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5" /> Incluye 7 días de prueba gratis
               </p>

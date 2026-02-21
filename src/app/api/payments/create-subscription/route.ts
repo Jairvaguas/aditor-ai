@@ -14,13 +14,26 @@ export async function POST(req: Request) {
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
         const email = user.emailAddresses[0]?.emailAddress || 'test@test.com';
 
+        let estimatedCop = 185000;
+        try {
+            const copRes = await fetch("https://api.exchangerate-api.com/v4/latest/USD", { next: { revalidate: 3600 } });
+            if (copRes.ok) {
+                const data = await copRes.json();
+                if (data && data.rates && data.rates.COP) {
+                    estimatedCop = Math.round(47 * data.rates.COP);
+                }
+            }
+        } catch (e) {
+            console.error("Error fetching exchange rate:", e);
+        }
+
         const response = await preapproval.create({
             body: {
                 reason: 'Aditor AI - Plan Mensual',
                 auto_recurring: {
                     frequency: 1,
                     frequency_type: 'months',
-                    transaction_amount: 185000,
+                    transaction_amount: estimatedCop,
                     currency_id: 'COP',
                     free_trial: {
                         frequency: 7,

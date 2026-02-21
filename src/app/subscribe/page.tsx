@@ -3,7 +3,21 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 // Definimos la prop searchParams para atrapar '?canceled=true'
-export default function SubscribePage({ searchParams }: { searchParams: { canceled?: string } }) {
+export default async function SubscribePage({ searchParams }: { searchParams: { canceled?: string, reactivate?: string } }) {
+    // Obtener la tasa de cambio en vivo
+    let estimatedCop = 185000;
+    try {
+        const copRes = await fetch("https://api.exchangerate-api.com/v4/latest/USD", { next: { revalidate: 3600 } });
+        if (copRes.ok) {
+            const data = await copRes.json();
+            if (data && data.rates && data.rates.COP) {
+                estimatedCop = Math.round(47 * data.rates.COP);
+            }
+        }
+    } catch (e) {
+        console.error("Error fetching exchange rate for display:", e);
+    }
+    const formattedCop = new Intl.NumberFormat('es-CO').format(estimatedCop);
     return (
         <div className="flex flex-col min-h-screen bg-[#0B1120] text-[#F0F0F0] font-sans selection:bg-[#FF6B6B]/30 pt-32">
             <Navbar />
@@ -16,6 +30,16 @@ export default function SubscribePage({ searchParams }: { searchParams: { cancel
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         Tu suscripción fue cancelada exitosamente.
+                    </div>
+                )}
+
+                {/* Reactivation Message Banner */}
+                {searchParams?.reactivate === 'true' && (
+                    <div className="bg-[#FF6B6B]/10 border border-[#FF6B6B]/30 text-[#FF6B6B] p-4 rounded-xl mb-8 max-w-2xl mx-auto flex items-center justify-center gap-2 font-medium">
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Tu suscripción está inactiva. Reactívala para reconectar tu cuenta de Meta Ads.
                     </div>
                 )}
                 <h1 className="text-4xl font-extrabold text-white mb-4 tracking-tight">
@@ -54,9 +78,11 @@ export default function SubscribePage({ searchParams }: { searchParams: { cancel
                     </ul>
 
                     <div className="text-center mb-6">
-                        <span className="text-5xl font-extrabold text-white">$185.000 COP</span>
-                        <span className="text-xl font-medium text-gray-500"> / mes</span>
-                        <div className="text-sm font-medium text-gray-400 mt-2">≈ USD $47</div>
+                        <div className="flex justify-center items-baseline gap-2">
+                            <span className="text-5xl font-extrabold text-white">$47</span>
+                            <span className="text-xl font-medium text-gray-400">USD / mes</span>
+                        </div>
+                        <div className="text-sm font-medium text-gray-500 mt-2">≈ ${formattedCop} COP</div>
                     </div>
 
                     <p className="text-center text-sm text-green-600 font-semibold mb-6">
