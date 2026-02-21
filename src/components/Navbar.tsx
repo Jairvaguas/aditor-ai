@@ -1,11 +1,12 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
     return (
         <nav className="fixed top-0 left-0 w-full z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 py-4">
             <div className="max-w-7xl mx-auto px-6 h-12 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#FF6B6B] to-[#ff8e53] flex items-center justify-center font-bold text-white text-xl">A</div>
+                    <Image src="/favicon.ico" alt="Aditor AI" width={32} height={32} />
                     <span className="text-2xl font-bold tracking-tight text-white">Aditor AI</span>
                 </Link>
 
