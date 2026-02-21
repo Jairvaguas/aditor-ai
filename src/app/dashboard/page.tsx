@@ -3,6 +3,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { checkSubscription } from "@/lib/checkSubscription";
+import { supabaseAdmin } from "@/lib/supabase";
 import {
     Bell,
     Search,
@@ -13,7 +14,8 @@ import {
     TrendingDown,
     DollarSign,
     MousePointer,
-    Megaphone
+    Megaphone,
+    CheckCircle2
 } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -30,6 +32,15 @@ export default async function DashboardPage() {
 
     // Determine displayName
     const displayName = user.firstName || user.username || "Usuario";
+
+    // 1. Fetch user profile from Supabase to check Meta connection status
+    const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('meta_access_token')
+        .eq('clerk_user_id', user.id)
+        .single();
+
+    const isConnectedToMeta = !!profile?.meta_access_token;
 
     return (
         <main className="min-h-screen bg-[#1A1A2E] text-white font-sans pb-24 relative overflow-hidden">
@@ -55,6 +66,33 @@ export default async function DashboardPage() {
                         <Bell className="w-4 h-4 text-white" />
                         <div className="absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF6B6B] rounded-full"></div>
                     </div>
+                </div>
+
+                {/* Meta Connect Status Card */}
+                <div className="mx-5 mb-4">
+                    {isConnectedToMeta ? (
+                        <div className="bg-slate-900/50 border border-green-500/30 rounded-[18px] p-4 flex flex-col items-center justify-center text-center">
+                            <div className="flex items-center gap-2 mb-2">
+                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                <span className="font-bold text-green-500 text-sm">Meta Ads conectado</span>
+                            </div>
+                            <p className="text-xs text-slate-400 mb-3 block">Analizando tus campañas de forma segura.</p>
+                            <Link href="/conectar" className="text-xs bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-full transition-colors border border-slate-700">
+                                Reconectar cuenta
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 rounded-[18px] p-5 flex flex-col items-center justify-center text-center shadow-lg">
+                            <h3 className="text-lg font-bold text-white mb-2 font-syne">Falta un paso</h3>
+                            <p className="text-xs text-slate-300 mb-4 px-2">
+                                Conecta tu cuenta publicitaria de Meta para que la IA inicie tu auditoría automáticamente.
+                            </p>
+                            <Link href="/conectar" className="w-full flex items-center justify-center gap-2 bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-[14px] py-3 rounded-xl transition-transform hover:scale-[1.02] shadow-[0_4px_14px_rgba(24,119,242,0.35)]">
+                                <span className="font-bold text-[18px] leading-none mb-0.5">f</span>
+                                Conectar Meta Ads
+                            </Link>
+                        </div>
+                    )}
                 </div>
 
                 {/* 2. Auto Audit Card */}
