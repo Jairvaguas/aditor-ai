@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-// Definir rutas públicas
 const isPublicRoute = createRouteMatcher([
   '/',
   '/conectar(.*)',
@@ -14,20 +14,28 @@ const isPublicRoute = createRouteMatcher([
   '/api/meta/callback(.*)',
   '/api/payments/create-subscription(.*)',
   '/api/payments/webhook(.*)',
-  '/api/payments/test-webhook(.*)'
+  '/api/payments/test-webhook(.*)',
+  '/api/admin(.*)',
+  '/admin/login(.*)'
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
-    await auth.protect();
+  if (req.nextUrl.pathname.startsWith('/admin') && !req.nextUrl.pathname.startsWith('/admin/login')) {
+      const adminSession = req.cookies.get('admin_session')?.value;
+      if (adminSession !== 'true') {
+          return NextResponse.redirect(new URL('/admin/login', req.url));
+      }
+      return NextResponse.next();
+  }
+  
+  if (!req.nextUrl.pathname.startsWith('/admin') && !isPublicRoute(req)) {
+      await auth.protect();
   }
 });
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
     '/(api|trpc)(.*)',
   ],
 };
