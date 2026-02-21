@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { generateAudit } from '@/lib/audit';
-import { sendAuditReadyEmail } from '@/lib/email';
+import { sendWeeklyAuditEmail } from '@/lib/emails';
 import { XMLParser } from 'fast-xml-parser';
 
 export async function GET(request: Request) {
@@ -77,12 +77,14 @@ export async function GET(request: Request) {
                 console.error('Error parsing XML for email:', e);
             }
 
-            // Send Email
-            await sendAuditReadyEmail(
+            // Send Weekly Email
+            await sendWeeklyAuditEmail(
                 user.email,
                 audit.id,
                 score,
-                hallazgosCount
+                hallazgosCount,
+                mockCampaigns[0].metricas_30d.roas,
+                mockCampaigns[0].metricas_30d.gasto_total
             );
 
             results.push({ userId: user.clerk_user_id, auditId: audit.id, status: 'ok', emailSent: true });

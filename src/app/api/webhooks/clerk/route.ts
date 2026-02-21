@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { NextResponse } from 'next/server'
+import { sendWelcomeEmail } from '@/lib/emails'
 
 export async function POST(req: Request) {
     const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET
@@ -47,7 +48,6 @@ export async function POST(req: Request) {
             })
         }
     } else {
-        // Si estamos en dev y no hay secret de clerk todavía pasale el payload (no recomendado en prod)
         if (process.env.NODE_ENV === 'development') {
             evt = payload as WebhookEvent;
         } else {
@@ -75,6 +75,9 @@ export async function POST(req: Request) {
             console.error('Error inserting profile in webhook', error);
             return new NextResponse('Error inserting profile', { status: 500 });
         }
+        
+        // Dispatch Welcome Email
+        await sendWelcomeEmail(primaryEmail, nombre);
     }
 
     return new NextResponse('', { status: 200 })

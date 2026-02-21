@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { preapproval } from '@/lib/mercadopago';
 import { supabaseAdmin } from '@/lib/supabase';
+import { sendSubscriptionActiveEmail } from '@/lib/emails';
 
 export async function POST(req: Request) {
     try {
@@ -10,22 +11,28 @@ export async function POST(req: Request) {
 
         const body = await req.json().catch(() => ({}));
 
-        // MP puede mandar notificación por querystring o por body
         const id = body?.data?.id || dataId;
         const type = body?.type || topic;
 
         if (id && (type === 'subscription_preapproval' || body.action === 'created' || body.action === 'updated')) {
             const subscription = await preapproval.get({ id });
 
-            const { status, external_reference } = subscription;
+            const { status, external_reference, reason, next_payment_date } = subscription;
 
-            if (external_reference) { // external_reference es el userId de Clerk
+            if (external_reference) { 
                 let is_subscribed = false;
                 if (status === 'authorized') {
                     is_subscribed = true;
                 } else if (status === 'cancelled' || status === 'paused') {
                     is_subscribed = false;
                 }
+                
+                // Get pre-existing data
+                const { data: profile } = await supabaseAdmin
+                    .from('profiles')
+                    .select('ad_accounts_count, email, is_subscribed')
+                    .eq('clerk_user_id', external_reference)
+                    .single();
 
                 await supabaseAdmin
                     .from('profiles')
@@ -34,13 +41,25 @@ export async function POST(req: Request) {
                         subscription_id: id,
                     })
                     .eq('clerk_user_id', external_reference);
+                    
+                // Send email ONLY upon fresh subscription active transition
+                if (status === 'authorized' && profile && !profile.is_subscribed) {
+                    const accountsLimit = profile.ad_accounts_count || 1;
+                    const nextPaymentTs = next_payment_date ? Math.floor(new Date(next_payment_date).getTime() / 1000) : undefined;
+                    
+                    await sendSubscriptionActiveEmail(
+                       profile.email,
+                       reason || "Aditor AI Pro",
+                       accountsLimit,
+                       nextPaymentTs
+                    );
+                }
             }
         }
 
         return new NextResponse('OK', { status: 200 });
     } catch (error) {
         console.error('Webhook processing error:', error);
-        // Para MP siempre retornamos 200 así no reintenta infinitamente si hay un error nuestro
         return new NextResponse('Webhook Received with Error', { status: 200 });
     }
 }
