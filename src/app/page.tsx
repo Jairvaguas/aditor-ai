@@ -180,14 +180,15 @@ export default function Home() {
                 <span className="text-6xl font-extrabold text-white">$47</span>
                 <span className="text-gray-500 font-medium text-xl">USD / mes</span>
               </div>
-              <div className="text-sm font-medium text-gray-400 mt-2">≈ $185.000 COP</div>
+              <div className="text-sm font-medium text-gray-400 mt-2">Incluye 1 cuenta publicitaria · Cuentas adicionales a $15 USD/mes</div>
+              <div className="text-sm font-medium text-gray-400 mt-1">≈ $185.000 COP</div>
               <p className="text-base text-[#00D4AA] font-medium mt-3 flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5" /> Incluye 7 días de prueba gratis
               </p>
             </div>
 
             <ul className="space-y-5 mb-10">
-              {['Auditorías ilimitadas de todas tus cuentas', 'Recomendaciones de IA avanzadas', 'Generador de copys y hooks', 'Soporte prioritario'].map((feature, i) => (
+              {['Auditorías ilimitadas en tu cuenta publicitaria incluida', 'Cuentas publicitarias adicionales a $15 USD/mes c/u', 'Recomendaciones de IA avanzadas', 'Generador de copys y hooks', 'Soporte prioritario'].map((feature, i) => (
                 <li key={i} className="flex items-start gap-4 text-gray-300 text-lg">
                   <CheckCircle2 className="w-6 h-6 text-[#00D4AA] flex-shrink-0 mt-0.5" />
                   <span>{feature}</span>
