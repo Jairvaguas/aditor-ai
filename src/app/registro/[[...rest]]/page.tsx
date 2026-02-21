@@ -12,7 +12,7 @@ export default function RegistroPage() {
 
             <div className="w-full max-w-md space-y-6">
                 {/* Trial Banner */}
-                <div className="bg-gradient-to-r from-[#4ECDC4]/10 to-[#74B9FF]/10 border border-[#4ECDC4]/20 rounded-2xl p-4 flex items-center gap-3">
+                <div className="bg-gradient-to-r from-[#4ECDC4]/10 to-[#74B9FF]/10 border border-[#4ECDC4]/20 rounded-2xl p-4 flex items-center justify-center gap-3 w-fit mx-auto">
                     <div className="text-2xl">🎁</div>
                     <div>
                         <div className="text-sm font-bold text-[#4ECDC4]">7 días completamente gratis</div>
