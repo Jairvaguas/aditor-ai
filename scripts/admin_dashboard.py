@@ -230,6 +230,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { Users, CreditCard, Activity, DollarSign, LogOut, Search, Settings, Sparkles, BarChart2, Bell } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import UserGrowthChart from "./UserGrowthChart";
 
 export const dynamic = "force-dynamic";
 
@@ -240,34 +241,69 @@ async function getStats() {
         .order("created_at", { ascending: false });
 
     if (error || !profiles) {
-        return { users: [], stats: { active: 0, trial: 0, inactive: 0, mrr: 0, total: 0 } };
+        return { users: [], stats: { active: 0, trial: 0, inactive: 0, mrr: 0, total: 0 }, chartData: [] };
     }
 
     const now = new Date().getTime();
     let active = 0;
     let trial = 0;
     let inactive = 0;
+    
+    // Monthly grouped data container
+    const monthsData: Record<string, { registrados: number, activos: number, inactivos: number }> = {};
 
     profiles.forEach((p) => {
-        if (p.is_subscribed) {
+        const isSubscribed = p.is_subscribed;
+        const isTrial = p.trial_ends_at && new Date(p.trial_ends_at).getTime() > now;
+        
+        if (isSubscribed) {
             active++;
-        } else if (p.trial_ends_at && new Date(p.trial_ends_at).getTime() > now) {
+        } else if (isTrial) {
             trial++;
         } else {
             inactive++;
         }
+        
+        // Month string formulation "YYYY-MM"
+        const createdAt = new Date(p.created_at);
+        const y = createdAt.getFullYear();
+        const m = (createdAt.getMonth() + 1).toString().padStart(2, '0');
+        const monthKey = `${y}-${m}`;
+        
+        if (!monthsData[monthKey]) {
+            monthsData[monthKey] = { registrados: 0, activos: 0, inactivos: 0 };
+        }
+        
+        monthsData[monthKey].registrados++;
+        if (isSubscribed) {
+             monthsData[monthKey].activos++;
+        } else {
+             monthsData[monthKey].inactivos++;
+        }
     });
 
     const mrr = active * 47;
+    
+    // Formulate final chartData sorting by date and taking last 6
+    const chartData = Object.keys(monthsData)
+        .sort((a, b) => a.localeCompare(b)) // ascending for chronological chart plotting
+        .slice(-6) // take only last 6 months
+        .map(key => ({
+             mes: new Date(`${key}-01T00:00:00`).toLocaleString('default', { month: 'short' }).toUpperCase(),
+             registrados: monthsData[key].registrados,
+             activos: monthsData[key].activos,
+             inactivos: monthsData[key].inactivos
+        }));
 
     return {
         users: profiles,
-        stats: { active, trial, inactive, mrr, total: profiles.length }
+        stats: { active, trial, inactive, mrr, total: profiles.length },
+        chartData
     };
 }
 
 export default async function AdminDashboard() {
-    const { users, stats } = await getStats();
+    const { users, stats, chartData } = await getStats();
 
     return (
         <main className="min-h-screen bg-[#0B1120] text-white font-sans flex overflow-hidden">
@@ -382,6 +418,9 @@ export default async function AdminDashboard() {
                         </div>
                     </div>
 
+                    {/* Recharts Graphical Display */}
+                    <UserGrowthChart data={chartData} />
+
                     {/* Table */}
                     <div className="bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden flex flex-col mt-4">
                         <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
@@ -461,7 +500,70 @@ export default async function AdminDashboard() {
 }
 """
     write_file("src/app/admin/page.tsx", dashboard_page_tsx)
+    
+    # 7. Admin Dashboard Recharts Client Component
+    user_growth_chart_tsx = """
+"use client";
+
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+
+interface ChartDataPoint {
+    mes: string;
+    registrados: number;
+    activos: number;
+    inactivos: number;
+}
+
+export default function UserGrowthChart({ data }: { data: ChartDataPoint[] }) {
+    if (!data || data.length === 0) return null;
+
+    return (
+        <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 flex flex-col mt-4">
+            <div className="mb-6 flex items-center justify-between">
+                <div>
+                    <h2 className="text-lg font-bold font-syne text-white">Crecimiento Mensual</h2>
+                    <p className="text-slate-400 text-sm mt-1">Evolución de usuarios en los últimos 6 meses</p>
+                </div>
+            </div>
+            <div className="h-80 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                        <XAxis 
+                            dataKey="mes" 
+                            stroke="#64748b" 
+                            tick={{ fill: '#64748b', fontSize: 12 }} 
+                            axisLine={false} 
+                            tickLine={false} 
+                            dy={10} 
+                        />
+                        <YAxis 
+                            stroke="#64748b" 
+                            tick={{ fill: '#64748b', fontSize: 12 }} 
+                            axisLine={false} 
+                            tickLine={false} 
+                            dx={-10} 
+                        />
+                        <Tooltip
+                            contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '12px', color: '#fff' }}
+                            itemStyle={{ fontWeight: 500 }}
+                            cursor={{ stroke: '#334155', strokeWidth: 1 }}
+                        />
+                        <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
+                        
+                        <Line type="monotone" name="Total Registrados" dataKey="registrados" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                        <Line type="monotone" name="Activos" dataKey="activos" stroke="#00D4AA" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                        <Line type="monotone" name="Inactivos" dataKey="inactivos" stroke="#FF6B6B" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
+        </div>
+    );
+}
+"""
+    write_file("src/app/admin/UserGrowthChart.tsx", user_growth_chart_tsx)
 
 if __name__ == "__main__":
     print("Ejecutando setup del Admin Dashboard...")
     build_admin_dashboard()
+

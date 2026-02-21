@@ -2,6 +2,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { Users, CreditCard, Activity, DollarSign, LogOut, Search, Settings, Sparkles, BarChart2, Bell } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import UserGrowthChart from "./UserGrowthChart";
 
 export const dynamic = "force-dynamic";
 
@@ -12,34 +13,69 @@ async function getStats() {
         .order("created_at", { ascending: false });
 
     if (error || !profiles) {
-        return { users: [], stats: { active: 0, trial: 0, inactive: 0, mrr: 0, total: 0 } };
+        return { users: [], stats: { active: 0, trial: 0, inactive: 0, mrr: 0, total: 0 }, chartData: [] };
     }
 
     const now = new Date().getTime();
     let active = 0;
     let trial = 0;
     let inactive = 0;
+    
+    // Monthly grouped data container
+    const monthsData: Record<string, { registrados: number, activos: number, inactivos: number }> = {};
 
     profiles.forEach((p) => {
-        if (p.is_subscribed) {
+        const isSubscribed = p.is_subscribed;
+        const isTrial = p.trial_ends_at && new Date(p.trial_ends_at).getTime() > now;
+        
+        if (isSubscribed) {
             active++;
-        } else if (p.trial_ends_at && new Date(p.trial_ends_at).getTime() > now) {
+        } else if (isTrial) {
             trial++;
         } else {
             inactive++;
         }
+        
+        // Month string formulation "YYYY-MM"
+        const createdAt = new Date(p.created_at);
+        const y = createdAt.getFullYear();
+        const m = (createdAt.getMonth() + 1).toString().padStart(2, '0');
+        const monthKey = `${y}-${m}`;
+        
+        if (!monthsData[monthKey]) {
+            monthsData[monthKey] = { registrados: 0, activos: 0, inactivos: 0 };
+        }
+        
+        monthsData[monthKey].registrados++;
+        if (isSubscribed) {
+             monthsData[monthKey].activos++;
+        } else {
+             monthsData[monthKey].inactivos++;
+        }
     });
 
     const mrr = active * 47;
+    
+    // Formulate final chartData sorting by date and taking last 6
+    const chartData = Object.keys(monthsData)
+        .sort((a, b) => a.localeCompare(b)) // ascending for chronological chart plotting
+        .slice(-6) // take only last 6 months
+        .map(key => ({
+             mes: new Date(`${key}-01T00:00:00`).toLocaleString('default', { month: 'short' }).toUpperCase(),
+             registrados: monthsData[key].registrados,
+             activos: monthsData[key].activos,
+             inactivos: monthsData[key].inactivos
+        }));
 
     return {
         users: profiles,
-        stats: { active, trial, inactive, mrr, total: profiles.length }
+        stats: { active, trial, inactive, mrr, total: profiles.length },
+        chartData
     };
 }
 
 export default async function AdminDashboard() {
-    const { users, stats } = await getStats();
+    const { users, stats, chartData } = await getStats();
 
     return (
         <main className="min-h-screen bg-[#0B1120] text-white font-sans flex overflow-hidden">
@@ -153,6 +189,9 @@ export default async function AdminDashboard() {
                             <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#4ECDC4] transition-colors">${stats.mrr}</div>
                         </div>
                     </div>
+
+                    {/* Recharts Graphical Display */}
+                    <UserGrowthChart data={chartData} />
 
                     {/* Table */}
                     <div className="bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden flex flex-col mt-4">
