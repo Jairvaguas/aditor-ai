@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { UserButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -99,12 +100,14 @@ export default async function DashboardPage() {
                             <Bell className="w-5 h-5 text-slate-300" />
                             <div className="absolute top-2 right-2.5 w-2 h-2 bg-[#FF6B6B] rounded-full ring-2 ring-slate-800"></div>
                         </div>
-                        {/* Placeholder Avatar */}
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00D4AA] to-teal-500 border-2 border-slate-700 p-0.5 cursor-pointer">
-                            <div className="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-sm font-bold">
-                                {displayName.charAt(0).toUpperCase()}
-                            </div>
-                        </div>
+                        <UserButton
+                            afterSignOutUrl="/"
+                            appearance={{
+                                elements: {
+                                    avatarBox: "w-10 h-10 border-2 border-slate-700 hover:border-[#00D4AA] transition-colors",
+                                }
+                            }}
+                        />
                     </div>
                 </header>
 
