@@ -29,11 +29,8 @@ export async function sendWelcomeEmail(email: string, nombre: string) {
                     <p style="${globalStyles.p}">
                         Estamos emocionados de tenerte a bordo. Recuerda que a partir de hoy cuentas con un <strong>Trial Gratis de 7 días</strong> para que audites tus campañas de Meta Ads sin compromiso.
                     </p>
-                    <p style="${globalStyles.p}">
-                        Encuentra oportunidades ocultas, frena el desperdicio de presupuesto y escala tu ROAS en pocos minutos usando nuestra IA.
-                    </p>
                     <div style="${globalStyles.buttonContainer}">
-                        <a href="https://aditor-ai.com/dashboard" style="${globalStyles.button}">Ir al Dashboard</a>
+                        <a href="https://www.aditor-ai.com/dashboard" style="${globalStyles.button}">Ir al dashboard</a>
                     </div>
                 </div>
                 <div style="${globalStyles.footer}">
@@ -56,16 +53,16 @@ export async function sendSubscriptionActiveEmail(email: string, planContratado:
             html: `
             <div style="${globalStyles.body}">
                 <div style="${globalStyles.container}">
-                    <h1 style="${globalStyles.h1}">Tu suscripción está lista ✅</h1>
+                    <h1 style="${globalStyles.h1}">Suscripción Confirmada</h1>
                     <p style="${globalStyles.p}">
-                        Gracias por confiar en Aditor AI. Tu plan <strong>${planContratado}</strong> ha sido activado satisfactoriamente.
+                        Tu plan <strong>${planContratado}</strong> ha sido activado satisfactoriamente.
                     </p>
                     <p style="${globalStyles.p}">
                         - <strong>Cuentas Incluidas:</strong> ${limiteCuentas} Ad Accounts<br>
                         - <strong>Próxima Renovación:</strong> ${proximaRenov}
                     </p>
                     <div style="${globalStyles.buttonContainer}">
-                        <a href="https://aditor-ai.com/dashboard" style="${globalStyles.button}">Ir al Dashboard</a>
+                        <a href="https://www.aditor-ai.com/dashboard" style="${globalStyles.button}">Ir al dashboard</a>
                     </div>
                 </div>
                 <div style="${globalStyles.footer}">
@@ -87,17 +84,16 @@ export async function sendAuditReadyEmail(email: string, auditId: string, score:
             html: `
             <div style="${globalStyles.body}">
                 <div style="${globalStyles.container}">
-                    <h1 style="${globalStyles.h1}">Auditoría Finalizada 📊</h1>
+                    <h1 style="${globalStyles.h1}">¡Tu auditoría está lista! 📊</h1>
                     <p style="${globalStyles.p}">
-                        Nuestra inteligencia artificial ha analizado tus campañas. Tenemos resultados para ti.
+                        Nuestra inteligencia artificial ha analizado tus campañas. Tenemos resultados importantes para ti.
                     </p>
                     <div style="background-color: #0f172a; padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 1px solid #1e293b; text-align: center;">
-                        <p style="margin: 0; color: #94a3b8; font-size: 14px;">Score de la Cuenta</p>
-                        <p style="margin: 5px 0 0 0; color: #FF6B6B; font-size: 32px; font-weight: bold;">${score}/100</p>
-                        <p style="margin: 10px 0 0 0; color: #cbd5e1; font-size: 15px;">Hemos detectado <strong>${hallazgosCount} hallazgos</strong> clave en tu estructura.</p>
+                        <p style="margin: 0; color: #94a3b8; font-size: 14px;">Resumen de Hallazgos</p>
+                        <p style="margin: 10px 0 0 0; color: #cbd5e1; font-size: 15px;">Hemos detectado <strong>${hallazgosCount} hallazgos</strong> clave sobre tu ROAS, campañas en riesgo y nuevas oportunidades de escala.</p>
                     </div>
                     <div style="${globalStyles.buttonContainer}">
-                        <a href="https://aditor-ai.com/dashboard/reporte/${auditId}" style="${globalStyles.button}">Ver Reporte Completo</a>
+                        <a href="https://www.aditor-ai.com/dashboard/reporte/${auditId}" style="${globalStyles.button}">Ver reporte completo</a>
                     </div>
                 </div>
                 <div style="${globalStyles.footer}">
@@ -122,18 +118,18 @@ export async function sendWeeklyAuditEmail(email: string, auditId: string, score
                 <div style="${globalStyles.container}">
                     <h1 style="${globalStyles.h1}">Reporte Semanal (${dateStr}) 📊</h1>
                     <p style="${globalStyles.p}">
-                        Este es tu resumen automatizado semanal para que estés al tanto del desempeño de tus cuentas y hallazgos críticos sin tener que entrar a Meta Ads.
+                        Este es tu resumen automatizado semanal para que estés al tanto de las métricas principales de tus campañas.
                     </p>
                     <div style="background-color: #0f172a; padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 1px solid #1e293b;">
                          <ul style="list-style: none; padding: 0; margin: 0; color: #cbd5e1; line-height: 1.8;">
                              <li>📈 <strong>Score Semanal:</strong> <span style="color: #FF6B6B">${score}/100</span></li>
-                             <li>🚨 <strong>Oportunidades/Riesgos:</strong> ${numHallazgos} hallazgos detectados</li>
+                             <li>🚨 <strong>Oportunidades/Riesgos:</strong> ${numHallazgos} hallazgos</li>
                              <li>💸 <strong>Inversión Base:</strong> $${gasto} USD</li>
                              <li>🎯 <strong>ROAS Estimado:</strong> ${roas}x</li>
                          </ul>
                     </div>
                     <div style="${globalStyles.buttonContainer}">
-                        <a href="https://aditor-ai.com/dashboard/reporte/${auditId}" style="${globalStyles.button}">Ver Reporte Completo</a>
+                        <a href="https://www.aditor-ai.com/dashboard/reporte/${auditId}" style="${globalStyles.button}">Ver reporte completo</a>
                     </div>
                 </div>
                 <div style="${globalStyles.footer}">
