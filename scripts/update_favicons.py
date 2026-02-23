@@ -39,6 +39,12 @@ def update_images():
     else:
         print(f"Imagen fuente no encontrada en: {source_image}")
 
+    # ELIMINAR EL FAVICON VIEJO DE SRC/APP/ PARA EVITAR PRECEDENCIA OVERRIDE
+    src_app_favicon = os.path.join("src", "app", "favicon.ico")
+    if os.path.exists(src_app_favicon):
+        os.remove(src_app_favicon)
+        print(f"Eliminado {src_app_favicon} para forzar el uso de metadata en /public/.")
+
 def patch_file(filepath, pattern_replace_pairs):
     if not os.path.exists(filepath):
         print(f"Archivo no encontrado: {filepath}")
@@ -76,26 +82,38 @@ def main():
     ])
     
     # layout.tsx metadata
-    # Si la metadata no tiene "icons:", la inyectamos.
     layout_path = "src/app/layout.tsx"
     with open(layout_path, "r", encoding="utf-8") as f:
         layout_content = f.read()
         
-    if "icons:" not in layout_content:
-        # Buscar el final de "description: ...," y meter icons allí.
+    # Reemplazar definicion previa de icons completa o insertar nueva
+    icons_block = """  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.png',
+  },"""
+  
+    if "icons: {" in layout_content:
+        # Reemplazar bloque icons existente
         patched = re.sub(
-            r'title:\s*"[^"]+",\s*description:\s*"[^"]+",',
-            r'\g<0>\n  icons: { icon: "/favicon.png" },',
+            r'icons:\s*\{[^}]*\},\n?',
+            icons_block + "\n",
             layout_content
         )
-        if patched != layout_content:
-            with open(layout_path, "w", encoding="utf-8") as f:
-                f.write(patched)
-            print("Layout metadata parcheada con icons: { icon: '/favicon.png' }.")
-        else:
-            print("No se pudo parchear la metadata en layout.tsx automáticamente.")
     else:
-        print("La metadata en layout.tsx ya incluye configuración de icons.")
+        # Insertar debajo de description si no hay icons
+        patched = re.sub(
+            r'(title:\s*"[^"]+",\s*description:\s*"[^"]+",)',
+            r'\1\n' + icons_block,
+            layout_content
+        )
+        
+    if patched != layout_content:
+        with open(layout_path, "w", encoding="utf-8") as f:
+            f.write(patched)
+        print("Layout metadata parcheada con bloque de icons completo.")
+    else:
+        print("La metadata en layout.tsx no necesitó parche nuevo.")
 
 if __name__ == "__main__":
     main()
