@@ -7,7 +7,7 @@ export default function Footer() {
             <div className="max-w-7xl mx-auto px-6 w-full">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-8">
                     <div className="flex items-center gap-3">
-                        <Image src="/favicon.ico" alt="Aditor AI" width={32} height={32} />
+                        <Image src="/favicon.png" alt="Aditor AI" width={32} height={32} />
                         <span className="font-bold text-gray-400 text-lg">Aditor AI</span>
                     </div>
 

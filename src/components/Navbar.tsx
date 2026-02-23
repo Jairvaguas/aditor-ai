@@ -6,7 +6,7 @@ export default function Navbar() {
         <nav className="fixed top-0 left-0 w-full z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 py-4">
             <div className="max-w-7xl mx-auto px-6 h-12 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-3">
-                    <Image src="/favicon.ico" alt="Aditor AI" width={32} height={32} />
+                    <Image src="/favicon.png" alt="Aditor AI" width={32} height={32} />
                     <span className="text-2xl font-bold tracking-tight text-white">Aditor AI</span>
                 </Link>
 

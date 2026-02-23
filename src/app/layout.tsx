@@ -10,6 +10,7 @@ const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
 export const metadata: Metadata = {
   title: "Aditor AI - Tu Director de Performance",
   description: "Auditoría automática de campañas de Meta Ads con IA.",
+  icons: { icon: "/favicon.png" },
 };
 
 export default function RootLayout({
