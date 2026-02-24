@@ -51,7 +51,7 @@ export async function GET(request: Request) {
                 // Ah, el usuario pidio:
                 // "Guardar el token en Supabase tabla profiles del usuario actual (selected_ad_account_id y un nuevo campo meta_access_token)"
             })
-            .eq('id', clerkUserId);
+            .eq('clerk_user_id', clerkUserId);
 
         // (Opcional, pero util: si el req decia "selected_ad_account_id", tal vez tambien debemos 
         // traer adAccounts y guardar el primero para cumplirlo a raja tabla o simplemente delegar a /conectar/cuentas)
@@ -65,11 +65,13 @@ export async function GET(request: Request) {
             await supabaseAdmin
                 .from('profiles')
                 .update({ selected_ad_account_id: selectedAccount.account_id })
-                .eq('id', clerkUserId);
+                .eq('clerk_user_id', clerkUserId);
         }
 
         if (dbError) {
-            console.error('Error saving token to profile:', dbError);
+            console.log('=== DB ERROR ===');
+            console.log('userId from state:', clerkUserId);
+            console.log('error details:', JSON.stringify(dbError));
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=db_error`);
         }
 
