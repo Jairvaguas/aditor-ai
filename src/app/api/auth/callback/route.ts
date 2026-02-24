@@ -11,6 +11,11 @@ export async function GET(request: Request) {
     const state = searchParams.get('state');
     const error = searchParams.get('error');
 
+    console.log('=== META CALLBACK ===');
+    console.log('code:', searchParams.get('code'));
+    console.log('state:', searchParams.get('state'));
+    console.log('error:', searchParams.get('error'));
+
     // 1. Validar request
     if (error) {
         return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=auth_denied`);
