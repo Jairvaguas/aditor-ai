@@ -2,11 +2,29 @@
 
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export default function ConnectPage() {
-  const { userId } = useAuth();
+  const { userId, isLoaded } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoaded && !userId) {
+      router.push("/login?redirect=/conectar");
+    }
+  }, [isLoaded, userId, router]);
+
+  if (!isLoaded || !userId) {
+    return (
+      <div className="flex flex-col min-h-screen bg-[#0B1120] text-[#F0F0F0] items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4ECDC4]"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-[#0B1120] text-[#F0F0F0] font-sans selection:bg-[#FF6B6B]/30 pt-32">
       <Navbar />
