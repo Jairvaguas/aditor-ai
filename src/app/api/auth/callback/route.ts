@@ -27,46 +27,48 @@ export async function GET(request: Request) {
         const { userId: clerkUserId } = await auth();
 
         if (!clerkUserId) {
-            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/sign-in?redirect_url=/conectar`);
+            // Si no tiene sesion, redirigimos a login, y luego a conectar
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/login?redirect=/conectar`);
         }
 
         // 2. Intercambio de Token
         const accessToken = await exchangeCodeForToken(code);
 
-        // 3. Obtener info de usuario de Meta
-        const metaUser = await getMetaUser(accessToken);
+        // 3. Guardar Token en Supabase (tabla profiles)
+        const { error: dbError } = await supabaseAdmin
+            .from('profiles')
+            .update({
+                meta_access_token: accessToken,
+                // Si el usuario acaba de conectar, asumiremos que en algun punto
+                // podria guardar selected_ad_account_id, pero el request pedía guardarlo
+                // aqui si era posible o en el siguiente paso.
+                // Como obtenemos selected_ad_account_id? 
+                // Ah, el usuario pidio:
+                // "Guardar el token en Supabase tabla profiles del usuario actual (selected_ad_account_id y un nuevo campo meta_access_token)"
+            })
+            .eq('id', clerkUserId);
 
-        // 4. Obtener Cuentas Publicitarias
+        // (Opcional, pero util: si el req decia "selected_ad_account_id", tal vez tambien debemos 
+        // traer adAccounts y guardar el primero para cumplirlo a raja tabla o simplemente delegar a /conectar/cuentas)
+        // Revisemos el request: "Guardar el token en Supabase tabla profiles del usuario actual (selected_ad_account_id y un nuevo campo meta_access_token)"
+        
+        // Mejor obtenemos las cuentas y guardamos la primera
         const adAccounts = await getAdAccounts(accessToken);
-
-        if (adAccounts.length === 0) {
-            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=no_ad_accounts`);
+        
+        if (adAccounts.length > 0) {
+            const selectedAccount = adAccounts[0];
+            await supabaseAdmin
+                .from('profiles')
+                .update({ selected_ad_account_id: selectedAccount.account_id })
+                .eq('id', clerkUserId);
         }
 
-        // --- SELECCION AUTOMATICA (ZERO-CLICK) ---
-        // Tomamos la primera cuenta disponible
-        const selectedAccount = adAccounts[0];
-
-        // 5. Guardar/Actualizar Token en Supabase
-        const { error: dbError } = await supabaseAdmin
-            .from('connected_accounts')
-            .upsert({
-                user_id: clerkUserId,
-                ad_account_id: selectedAccount.account_id, // e.g., '123456789'
-                facebook_user_id: metaUser.id,
-                access_token: accessToken,
-                account_name: selectedAccount.name,
-                currency: selectedAccount.currency
-            }, { onConflict: 'ad_account_id' });
-
         if (dbError) {
-            console.error('Error saving connected account:', dbError);
-            // Seguimos adelante, quizas fallo el upsert pero queremos mostrar el resultado si es posible,
-            // aunque para persistencia futura es malo. Mejor redirigir con error si es critico.
+            console.error('Error saving token to profile:', dbError);
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=db_error`);
         }
 
-        // 6. Redirigir a Selección de Cuentas
+        // 6. Redirigir a Selección de Cuentas si se autentico y guardo todo bien.
         return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar/cuentas`);
 
     } catch (err: any) {
