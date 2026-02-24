@@ -24,7 +24,7 @@ export async function GET(request: Request) {
 
     try {
         // Obtenemos user de Clerk actual
-        const { userId: clerkUserId } = await auth();
+        const clerkUserId = state; // We receive Clerk userId from Meta 'state' param
 
         if (!clerkUserId) {
             // Si no tiene sesion, redirigimos a login, y luego a conectar

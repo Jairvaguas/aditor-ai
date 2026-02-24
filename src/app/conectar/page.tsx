@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useAuth } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export default function ConnectPage() {
+  const { userId } = useAuth();
   return (
     <div className="flex flex-col min-h-screen bg-[#0B1120] text-[#F0F0F0] font-sans selection:bg-[#FF6B6B]/30 pt-32">
       <Navbar />
@@ -52,7 +54,7 @@ export default function ConnectPage() {
           <button
             onClick={() => {
               console.log("FACEBOOK_APP_ID client side:", process.env.NEXT_PUBLIC_FACEBOOK_APP_ID);
-              window.location.href = "https://www.facebook.com/dialog/oauth?client_id=1559690031775292&redirect_uri=https://www.aditor-ai.com/api/auth/callback&scope=ads_read&response_type=code";
+              window.location.href = `https://www.facebook.com/dialog/oauth?client_id=1559690031775292&redirect_uri=https://www.aditor-ai.com/api/auth/callback&scope=ads_read&response_type=code&state=${userId}`;
             }}
             className="w-full flex items-center justify-center gap-3 bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-[16px] py-[14px] rounded-[14px] transition-transform hover:scale-[1.02] active:scale-[0.98]"
             style={{ boxShadow: '0 6px 20px rgba(24,119,242,0.35)' }}
