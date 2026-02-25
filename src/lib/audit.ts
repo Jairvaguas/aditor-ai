@@ -47,6 +47,14 @@ Devuelve ÚNICAMENTE el XML con este schema exacto:
     <nivel></nivel>
     <resumen></resumen>
   </score_cuenta>
+
+  CRÍTICO - En <metricas_globales> usa SOLO valores numéricos:
+  - <roas_promedio> debe ser un número como 2.4, no texto
+  - <ctr_promedio> debe ser un número como 1.8, no texto
+  - <cpm_promedio> debe ser un número como 12.5, no texto
+  - <gasto_total_30d> debe ser un número como 149956, no texto
+  NUNCA pongas explicaciones, frases o texto en estas etiquetas.
+  
   <metricas_globales>
     <roas_promedio></roas_promedio>
     <ctr_promedio></ctr_promedio>

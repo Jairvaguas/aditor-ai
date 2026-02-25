@@ -275,9 +275,9 @@ export default async function DashboardPage() {
                                     <h2 className="text-lg font-bold font-syne text-white">Rendimiento de Campañas</h2>
                                     <p className="text-sm text-slate-400 mt-1">Monitoreo activo por la IA.</p>
                                 </div>
-                                <button className="text-[#FF6B6B] bg-[#FF6B6B]/10 hover:bg-[#FF6B6B]/20 text-sm font-bold py-2 px-4 rounded-lg transition-colors flex items-center gap-1">
+                                <Link href="/dashboard/auditorias" className="text-[#FF6B6B] bg-[#FF6B6B]/10 hover:bg-[#FF6B6B]/20 text-sm font-bold py-2 px-4 rounded-lg transition-colors flex items-center gap-1">
                                     Ver todas <ChevronRight className="w-4 h-4" />
-                                </button>
+                                </Link>
                             </div>
 
                             <div className="overflow-x-auto">
