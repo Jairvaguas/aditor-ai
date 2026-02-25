@@ -194,10 +194,7 @@ export default async function ReportePage(props: PageProps) {
                     </div>
                 </div>
 
-                {/* Link to Hooks */}
-                <NextLink href={`/hooks/${id}`} className="w-full flex items-center justify-center gap-2 py-4 rounded-[14px] bg-white text-[#1A1A2E] font-bold text-[16px] shadow-lg hover:bg-gray-100 transition-colors">
-                    Ver Hooks y Ángulos <ArrowRight className="w-5 h-5" />
-                </NextLink>
+
 
             </div>
         </main>

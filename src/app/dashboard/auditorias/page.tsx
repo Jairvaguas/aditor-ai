@@ -32,12 +32,15 @@ export default async function AuditoriasPage() {
     const displayName = user.firstName || user.username || "Usuario";
 
     // Fetch audits for this user from Supabase
-    // Using a robust query, but if the table doesn't have campaigns_analyzed, it will still safely return data
-    const { data: auditsList } = await supabaseAdmin
-        .from('audits')
+    const { data: auditsList, error: auditsError } = await supabaseAdmin
+        .from('auditorias')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
+
+    console.log('Buscando auditorías para user_id:', user.id);
+    console.log('Auditorías encontradas:', auditsList?.length);
+    if (auditsError) console.error('Error fetching auditorias:', auditsError);
 
     const audits = auditsList || [];
 
@@ -187,11 +190,6 @@ export default async function AuditoriasPage() {
                 <Link href="/dashboard/auditorias" className="flex flex-col items-center gap-1 text-[#FF6B6B] w-16">
                     <Search className="w-5 h-5" />
                     <span className="text-[10px] font-medium">Auditorías</span>
-                </Link>
-
-                <Link href="/dashboard/hooks" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
-                    <Sparkles className="w-5 h-5" />
-                    <span className="text-[10px] font-medium">Hooks IA</span>
                 </Link>
 
                 <Link href="/dashboard/config" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">

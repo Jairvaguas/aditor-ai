@@ -55,8 +55,15 @@ export default async function TeaserPage({ searchParams }: { searchParams: { aud
     const { auditId } = searchParams;
 
     if (!auditId) {
-        // Si no hay ID, redirigir a conectar (o mostrar error)
-        redirect('/conectar');
+        return (
+            <div className="min-h-screen bg-[#1A1A2E] text-white flex items-center justify-center p-4">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold mb-2">Falta ID de auditoría 😕</h1>
+                    <p className="text-[#8892A4] mb-4">La URL no contiene un ID válido.</p>
+                    <Link href="/registro" className="text-[#E94560] underline">Crear cuenta</Link>
+                </div>
+            </div>
+        );
     }
 
     const auditData = await getAuditData(auditId);
