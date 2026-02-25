@@ -93,8 +93,14 @@ export async function POST(request: Request) {
 
         const accessToken = profileData.meta_access_token;
 
-        // 3. Fetch campaigns for the selected account
-        const campaigns = await getCampaignInsights(accessToken, adAccountId);
+        // 3. Fetch campaigns for the selected account safely
+        let campaigns;
+        try {
+            campaigns = await getCampaignInsights(accessToken, adAccountId);
+        } catch (metaErr: any) {
+            console.error('DEBUG - Meta API Error fetching insights:', metaErr.message);
+            return NextResponse.json({ error: 'meta_api_error', details: metaErr.message }, { status: 502 });
+        }
 
         if (!campaigns || campaigns.length === 0) {
             return NextResponse.json({ error: 'no_campaign_data' }, { status: 400 });

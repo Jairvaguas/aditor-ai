@@ -43,6 +43,8 @@ const acc = accounts.find(a => a.account_id === accountId);
                     router.push('/conectar?error=account_already_in_use');
                 } else if (data.error === 'already_locked') {
                     router.push('/conectar?error=account_locked');
+                } else if (data.error === 'meta_api_error') {
+                    router.push('/conectar?error=meta_api_error');
                 } else {
                     router.push('/conectar?error=selection_failed');
                 }

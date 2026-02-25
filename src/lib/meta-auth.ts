@@ -135,7 +135,7 @@ export async function getCampaignInsights(accessToken: string, adAccountId: stri
         'frequency',
         'actions',
         'action_values',
-        'roas', // derived often, but let's see if api provides 'purchase_roas'
+        'purchase_roas',
         'objective',
     ].join(',');
 
