@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server';
 import { exchangeCodeForToken, getAdAccounts, getCampaignInsights, getMetaUser } from '@/lib/meta-auth';
 import { generateAudit } from '@/lib/audit';
 import { supabaseAdmin } from '@/lib/supabase';
-import { auth } from '@clerk/nextjs/server';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -21,8 +20,10 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=auth_denied`);
     }
 
-    if (!code) {
-        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=missing_code`);
+    if (!code || !state) {
+        console.error('Missing params:', { code, state });
+        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=missing_params`);
+    }
     }
 
     // TODO: Validar state cookie (simplificado para MVP, pero recomendado)
