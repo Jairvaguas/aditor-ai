@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { getCampaignInsights } from '@/lib/meta-auth';
-import { generateAudit } from '@/lib/audit';
+
 
 export async function POST(request: Request) {
     try {
@@ -82,37 +81,10 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Database error storing selection' }, { status: 500 });
         }
 
-        // 2. We already extracted token in step 0, reuse it.
-        const tokenError = null;
-        const profileData = currentProfile;
-
-        if (tokenError || !profileData || !profileData.meta_access_token) {
-            console.error('Error fetching meta token from profiles:', tokenError);
-            return NextResponse.json({ error: 'Token not found for user' }, { status: 500 });
-        }
-
-        const accessToken = profileData.meta_access_token;
-
-        // 3. Fetch campaigns for the selected account safely
-        let campaigns;
-        try {
-            campaigns = await getCampaignInsights(accessToken, adAccountId);
-        } catch (metaErr: any) {
-            console.error('DEBUG - Meta API Error fetching insights:', metaErr.message);
-            return NextResponse.json({ error: 'meta_api_error', details: metaErr.message }, { status: 502 });
-        }
-
-        if (!campaigns || campaigns.length === 0) {
-            return NextResponse.json({ error: 'no_campaign_data' }, { status: 400 });
-        }
-
-        // 4. Generate audit
-        const auditResult = await generateAudit(campaigns, clerkUserId, currency);
-
+        // Éxito Total: La BD ya tiene vinculado el ID. Todo lo demás se delega al dashboard.
         return NextResponse.json({
             success: true,
-            auditId: auditResult.id,
-            redirectUrl: `/teaser?auditId=${auditResult.id}`
+            redirectUrl: '/dashboard'
         });
 
     } catch (error: any) {
