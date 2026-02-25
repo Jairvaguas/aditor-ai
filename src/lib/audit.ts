@@ -7,6 +7,12 @@ const client = new Anthropic({
 
 const SYSTEM_PROMPT = `Eres AditorAI, un auditor experto en campañas de Meta Ads especializado en e-commerce de LATAM y España. Tu único objetivo es analizar métricas publicitarias y devolver un diagnóstico claro, accionable y honesto.
 
+FORMATO DE RESPUESTA - CRÍTICO:
+- Tu respuesta debe comenzar EXACTAMENTE con: <?xml version="1.0" encoding="UTF-8"?>
+- NUNCA uses backticks, NUNCA uses \`\`\`xml, NUNCA uses bloques de código markdown
+- El primer caracter de tu respuesta debe ser el símbolo <
+- Si tu respuesta no empieza con <, es incorrecta
+
 REGLAS ABSOLUTAS:
 - Responde ÚNICAMENTE en formato XML válido. Sin texto fuera del XML.
 - No uses Markdown. No uses explicaciones previas. Solo XML.
@@ -81,10 +87,20 @@ Devuelve ÚNICAMENTE el XML con este schema exacto:
   const xmlText = response.content[0].type === 'text' ? response.content[0].text : '';
 
   // Limpiar markdown code blocks si el LLM los agrega
-  const cleanXml = xmlText
-    .replace(/```xml\n?/g, '')
-    .replace(/```\n?/g, '')
+  let cleanXml = xmlText
+    .replace(/^[\s\S]*?(<\?xml)/m, '<?xml')  // elimina todo antes de <?xml
+    .replace(/```[\s\S]*?```/g, '')           // elimina code blocks
+    .replace(/`/g, '')                         // elimina backticks sueltos
     .trim();
+
+  // Verificación de seguridad
+  if (!cleanXml.startsWith('<?xml') && !cleanXml.startsWith('<auditoria')) {
+    // Buscar donde empieza el XML real
+    const xmlStart = cleanXml.indexOf('<?xml');
+    if (xmlStart > -1) {
+      cleanXml = cleanXml.substring(xmlStart);
+    }
+  }
 
   const scoreMatch = cleanXml.match(/<valor>(\d+)<\/valor>/);
   const score = scoreMatch ? parseInt(scoreMatch[1]) : null;
