@@ -49,17 +49,17 @@ export default async function DashboardPage() {
         .single();
 
     const isZeroState = !lastAudit;
-    
+
     let metrics = { roas: "--", ctr: "--", cpm: "$0", spend: "$0" };
     let hallazgos: any[] = [];
-    
+
     if (lastAudit && lastAudit.xml_raw) {
         const extract = (xml: string, tag: string) => {
             const regex = new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`);
             const match = xml.match(regex);
             return match ? match[1].trim() : '';
         };
-        
+
         const metricasXml = extract(lastAudit.xml_raw, 'metricas_globales');
         if (metricasXml) {
             metrics = {
@@ -69,9 +69,9 @@ export default async function DashboardPage() {
                 spend: "$" + (extract(metricasXml, 'gasto_total') || "0"),
             };
         }
-        
+
         // Extraer los top 4 hallazgos para la tabla
-        const hallazgoRegex = /<hallazgo id="(\\d+)">([\\s\\S]*?)<\\/hallazgo>/g;
+        const hallazgoRegex = /<hallazgo id="(\d+)">([\s\S]*?)<\/hallazgo>/g;
         let match;
         while ((match = hallazgoRegex.exec(lastAudit.xml_raw)) !== null) {
             if (hallazgos.length >= 4) break;
@@ -81,16 +81,16 @@ export default async function DashboardPage() {
                 const m = content.match(r);
                 return m ? m[1].trim() : '';
             };
-            
+
             const tipo = extractInner('tipo');
             const urgencia = extractInner('urgencia');
-            
+
             let bg = 'bg-[#FFE66D]/10';
             let border = 'border-[#FFE66D]/20';
             let dot = 'bg-[#FFE66D] shadow-[0_0_5px_rgba(255,230,109,0.8)]';
             let text = 'text-[#FFE66D]';
             let estado = 'Observación';
-            
+
             if (tipo.toLowerCase().includes('pausa') || urgencia.toLowerCase().includes('alta')) {
                 bg = 'bg-[#FF6B6B]/10'; border = 'border-[#FF6B6B]/20';
                 dot = 'bg-[#FF6B6B] shadow-[0_0_5px_rgba(255,107,107,0.8)]';
@@ -100,7 +100,7 @@ export default async function DashboardPage() {
                 dot = 'bg-[#00D4AA] shadow-[0_0_5px_rgba(0,212,170,0.8)]';
                 text = 'text-[#00D4AA]'; estado = 'Óptimo';
             }
-            
+
             hallazgos.push({
                 id: match[1],
                 campana: extractInner('campana_nombre'),
