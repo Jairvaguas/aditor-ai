@@ -3,6 +3,7 @@ import { UserButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import AuditTriggerButton from "@/components/AuditTriggerButton";
 import { checkSubscription } from "@/lib/checkSubscription";
 import { supabaseAdmin } from "@/lib/supabase";
 import {
@@ -38,6 +39,13 @@ export default async function DashboardPage() {
         .single();
 
     const isConnectedToMeta = !!profile?.meta_access_token;
+
+    const { count: auditCount } = await supabaseAdmin
+        .from('auditorias')
+        .select('*', { count: 'exact', head: true })
+        .eq('clerk_user_id', user.id);
+
+    const isZeroState = !auditCount || auditCount === 0;
 
     return (
         <main className="min-h-screen bg-[#0B1120] text-white font-sans flex overflow-hidden">
@@ -122,7 +130,7 @@ export default async function DashboardPage() {
                                 <div className="text-slate-400 font-medium text-sm">ROAS Global</div>
                                 <div className="p-2 bg-[#ffe66d]/10 rounded-lg"><div className="text-lg">💰</div></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#ffe66d] transition-colors">2.4x</div>
+                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#ffe66d] transition-colors">{isZeroState ? "--" : "2.4x"}</div>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="flex items-center text-[#FF6B6B] font-bold"><TrendingDown className="w-3 h-3 mr-0.5" /> -0.3 </span>
                                 <span className="text-slate-500">vs semana ant.</span>
@@ -139,7 +147,7 @@ export default async function DashboardPage() {
                                 <div className="text-slate-400 font-medium text-sm">CTR Promedio</div>
                                 <div className="p-2 bg-[#00D4AA]/10 rounded-lg"><div className="text-lg">🖱️</div></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#00D4AA] transition-colors">1.8%</div>
+                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#00D4AA] transition-colors">{isZeroState ? "--" : "1.8%"}</div>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="flex items-center text-[#00D4AA] font-bold"><TrendingUp className="w-3 h-3 mr-0.5" /> +0.2% </span>
                                 <span className="text-slate-500">vs semana ant.</span>
@@ -156,7 +164,7 @@ export default async function DashboardPage() {
                                 <div className="text-slate-400 font-medium text-sm">CPM Promedio</div>
                                 <div className="p-2 bg-[#FF6B6B]/10 rounded-lg"><div className="text-lg">📣</div></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#FF6B6B] transition-colors">$14.2</div>
+                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#FF6B6B] transition-colors">{isZeroState ? "$0" : "$14.2"}</div>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="flex items-center text-[#FF6B6B] font-bold">ALTO</span>
                                 <span className="text-slate-500">Requiere atención</span>
@@ -173,7 +181,7 @@ export default async function DashboardPage() {
                                 <div className="text-slate-400 font-medium text-sm">Gasto 7 días</div>
                                 <div className="p-2 bg-[#74B9FF]/10 rounded-lg"><div className="text-lg">💸</div></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#74B9FF] transition-colors">$1,240</div>
+                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#74B9FF] transition-colors">{isZeroState ? "$0" : "$1,240"}</div>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="flex items-center text-[#00D4AA] font-bold"><TrendingUp className="w-3 h-3 mr-0.5" /> +15% </span>
                                 <span className="text-slate-500">vs semana ant.</span>
@@ -211,74 +219,32 @@ export default async function DashboardPage() {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-800/60">
-
-                                        {/* Row 1 */}
-                                        <tr className="hover:bg-slate-800/40 transition-colors group cursor-pointer">
-                                            <td className="py-4 px-6">
-                                                <div className="font-bold text-white text-sm group-hover:text-[#00D4AA] transition-colors">Retargeting 7 días</div>
-                                                <div className="text-xs text-slate-500 mt-1">Última ed.: Ayer</div>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <span className="inline-flex items-center gap-1.5 bg-[#00D4AA]/10 text-[#00D4AA] text-xs font-bold px-2.5 py-1 rounded-md border border-[#00D4AA]/20">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#00D4AA] shadow-[0_0_5px_rgba(0,212,170,0.8)]"></span> Óptimo
-                                                </span>
-                                            </td>
-                                            <td className="py-4 px-6 text-sm text-slate-300 font-medium">$340</td>
-                                            <td className="py-4 px-6 text-right">
-                                                <div className="font-bold font-syne text-[#00D4AA] text-base">4.2x</div>
-                                            </td>
-                                        </tr>
-
-                                        {/* Row 2 */}
-                                        <tr className="hover:bg-slate-800/40 transition-colors group cursor-pointer">
-                                            <td className="py-4 px-6">
-                                                <div className="font-bold text-white text-sm group-hover:text-[#ffe66d] transition-colors">Lookalike 1% compradores</div>
-                                                <div className="text-xs text-slate-500 mt-1">Última ed.: Hace 3 días</div>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <span className="inline-flex items-center gap-1.5 bg-[#ffe66d]/10 text-[#ffe66d] text-xs font-bold px-2.5 py-1 rounded-md border border-[#ffe66d]/20">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#ffe66d] shadow-[0_0_5px_rgba(255,230,109,0.8)]"></span> En observación
-                                                </span>
-                                            </td>
-                                            <td className="py-4 px-6 text-sm text-slate-300 font-medium">$280</td>
-                                            <td className="py-4 px-6 text-right">
-                                                <div className="font-bold font-syne text-[#ffe66d] text-base">1.9x</div>
-                                            </td>
-                                        </tr>
-
-                                        {/* Row 3 */}
-                                        <tr className="hover:bg-slate-800/40 transition-colors group cursor-pointer">
-                                            <td className="py-4 px-6">
-                                                <div className="font-bold text-white text-sm group-hover:text-[#FF6B6B] transition-colors">Intereses — Ropa Mujer</div>
-                                                <div className="text-xs text-slate-500 mt-1">Última ed.: Hoy</div>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <span className="inline-flex items-center gap-1.5 bg-[#FF6B6B]/10 text-[#FF6B6B] text-xs font-bold px-2.5 py-1 rounded-md border border-[#FF6B6B]/20">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B6B] shadow-[0_0_5px_rgba(255,107,107,0.8)]"></span> Riesgo
-                                                </span>
-                                            </td>
-                                            <td className="py-4 px-6 text-sm text-slate-300 font-medium">$340</td>
-                                            <td className="py-4 px-6 text-right">
-                                                <div className="font-bold font-syne text-[#FF6B6B] text-base">0.8x</div>
-                                            </td>
-                                        </tr>
-
-                                        {/* Row 4 */}
-                                        <tr className="hover:bg-slate-800/40 transition-colors group cursor-pointer">
-                                            <td className="py-4 px-6">
-                                                <div className="font-bold text-white text-sm group-hover:text-[#00D4AA] transition-colors">Campaña Catálogo Dinámico</div>
-                                                <div className="text-xs text-slate-500 mt-1">Última ed.: Hace 1 sem</div>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <span className="inline-flex items-center gap-1.5 bg-[#00D4AA]/10 text-[#00D4AA] text-xs font-bold px-2.5 py-1 rounded-md border border-[#00D4AA]/20">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#00D4AA] shadow-[0_0_5px_rgba(0,212,170,0.8)]"></span> Óptimo
-                                                </span>
-                                            </td>
-                                            <td className="py-4 px-6 text-sm text-slate-300 font-medium">$520</td>
-                                            <td className="py-4 px-6 text-right">
-                                                <div className="font-bold font-syne text-[#00D4AA] text-base">6.3x</div>
-                                            </td>
-                                        </tr>
+                                        {isZeroState ? (
+                                            <tr>
+                                                <td colSpan={4} className="py-12 px-6 text-center text-slate-500">
+                                                    Aún no hay datos. Conecta Meta e inicia tu primera auditoría interactiva.
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            <>
+                                                {/* Mock Data from previous version, waiting to be hydrated natively */}
+                                                <tr className="hover:bg-slate-800/40 transition-colors group cursor-pointer">
+                                                    <td className="py-4 px-6">
+                                                        <div className="font-bold text-white text-sm group-hover:text-[#00D4AA] transition-colors">Retargeting 7 días</div>
+                                                        <div className="text-xs text-slate-500 mt-1">Última ed.: Ayer</div>
+                                                    </td>
+                                                    <td className="py-4 px-6">
+                                                        <span className="inline-flex items-center gap-1.5 bg-[#00D4AA]/10 text-[#00D4AA] text-xs font-bold px-2.5 py-1 rounded-md border border-[#00D4AA]/20">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-[#00D4AA] shadow-[0_0_5px_rgba(0,212,170,0.8)]"></span> Óptimo
+                                                        </span>
+                                                    </td>
+                                                    <td className="py-4 px-6 text-sm text-slate-300 font-medium">$340</td>
+                                                    <td className="py-4 px-6 text-right">
+                                                        <div className="font-bold font-syne text-[#00D4AA] text-base">4.2x</div>
+                                                    </td>
+                                                </tr>
+                                            </>
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
@@ -295,9 +261,7 @@ export default async function DashboardPage() {
                                 <h3 className="text-lg font-bold font-syne text-white mb-2 relative z-10">Análisis bajo demanda</h3>
                                 <p className="text-sm text-slate-400 mb-6 relative z-10">Genera una auditoría instantánea de tus campañas activas.</p>
 
-                                <Link href="/teaser" className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-[#FF6B6B] hover:bg-[#ff5252] text-white font-bold text-[15px] shadow-[0_4px_14px_rgba(255,107,107,0.35)] hover:scale-[1.02] hover:-translate-y-0.5 transition-all relative z-10">
-                                    <Sparkles className="w-5 h-5" /> Iniciar Auditoría
-                                </Link>
+                                <AuditTriggerButton />
                             </div>
 
                             {/* Próxima auditoría automática */}
