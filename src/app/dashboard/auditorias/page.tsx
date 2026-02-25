@@ -74,10 +74,6 @@ export default async function AuditoriasPage() {
                         <span>Auditorías</span>
                     </Link>
 
-                    <Link href="/dashboard/hooks" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors">
-                        <Sparkles className="w-5 h-5" />
-                        <span>Hooks IA</span>
-                    </Link>
 
                     <Link href="/dashboard/config" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors mt-auto">
                         <Settings className="w-5 h-5" />

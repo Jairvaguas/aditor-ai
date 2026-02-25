@@ -20,14 +20,14 @@ async function getStats() {
     let active = 0;
     let trial = 0;
     let inactive = 0;
-    
+
     // Monthly grouped data container
     const monthsData: Record<string, { registrados: number, activos: number, inactivos: number }> = {};
 
     profiles.forEach((p) => {
         const isSubscribed = p.is_subscribed;
         const isTrial = p.trial_ends_at && new Date(p.trial_ends_at).getTime() > now;
-        
+
         if (isSubscribed) {
             active++;
         } else if (isTrial) {
@@ -35,36 +35,36 @@ async function getStats() {
         } else {
             inactive++;
         }
-        
+
         // Month string formulation "YYYY-MM"
         const createdAt = new Date(p.created_at);
         const y = createdAt.getFullYear();
         const m = (createdAt.getMonth() + 1).toString().padStart(2, '0');
         const monthKey = `${y}-${m}`;
-        
+
         if (!monthsData[monthKey]) {
             monthsData[monthKey] = { registrados: 0, activos: 0, inactivos: 0 };
         }
-        
+
         monthsData[monthKey].registrados++;
         if (isSubscribed) {
-             monthsData[monthKey].activos++;
+            monthsData[monthKey].activos++;
         } else {
-             monthsData[monthKey].inactivos++;
+            monthsData[monthKey].inactivos++;
         }
     });
 
     const mrr = active * 47;
-    
+
     // Formulate final chartData sorting by date and taking last 6
     const chartData = Object.keys(monthsData)
         .sort((a, b) => a.localeCompare(b)) // ascending for chronological chart plotting
         .slice(-6) // take only last 6 months
         .map(key => ({
-             mes: new Date(`${key}-01T00:00:00`).toLocaleString('default', { month: 'short' }).toUpperCase(),
-             registrados: monthsData[key].registrados,
-             activos: monthsData[key].activos,
-             inactivos: monthsData[key].inactivos
+            mes: new Date(`${key}-01T00:00:00`).toLocaleString('default', { month: 'short' }).toUpperCase(),
+            registrados: monthsData[key].registrados,
+            activos: monthsData[key].activos,
+            inactivos: monthsData[key].inactivos
         }));
 
     return {
@@ -107,10 +107,6 @@ export default async function AdminDashboard() {
                         <span>Auditorías</span>
                     </Link>
 
-                    <Link href="/dashboard/hooks" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors">
-                        <Sparkles className="w-5 h-5" />
-                        <span>Hooks IA</span>
-                    </Link>
 
                     <Link href="/dashboard/config" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors mt-auto">
                         <Settings className="w-5 h-5" />
@@ -216,7 +212,7 @@ export default async function AdminDashboard() {
                                         const now = new Date().getTime();
                                         let statusLabel = "Inactivo";
                                         let statusClass = "bg-red-500/10 text-red-400 border border-red-500/20";
-                                        
+
                                         if (u.is_subscribed) {
                                             statusLabel = "Activo";
                                             statusClass = "bg-green-500/10 text-green-400 border border-green-500/20";
@@ -254,7 +250,7 @@ export default async function AdminDashboard() {
                     </div>
                 </div>
             </div>
-            
+
             {/* Mobile Bottom Navigation */}
             <div className="lg:hidden fixed bottom-0 left-0 w-full bg-slate-900 border-t border-slate-800 pb-5 pt-3 flex justify-around items-center z-50 px-2 transition-transform">
                 <Link href="/dashboard" className="flex flex-col items-center gap-1 text-slate-400 w-16">

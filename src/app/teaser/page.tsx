@@ -54,33 +54,38 @@ function parseAuditXML(xml: string) {
 export default async function TeaserPage({ searchParams }: { searchParams: { auditId: string } }) {
     const { auditId } = searchParams;
 
-    if (!auditId) {
-        return (
-            <div className="min-h-screen bg-[#1A1A2E] text-white flex items-center justify-center p-4">
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold mb-2">Falta ID de auditoría 😕</h1>
-                    <p className="text-[#8892A4] mb-4">La URL no contiene un ID válido.</p>
-                    <Link href="/registro" className="text-[#E94560] underline">Crear cuenta</Link>
+    let score = 64;
+    let nivel = "Requiere Atención";
+    let resumen = "Analizamos tu cuenta publicitaria y detectamos fugas de presupuesto importantes en campañas con bajo rendimiento, así como oportunidades claras de escala en segmentos de retargeting que podrían incrementar tu ROAS general.";
+    let hallazgos: any[] = [
+        { tipo: "Pausar", urgencia: "Alta", campana: "LAL 1% Compradores - Broad", diagnostico: "ROAS menor a 1.0 tras invertir $150. El costo por clic es excesivo y los creativos presentan fatiga alta.", accion: "Pausar adset y regenerar público." },
+        { tipo: "Escalar", urgencia: "Oportunidad", campana: "Retargeting DPA (Catálogo)", diagnostico: "ROAS sostenido de 4.2x con CPM de $8, muy por debajo de la media de la industria.", accion: "Incrementar presupuesto 20% paulatinamente." },
+        { tipo: "Optimización", urgencia: "Media", campana: "Tráfico Frío - Colección Inverno", diagnostico: "CTR de 0.6%, por debajo del benchmark del e-commerce (1.5%). La tasa de conversión es buena, pero faltan clics.", accion: "Renovar ángulos visuales urgentes." },
+        { tipo: "Pausar", urgencia: "Alta", campana: "Test Creativos CBO", diagnostico: "---", accion: "---" },
+        { tipo: "Oportunidad", urgencia: "Baja", campana: "Black Friday Promo", diagnostico: "---", accion: "---" },
+        { tipo: "Alerta", urgencia: "Media", campana: "Intereses Moda E-commerce", diagnostico: "---", accion: "---" }
+    ];
+
+    if (auditId) {
+        const auditData = await getAuditData(auditId);
+        if (!auditData) {
+            return (
+                <div className="min-h-screen bg-[#1A1A2E] text-white flex items-center justify-center p-4">
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold mb-2">Auditoría no encontrada 😕</h1>
+                        <p className="text-[#8892A4] mb-4">No pudimos encontrar el reporte solicitado.</p>
+                        <Link href="/conectar" className="text-[#E94560] underline">Volver a intentar</Link>
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        }
+
+        const parsed = parseAuditXML(auditData.xml_raw || '');
+        score = parsed.score;
+        nivel = parsed.nivel;
+        resumen = parsed.resumen;
+        hallazgos = parsed.hallazgos;
     }
-
-    const auditData = await getAuditData(auditId);
-
-    if (!auditData) {
-        return (
-            <div className="min-h-screen bg-[#1A1A2E] text-white flex items-center justify-center p-4">
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold mb-2">Auditoría no encontrada 😕</h1>
-                    <p className="text-[#8892A4] mb-4">No pudimos encontrar el reporte solicitado.</p>
-                    <Link href="/conectar" className="text-[#E94560] underline">Volver a intentar</Link>
-                </div>
-            </div>
-        );
-    }
-
-    const { score, nivel, resumen, hallazgos } = parseAuditXML(auditData.xml_raw || '');
 
     // Separamos hallazgos visibles (loss primeros 3) de los ocultos
     const visibleHallazgos = hallazgos.slice(0, 3);
@@ -170,7 +175,7 @@ export default async function TeaserPage({ searchParams }: { searchParams: { aud
                                 <p className="text-[11px] text-[#8892A4] mb-3 leading-snug">
                                     Creá tu cuenta gratis para ver todas las recomendaciones y activar la auditoría semanal.
                                 </p>
-                                <Link href="/registro" className="block w-full py-3 bg-gradient-to-br from-[#E94560] to-[#ff8e53] rounded-[14px] text-white text-[14px] font-bold shadow-[0_6px_20px_rgba(255,107,107,0.35)] hover:scale-[1.02] transition-transform">
+                                <Link href="/conectar" className="block w-full py-3 bg-gradient-to-br from-[#E94560] to-[#ff8e53] rounded-[14px] text-white text-[14px] font-bold shadow-[0_6px_20px_rgba(255,107,107,0.35)] hover:scale-[1.02] transition-transform">
                                     Ver reporte completo gratis →
                                 </Link>
                                 <div className="text-[10px] text-[#8892A4] mt-2">7 días gratis · Sin tarjeta de crédito</div>
