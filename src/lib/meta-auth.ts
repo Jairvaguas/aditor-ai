@@ -128,15 +128,13 @@ export async function getCampaignInsights(accessToken: string, adAccountId: stri
 
     const fields = [
         'campaign_name',
+        'adset_name',
+        'ad_name',
         'spend',
-        'cpc',
-        'ctr',
-        'cpm',
-        'frequency',
-        'actions',
-        'action_values',
-        'purchase_roas',
-        'objective',
+        'impressions',
+        'clicks',
+        'reach',
+        'actions'
     ].join(',');
 
     // Last 30 days

@@ -111,7 +111,8 @@ export async function POST(request: Request) {
 
         return NextResponse.json({
             success: true,
-            auditId: auditResult.id
+            auditId: auditResult.id,
+            redirectUrl: `/teaser?auditId=${auditResult.id}`
         });
 
     } catch (error: any) {

@@ -35,8 +35,8 @@ const acc = accounts.find(a => a.account_id === accountId);
 
             const data = await res.json();
 
-            if (data.success && data.auditId) {
-                router.push(`/teaser?auditId=${data.auditId}`);
+            if (data.success && data.redirectUrl) {
+                router.push(data.redirectUrl);
             } else {
                 console.error("Error creating audit:", data.error);
                 if (data.error === 'account_already_in_use') {
