@@ -24,7 +24,6 @@ export async function GET(request: Request) {
         console.error('Missing params:', { code, state });
         return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=missing_params`);
     }
-    }
 
     // TODO: Validar state cookie (simplificado para MVP, pero recomendado)
 
@@ -57,10 +56,10 @@ export async function GET(request: Request) {
         // (Opcional, pero util: si el req decia "selected_ad_account_id", tal vez tambien debemos 
         // traer adAccounts y guardar el primero para cumplirlo a raja tabla o simplemente delegar a /conectar/cuentas)
         // Revisemos el request: "Guardar el token en Supabase tabla profiles del usuario actual (selected_ad_account_id y un nuevo campo meta_access_token)"
-        
+
         // Mejor obtenemos las cuentas y guardamos la primera
         const adAccounts = await getAdAccounts(accessToken);
-        
+
         if (adAccounts.length > 0) {
             const selectedAccount = adAccounts[0];
             await supabaseAdmin
