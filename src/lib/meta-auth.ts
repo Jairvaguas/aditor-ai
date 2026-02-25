@@ -89,7 +89,7 @@ export async function exchangeCodeForToken(code: string): Promise<string> {
     const params = new URLSearchParams({
         client_id: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID!,
         client_secret: process.env.FACEBOOK_APP_SECRET!,
-        redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
+        redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/meta/callback`,
         code,
     });
 
