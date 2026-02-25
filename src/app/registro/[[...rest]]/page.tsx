@@ -49,7 +49,7 @@ export default function RegistroPage() {
                                 showOptionalFields: false
                             }
                         }}
-                        forceRedirectUrl="/dashboard"
+                        fallbackRedirectUrl="/dashboard"
                         signInUrl="/login"
                     />
                 </div>
