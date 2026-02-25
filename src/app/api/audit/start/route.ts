@@ -57,6 +57,7 @@ export async function POST(request: Request) {
         }
 
         // 4. Generar Auditoría (IA)
+        console.log("DEBUG - Iniciando proceso de IA...");
         const auditResult = await generateAudit(campaigns, clerkUserId, currency);
 
         // 5. Devolver Éxito
@@ -68,6 +69,6 @@ export async function POST(request: Request) {
 
     } catch (error: any) {
         console.error('Error in /api/audit/start:', error);
-        return NextResponse.json({ error: error.message || 'Server error' }, { status: 500 });
+        return NextResponse.json({ error: 'audit_failed', message: error.message || 'Server error' }, { status: 500 });
     }
 }

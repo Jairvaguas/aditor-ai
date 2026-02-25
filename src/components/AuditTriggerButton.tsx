@@ -14,7 +14,15 @@ export default function AuditTriggerButton() {
             const res = await fetch('/api/audit/start', {
                 method: 'POST'
             });
-            const data = await res.json();
+            
+            let data;
+            try {
+                data = await res.json();
+            } catch (jsonErr) {
+                console.error("Failed to parse JSON response. Likely a 504 Gateway Timeout from Vercel.", jsonErr);
+                alert("La auditoría está tomando más tiempo del esperado. Por favor, revisa tu correo en unos minutos o intenta de nuevo.");
+                return;
+            }
 
             if (res.ok && data.success) {
                 router.push(data.redirectUrl);
@@ -22,10 +30,12 @@ export default function AuditTriggerButton() {
                 alert('Has agotado tu auditoría gratuita. ¡Pásate a Pro para análisis ilimitados!');
                 router.push(data.redirectUrl || '/subscribe');
             } else {
-                alert(`Error: ${data.error || 'Algo salió mal al conectar con Meta o la IA.'}`);
+                console.error("Backend Error:", data.message || data.error);
+                alert(`Error en la Auditoría: ${data.message || data.error || 'Error desconocido.'}`);
             }
         } catch (err) {
-            alert('Error de red Inesperado.');
+            console.error("Network Fetch Error:", err);
+            alert('Error de red Inesperado. Revisa tu conexión.');
         } finally {
             setIsLoading(false);
         }
