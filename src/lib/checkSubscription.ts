@@ -6,7 +6,7 @@ export async function checkSubscription(userId: string): Promise<boolean> {
     try {
         const { data, error } = await supabaseAdmin
             .from('profiles')
-            .select('is_subscribed, trial_ends_at')
+            .select('is_subscribed, trial_ends_at, plan')
             .eq('clerk_user_id', userId)
             .single();
 
@@ -18,6 +18,10 @@ export async function checkSubscription(userId: string): Promise<boolean> {
         }
 
         if (data.is_subscribed) {
+            return true;
+        }
+
+        if (data.plan === 'trial') {
             return true;
         }
 
