@@ -47,6 +47,13 @@ Devuelve ÚNICAMENTE el XML con este schema exacto:
     <nivel></nivel>
     <resumen></resumen>
   </score_cuenta>
+  <metricas_globales>
+    <roas_promedio></roas_promedio>
+    <ctr_promedio></ctr_promedio>
+    <cpm_promedio></cpm_promedio>
+    <gasto_total_30d></gasto_total_30d>
+    <conversiones_totales></conversiones_totales>
+  </metricas_globales>
   <resumen_ejecutivo></resumen_ejecutivo>
   <hallazgos>
     <hallazgo id="1">

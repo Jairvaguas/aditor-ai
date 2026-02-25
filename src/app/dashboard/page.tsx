@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import AuditTriggerButton from "@/components/AuditTriggerButton";
+import ClientTableRow from "@/components/ClientTableRow";
 import { checkSubscription } from "@/lib/checkSubscription";
 import { supabaseAdmin } from "@/lib/supabase";
 import {
@@ -65,14 +66,15 @@ export default async function DashboardPage() {
             return match ? match[1].trim() : '';
         };
 
-        const metricasXml = extract(lastAudit.xml_raw, 'metricas_globales');
+        // Try 'metricas_globales', fallback to 'resumen_ejecutivo' or 'metricas_cuenta'
+        const metricasXml = extract(lastAudit.xml_raw, 'metricas_globales') || extract(lastAudit.xml_raw, 'resumen_ejecutivo') || extract(lastAudit.xml_raw, 'metricas_cuenta');
         console.log('Parsed metricasXml:', metricasXml);
         if (metricasXml) {
             metrics = {
-                roas: (extract(metricasXml, 'roas') || "--") + "x",
-                ctr: (extract(metricasXml, 'ctr') || "--") + "%",
-                cpm: "$" + (extract(metricasXml, 'cpm_promedio') || "0"),
-                spend: "$" + (extract(metricasXml, 'gasto_total') || "0"),
+                roas: (extract(metricasXml, 'roas_promedio') || extract(metricasXml, 'roas') || "--") + "x",
+                ctr: (extract(metricasXml, 'ctr_promedio') || extract(metricasXml, 'ctr') || "--") + "%",
+                cpm: "$" + (extract(metricasXml, 'cpm_promedio') || extract(metricasXml, 'cpm') || "0"),
+                spend: "$" + (extract(metricasXml, 'gasto_total_30d') || extract(metricasXml, 'gasto_total') || extract(metricasXml, 'gasto') || "0"),
             };
         }
 
@@ -298,21 +300,7 @@ export default async function DashboardPage() {
                                         ) : (
                                             <>
                                                 {hallazgos.map((h, i) => (
-                                                    <tr key={i} className="hover:bg-slate-800/40 transition-colors group cursor-pointer">
-                                                        <td className="py-4 px-6">
-                                                            <div className={`font-bold text-white text-sm group-hover:${h.styles.text} transition-colors`}>{h.campana}</div>
-                                                            <div className="text-xs text-slate-500 mt-1">Detectado por IA</div>
-                                                        </td>
-                                                        <td className="py-4 px-6">
-                                                            <span className={`inline-flex items-center gap-1.5 ${h.styles.bg} ${h.styles.text} text-xs font-bold px-2.5 py-1 rounded-md border ${h.styles.border}`}>
-                                                                <span className={`w-1.5 h-1.5 rounded-full ${h.styles.dot}`}></span> {h.estado}
-                                                            </span>
-                                                        </td>
-                                                        <td className="py-4 px-6 text-sm text-slate-300 font-medium">--</td>
-                                                        <td className="py-4 px-6 text-right">
-                                                            <div className={`font-bold font-syne ${h.styles.text} text-base`}>{h.roi}</div>
-                                                        </td>
-                                                    </tr>
+                                                    <ClientTableRow key={i} item={h} auditId={lastAudit.id} />
                                                 ))}
                                             </>
                                         )}

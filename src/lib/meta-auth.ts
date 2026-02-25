@@ -122,27 +122,29 @@ export async function getAdAccounts(accessToken: string): Promise<AdAccount[]> {
 }
 
 export async function getCampaignInsights(accessToken: string, adAccountId: string) {
-    // Definimos campos clave para el analisis. 
-    // account_id es el prefijo "act_<num>" normalmente
     const accountId = adAccountId.startsWith('act_') ? adAccountId : `act_${adAccountId}`;
 
-    const fields = [
-        'campaign_name',
-        'adset_name',
-        'ad_name',
-        'spend',
-        'impressions',
-        'clicks',
-        'reach',
-        'actions'
-    ].join(',');
-
-    // Last 30 days
+    // Last 30 days explicit fields including name and nested insights
     const res = await fetch(
-        `${BASE_URL}/${accountId}/insights?fields=${fields}&date_preset=last_30d&level=campaign&access_token=${accessToken}`
+        `${BASE_URL}/${accountId}/campaigns?fields=id,name,status,insights.date_preset(last_30d){spend,impressions,clicks,reach,actions}&access_token=${accessToken}`
     );
     const data = await res.json();
 
     if (data.error) throw new Error(data.error.message);
-    return data.data || [];
+
+    const campaignsData = data.data || [];
+
+    return campaignsData.map((c: any) => {
+        const insights = c.insights?.data?.[0] || {};
+        return {
+            campaign_id: c.id,
+            campaign_name: c.name,
+            status: c.status,
+            spend: insights.spend || "0",
+            impressions: insights.impressions || "0",
+            clicks: insights.clicks || "0",
+            reach: insights.reach || "0",
+            actions: insights.actions || []
+        };
+    });
 }

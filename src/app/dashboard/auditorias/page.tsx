@@ -137,9 +137,17 @@ export default async function AuditoriasPage() {
                                         {new Date(audit.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
                                     </h3>
 
-                                    <div className="flex items-center gap-1.5 text-sm text-slate-400 mb-6">
-                                        <Target className="w-4 h-4 text-slate-500" />
-                                        <span>Campañas analizadas</span>
+                                    <div className="flex items-center gap-2 mb-6">
+                                        <div className="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/50 flex items-center gap-1.5">
+                                            <span className="text-xs text-slate-400 font-medium">Score:</span>
+                                            <span className={`text-sm font-extrabold font-syne ${audit.score >= 80 ? 'text-[#00D4AA]' : audit.score >= 50 ? 'text-[#ffe66d]' : 'text-[#FF6B6B]'}`}>
+                                                {audit.score || '--'}/100
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5 text-xs text-slate-500 ml-auto">
+                                            <Target className="w-3.5 h-3.5" />
+                                            <span>IA</span>
+                                        </div>
                                     </div>
 
                                     <div className="mt-auto pt-4 border-t border-slate-800/80">
