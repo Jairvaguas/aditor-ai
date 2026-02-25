@@ -65,12 +65,18 @@ export async function POST(request: Request) {
             .upsert({ 
                 clerk_user_id: clerkUserId, 
                 selected_ad_account_id: adAccountId,
+                meta_access_token: currentProfile.meta_access_token,
                 email: 'pending@aditor-ai.com',
                 nombre: 'Usuario Meta'
             }, { onConflict: 'clerk_user_id' });
 
         if (profileError) {
-            console.error('DEBUG - Fallo al guardar cuenta seleccionada:', profileError);
+            console.error(`DEBUG - Error de Persistencia: ${profileError.message} - Código: ${profileError.code}`);
+            
+            if (profileError.code === '23505' || (profileError.message && profileError.message.includes('unique constraint'))) {
+                return NextResponse.json({ error: 'account_claimed_by_another' }, { status: 409 });
+            }
+            
             return NextResponse.json({ error: 'Database error storing selection' }, { status: 500 });
         }
 
