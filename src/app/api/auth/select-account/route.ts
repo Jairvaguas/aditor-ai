@@ -12,36 +12,40 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { adAccountId } = body;
+        const { adAccountId, currency = 'USD' } = body;
 
         if (!adAccountId) {
             return NextResponse.json({ error: 'Missing adAccountId' }, { status: 400 });
         }
 
-        // 1. Save selected account to profiles
+        // 1. Save selected account to profiles via UPSERT for safety and log thoroughly
         const { error: profileError } = await supabaseAdmin
             .from('profiles')
-            .update({ selected_ad_account_id: adAccountId })
-            .eq('clerk_user_id', clerkUserId);
+            .upsert({ 
+                clerk_user_id: clerkUserId, 
+                selected_ad_account_id: adAccountId,
+                email: 'pending@aditor-ai.com',
+                nombre: 'Usuario Meta'
+            }, { onConflict: 'clerk_user_id' });
 
         if (profileError) {
-            console.error('Error updating selected ad account:', profileError);
+            console.error('DEBUG - Fallo al guardar cuenta seleccionada:', profileError);
             return NextResponse.json({ error: 'Database error storing selection' }, { status: 500 });
         }
 
-        // 2. We need the access token for this user to fetch campaigns
-        const { data: connectedAccount, error: accountError } = await supabaseAdmin
-            .from('connected_accounts')
-            .select('access_token, currency')
-            .eq('user_id', clerkUserId)
-            .single(); // we assume they have a token
+        // 2. Extract token from profiles (legacy code queried connected_accounts)
+        const { data: profileData, error: tokenError } = await supabaseAdmin
+            .from('profiles')
+            .select('meta_access_token')
+            .eq('clerk_user_id', clerkUserId)
+            .single();
 
-        if (accountError || !connectedAccount) {
-            console.error('Error fetching connected account:', accountError);
+        if (tokenError || !profileData || !profileData.meta_access_token) {
+            console.error('Error fetching meta token from profiles:', tokenError);
             return NextResponse.json({ error: 'Token not found for user' }, { status: 500 });
         }
 
-        const { access_token: accessToken, currency } = connectedAccount;
+        const accessToken = profileData.meta_access_token;
 
         // 3. Fetch campaigns for the selected account
         const campaigns = await getCampaignInsights(accessToken, adAccountId);

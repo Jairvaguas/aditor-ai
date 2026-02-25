@@ -21,12 +21,16 @@ export default function AccountSelector({ accounts }: { accounts: AdAccount[] })
         setIsLoading(true);
 
         try {
+const acc = accounts.find(a => a.account_id === accountId);
+            const currency = acc?.currency || 'USD';
+            const bodyPayload = JSON.stringify({ adAccountId: accountId, currency });
+            
             const res = await fetch('/api/auth/select-account', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ adAccountId: accountId })
+                body: bodyPayload
             });
 
             const data = await res.json();
