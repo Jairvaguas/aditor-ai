@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { exchangeCodeForToken, getAdAccounts, getCampaignInsights, getMetaUser } from '@/lib/meta-auth';
 import { generateAudit } from '@/lib/audit';
 import { supabaseAdmin } from '@/lib/supabase';
+import { clerkClient } from '@clerk/nextjs/server';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -39,6 +40,42 @@ export async function GET(request: Request) {
         // 2. Intercambio de Token
         const accessToken = await exchangeCodeForToken(code);
 
+        // --- DUPLICATE PROFILE CLEANUP LOGIC ---
+        let userEmail = 'pending@aditor-ai.com';
+        let userName = 'Usuario Meta';
+        try {
+            const client = typeof clerkClient === 'function' ? await clerkClient() : clerkClient;
+            const user = await client.users.getUser(clerkUserId);
+            if (user && user.emailAddresses && user.emailAddresses.length > 0) {
+                userEmail = user.emailAddresses[0].emailAddress;
+            }
+            if (user && (user.firstName || user.lastName)) {
+                userName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+            }
+            
+            console.log(`DEBUG - Email real obtenido de Clerk: ${userEmail}`);
+            
+            if (userEmail !== 'pending@aditor-ai.com') {
+                const { data: existingProfile } = await supabaseAdmin
+                    .from('profiles')
+                    .select('id, clerk_user_id')
+                    .eq('email', userEmail)
+                    .neq('clerk_user_id', clerkUserId)
+                    .single();
+                    
+                if (existingProfile) {
+                    console.log(`DEBUG - Resolviendo duplicado: Actualizando clerk_user_id de ${existingProfile.clerk_user_id} a ${clerkUserId} para el email ${userEmail}`);
+                    await supabaseAdmin
+                        .from('profiles')
+                        .update({ clerk_user_id: clerkUserId })
+                        .eq('id', existingProfile.id);
+                }
+            }
+        } catch (e: any) {
+            console.error("Warning: Could not fetch or cleanup user from Clerk:", e.message || e);
+        }
+        // ---------------------------------------
+
         // 3. Guardar Token en Supabase (tabla profiles)
         console.log("DEBUG - Intentando UPSERT de token para clerkUserId:", clerkUserId);
         const { data: updatedRecords, error: dbError } = await supabaseAdmin
@@ -46,8 +83,8 @@ export async function GET(request: Request) {
             .upsert({ 
                 clerk_user_id: clerkUserId, 
                 meta_access_token: accessToken,
-                email: 'pending@aditor-ai.com',
-                nombre: 'Usuario Meta'
+                email: userEmail,
+                nombre: userName
             }, { onConflict: 'clerk_user_id' })
             .select();
             
@@ -80,8 +117,8 @@ export async function GET(request: Request) {
                 .upsert({ 
                     clerk_user_id: clerkUserId, 
                     selected_ad_account_id: selectedAccount.account_id,
-                    email: 'pending@aditor-ai.com',
-                    nombre: 'Usuario Meta'
+                    email: userEmail,
+                    nombre: userName
                 }, { onConflict: 'clerk_user_id' });
                 
             if (accDbError) {
