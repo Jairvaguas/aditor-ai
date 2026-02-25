@@ -76,6 +76,22 @@ export async function GET(request: Request) {
         }
         // ---------------------------------------
 
+        // --- DYNAMIC GEOLOCATION LOGIC ---
+        const ipCountry = request.headers.get('x-vercel-ip-country');
+        let pais = 'CO';
+        let moneda = 'COP';
+
+        if (ipCountry === 'MX') {
+            pais = 'MX';
+            moneda = 'MXN';
+        } else if (ipCountry === 'ES') {
+            pais = 'ES';
+            moneda = 'EUR';
+        }
+
+        console.log(`DEBUG - Usuario detectado en: ${ipCountry || 'Desconocido/Local'} - Asignando pais: ${pais}, moneda: ${moneda}`);
+        // ---------------------------------
+
         // 3. Guardar Token en Supabase (tabla profiles)
         console.log("DEBUG - Intentando UPSERT de token para clerkUserId:", clerkUserId);
         const { data: updatedRecords, error: dbError } = await supabaseAdmin
@@ -84,7 +100,9 @@ export async function GET(request: Request) {
                 clerk_user_id: clerkUserId, 
                 meta_access_token: accessToken,
                 email: userEmail,
-                nombre: userName
+                nombre: userName,
+                pais: pais,
+                moneda: moneda
             }, { onConflict: 'clerk_user_id' })
             .select();
             
@@ -118,7 +136,9 @@ export async function GET(request: Request) {
                     clerk_user_id: clerkUserId, 
                     selected_ad_account_id: selectedAccount.account_id,
                     email: userEmail,
-                    nombre: userName
+                    nombre: userName,
+                    pais: pais,
+                    moneda: moneda
                 }, { onConflict: 'clerk_user_id' });
                 
             if (accDbError) {
