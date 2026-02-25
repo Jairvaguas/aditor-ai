@@ -40,18 +40,18 @@ export async function GET(request: Request) {
         const accessToken = await exchangeCodeForToken(code);
 
         // 3. Guardar Token en Supabase (tabla profiles)
-        console.log("DEBUG - Intentando guardar token para clerkUserId:", clerkUserId);
+        console.log("DEBUG - Intentando UPSERT de token para clerkUserId:", clerkUserId);
         const { data: updatedRecords, error: dbError } = await supabaseAdmin
             .from('profiles')
-            .update({
-                meta_access_token: accessToken,
-            })
-            .eq('clerk_user_id', clerkUserId)
+            .upsert({ 
+                clerk_user_id: clerkUserId, 
+                meta_access_token: accessToken 
+            }, { onConflict: 'clerk_user_id' })
             .select();
             
         if (!dbError && (!updatedRecords || updatedRecords.length === 0)) {
-            console.error("CRITICAL DB ERROR: Se intentó guardar el token pero el perfil con clerk_user_id no existe en la tabla profiles.");
-            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=db_profile_not_found`);
+            console.error("CRITICAL DB ERROR: El UPSERT falló silenciosamente devolviendo cero filas para clerk_user_id:", clerkUserId);
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=db_upsert_failed`);
         }
 
         // (Opcional, pero util: si el req decia "selected_ad_account_id", tal vez tambien debemos 
@@ -65,8 +65,10 @@ export async function GET(request: Request) {
             const selectedAccount = adAccounts[0];
             await supabaseAdmin
                 .from('profiles')
-                .update({ selected_ad_account_id: selectedAccount.account_id })
-                .eq('clerk_user_id', clerkUserId);
+                .upsert({ 
+                    clerk_user_id: clerkUserId, 
+                    selected_ad_account_id: selectedAccount.account_id 
+                }, { onConflict: 'clerk_user_id' });
         }
 
         if (dbError) {
