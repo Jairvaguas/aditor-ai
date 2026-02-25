@@ -51,8 +51,9 @@ function parseAuditXML(xml: string) {
     return { score, nivel, resumen, hallazgos };
 }
 
-export default async function TeaserPage({ searchParams }: { searchParams: { auditId: string } }) {
-    const { auditId } = searchParams;
+export default async function TeaserPage(props: { searchParams: Promise<{ auditId?: string }> }) {
+    const searchParams = await props.searchParams;
+    const auditId = searchParams?.auditId;
 
     let score = 64;
     let nivel = "Requiere Atención";
