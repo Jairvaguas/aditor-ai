@@ -58,3 +58,38 @@ export async function sendAuditReadyEmail(
     return { success: false, error: e };
   }
 }
+
+export async function sendTrialExpiryEmail(email: string, nombre: string) {
+  const resend = getResend()
+  if (!resend) return
+
+  await resend.emails.send({
+    from: 'Aditor AI <hola@aditor-ai.com>',
+    to: email,
+    subject: '⏰ Tu prueba gratuita vence mañana — no pierdas el acceso',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #1A1A2E; color: #FAFAFA; padding: 40px; border-radius: 16px;">
+        <h1 style="color: #FFE66D; font-size: 22px; margin-bottom: 8px;">⏰ Tu prueba gratis vence mañana</h1>
+        <p style="color: #8892A4; margin-bottom: 24px;">Hola ${nombre}, mañana termina tu período de prueba gratuita de Aditor AI.</p>
+        
+        <div style="background: rgba(233,69,96,0.1); border: 1px solid rgba(233,69,96,0.3); border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+          <p style="color: #FAFAFA; margin: 0;">Si no activás tu suscripción, <strong style="color: #E94560;">perderás acceso a:</strong></p>
+          <ul style="color: #8892A4; margin-top: 12px;">
+            <li>Auditorías semanales automáticas</li>
+            <li>Reportes completos de tus campañas</li>
+            <li>Alertas de campañas con pérdida activa</li>
+          </ul>
+        </div>
+
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/subscribe" 
+           style="display: block; background: linear-gradient(135deg, #E94560, #ff8e53); color: white; text-decoration: none; padding: 16px 24px; border-radius: 12px; text-align: center; font-weight: 700; font-size: 16px; margin-bottom: 16px;">
+          Activar suscripción — $47/mes →
+        </a>
+
+        <p style="color: #8892A4; font-size: 12px; text-align: center;">
+          Cancelás cuando quieras · Sin permanencia
+        </p>
+      </div>
+    `
+  })
+}
