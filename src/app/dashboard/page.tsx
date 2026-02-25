@@ -50,6 +50,11 @@ export default async function DashboardPage() {
 
     const isZeroState = !lastAudit;
 
+    console.log('--- DEBUG START ---');
+    console.log('User ID from Clerk:', user.id);
+    console.log('Last audit ID:', lastAudit?.id);
+    console.log('XML raw preview:', lastAudit?.xml_raw?.substring(0, 500));
+
     let metrics = { roas: "--", ctr: "--", cpm: "$0", spend: "$0" };
     let hallazgos: any[] = [];
 
@@ -61,6 +66,7 @@ export default async function DashboardPage() {
         };
 
         const metricasXml = extract(lastAudit.xml_raw, 'metricas_globales');
+        console.log('Parsed metricasXml:', metricasXml);
         if (metricasXml) {
             metrics = {
                 roas: (extract(metricasXml, 'roas') || "--") + "x",
