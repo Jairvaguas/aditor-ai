@@ -47,10 +47,17 @@ export async function POST(request: Request) {
             .neq('clerk_user_id', clerkUserId)
             .limit(1);
 
+        if (globalCheckError) {
+            console.error('DEBUG - Error de BD en verificación de unicidad global:', globalCheckError);
+            return NextResponse.json({ error: 'Database check failed' }, { status: 500 });
+        }
+
         if (globalCheck && globalCheck.length > 0) {
-            console.warn(`Account ${adAccountId} is already claimed by ${globalCheck[0].clerk_user_id}`);
+            console.warn(`DEBUG - Bloqueo por Conflicto de Usuario (Fraude): Account ${adAccountId} ya pertenece a ${globalCheck[0].clerk_user_id}. Intento por ${clerkUserId}`);
             return NextResponse.json({ error: 'account_already_in_use' }, { status: 403 });
         }
+        
+        // Re-vinculación/Éxito: Si todo está en orden y ya le pertenece a este mismo usuario, se permite continuar sin generar error.
 
         // 1. Save selected account to profiles via UPSERT for safety and log thoroughly
         const { error: profileError } = await supabaseAdmin
