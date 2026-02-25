@@ -124,8 +124,7 @@ Devuelve ÚNICAMENTE el XML con este schema exacto:
     .from('auditorias')
     .insert({
       user_id: userId,
-      clerk_user_id: userId, // adding clerk_user_id just in case to sync with dashboard query
-      ad_account_id: campaigns[0]?.ad_account_id || 'test',
+      ad_account_id: campaigns[0]?.ad_account_id || 'unknown',
       tipo: 'manual',
       xml_raw: cleanXml,
       score: score,

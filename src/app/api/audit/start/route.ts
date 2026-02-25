@@ -32,13 +32,13 @@ export async function POST(request: Request) {
             const { count, error: countError } = await supabaseAdmin
                 .from('auditorias')
                 .select('*', { count: 'exact', head: true })
-                .eq('clerk_user_id', clerkUserId);
+                .eq('user_id', clerkUserId);
 
             if (!countError && count && count > 0) {
-                return NextResponse.json({ 
-                    success: false, 
-                    reason: 'trial_exhausted', 
-                    redirectUrl: '/subscribe' 
+                return NextResponse.json({
+                    success: false,
+                    reason: 'trial_exhausted',
+                    redirectUrl: '/subscribe'
                 });
             }
         }

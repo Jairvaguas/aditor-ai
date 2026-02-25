@@ -43,7 +43,7 @@ export default async function DashboardPage() {
     const { data: lastAudit } = await supabaseAdmin
         .from('auditorias')
         .select('*')
-        .eq('clerk_user_id', user.id)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
