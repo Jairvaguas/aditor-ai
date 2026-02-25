@@ -80,6 +80,11 @@ Devuelve ÚNICAMENTE el XML con este schema exacto:
 
   const xmlText = response.content[0].type === 'text' ? response.content[0].text : '';
 
+  console.log('--- DEBUG INSERT ---');
+  console.log('XML a guardar (primeros 200 chars):', xmlText?.substring(0, 200));
+  console.log('XML length:', xmlText?.length);
+  console.log('Insertando con user_id:', userId);
+
   // Guardar en Supabase - Using Service Role Key for backend operations
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
