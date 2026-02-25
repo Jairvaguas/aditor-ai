@@ -80,10 +80,23 @@ Devuelve ÚNICAMENTE el XML con este schema exacto:
 
   const xmlText = response.content[0].type === 'text' ? response.content[0].text : '';
 
+  // Limpiar markdown code blocks si el LLM los agrega
+  const cleanXml = xmlText
+    .replace(/```xml\n?/g, '')
+    .replace(/```\n?/g, '')
+    .trim();
+
+  const scoreMatch = cleanXml.match(/<valor>(\d+)<\/valor>/);
+  const score = scoreMatch ? parseInt(scoreMatch[1]) : null;
+
+  const hallazgosMatches = cleanXml.match(/<hallazgo /g);
+  const hallazgosCount = hallazgosMatches ? hallazgosMatches.length : 0;
+
   console.log('--- DEBUG INSERT ---');
-  console.log('XML a guardar (primeros 200 chars):', xmlText?.substring(0, 200));
-  console.log('XML length:', xmlText?.length);
+  console.log('XML a guardar (primeros 200 chars):', cleanXml?.substring(0, 200));
+  console.log('XML length:', cleanXml?.length);
   console.log('Insertando con user_id:', userId);
+  console.log('Score parseado:', score, '| Hallazgos:', hallazgosCount);
 
   // Guardar en Supabase - Using Service Role Key for backend operations
   const supabase = createClient(
@@ -95,11 +108,12 @@ Devuelve ÚNICAMENTE el XML con este schema exacto:
     .from('auditorias')
     .insert({
       user_id: userId,
+      clerk_user_id: userId, // adding clerk_user_id just in case to sync with dashboard query
       ad_account_id: campaigns[0]?.ad_account_id || 'test',
       tipo: 'manual',
-      xml_raw: xmlText,
-      // For parsed_data, we might want to parse it here or just store raw. 
-      // User instructions just said "xml_raw: xmlText".
+      xml_raw: cleanXml,
+      score: score,
+      hallazgos_count: hallazgosCount,
       periodo_inicio: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       periodo_fin: new Date().toISOString().split('T')[0],
     })
@@ -111,5 +125,5 @@ Devuelve ÚNICAMENTE el XML con este schema exacto:
     throw error;
   }
 
-  return { id: data.id, xml: xmlText };
+  return { id: data.id, xml: cleanXml };
 }
