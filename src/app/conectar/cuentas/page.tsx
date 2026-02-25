@@ -11,24 +11,25 @@ export default async function SelectAccountPage() {
     const { userId } = await auth();
 
     if (!userId) {
-        redirect('/sign-in?redirect_url=/conectar');
+        redirect('/login?redirect=/conectar');
     }
 
     // Obtenemos el token del usuario para llamar a Meta
-    const { data: account, error } = await supabaseAdmin
-        .from('connected_accounts')
-        .select('access_token')
-        .eq('user_id', userId)
+    const { data: profile, error } = await supabaseAdmin
+        .from('profiles')
+        .select('meta_access_token')
+        .eq('clerk_user_id', userId)
         .single();
 
-    if (error || !account?.access_token) {
-        redirect('/conectar?error=auth_required');
+    if (error || !profile?.meta_access_token) {
+        console.error("DEBUG - Fallo en obtención de token en Supabase:", { error, clerkUserId: userId, profile });
+        redirect('/conectar?error=token_exchange_failed');
     }
 
     // Buscamos las cuentas en Meta
     let adAccounts = [];
     try {
-        adAccounts = await getAdAccounts(account.access_token);
+        adAccounts = await getAdAccounts(profile.meta_access_token);
     } catch (e: any) {
         console.error("Error fetching ad accounts from Meta:", e);
         redirect('/conectar?error=meta_api_error');
