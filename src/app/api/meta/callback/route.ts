@@ -40,18 +40,19 @@ export async function GET(request: Request) {
         const accessToken = await exchangeCodeForToken(code);
 
         // 3. Guardar Token en Supabase (tabla profiles)
-        const { error: dbError } = await supabaseAdmin
+        console.log("DEBUG - Intentando guardar token para clerkUserId:", clerkUserId);
+        const { data: updatedRecords, error: dbError } = await supabaseAdmin
             .from('profiles')
             .update({
                 meta_access_token: accessToken,
-                // Si el usuario acaba de conectar, asumiremos que en algun punto
-                // podria guardar selected_ad_account_id, pero el request pedía guardarlo
-                // aqui si era posible o en el siguiente paso.
-                // Como obtenemos selected_ad_account_id? 
-                // Ah, el usuario pidio:
-                // "Guardar el token en Supabase tabla profiles del usuario actual (selected_ad_account_id y un nuevo campo meta_access_token)"
             })
-            .eq('clerk_user_id', clerkUserId);
+            .eq('clerk_user_id', clerkUserId)
+            .select();
+            
+        if (!dbError && (!updatedRecords || updatedRecords.length === 0)) {
+            console.error("CRITICAL DB ERROR: Se intentó guardar el token pero el perfil con clerk_user_id no existe en la tabla profiles.");
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=db_profile_not_found`);
+        }
 
         // (Opcional, pero util: si el req decia "selected_ad_account_id", tal vez tambien debemos 
         // traer adAccounts y guardar el primero para cumplirlo a raja tabla o simplemente delegar a /conectar/cuentas)
