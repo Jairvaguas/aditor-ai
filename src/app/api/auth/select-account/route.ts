@@ -12,7 +12,7 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { adAccountId, currency = 'USD' } = body;
+        const { adAccountId, currency = 'COP' } = body;
 
         if (!adAccountId) {
             return NextResponse.json({ error: 'Missing adAccountId' }, { status: 400 });
@@ -67,11 +67,13 @@ export async function POST(request: Request) {
                 selected_ad_account_id: adAccountId,
                 meta_access_token: currentProfile.meta_access_token,
                 email: 'pending@aditor-ai.com',
-                nombre: 'Usuario Meta'
+                nombre: 'Usuario Meta',
+                moneda: currency || 'COP'
             }, { onConflict: 'clerk_user_id' });
 
         if (profileError) {
             console.error(`DEBUG - Error de Persistencia: ${profileError.message} - Código: ${profileError.code}`);
+            console.error(`JSON Completo del Error de BD:`, JSON.stringify(profileError));
             
             if (profileError.code === '23505' || (profileError.message && profileError.message.includes('unique constraint'))) {
                 return NextResponse.json({ error: 'account_claimed_by_another' }, { status: 409 });
