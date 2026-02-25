@@ -45,11 +45,23 @@ export async function GET(request: Request) {
             .from('profiles')
             .upsert({ 
                 clerk_user_id: clerkUserId, 
-                meta_access_token: accessToken 
+                meta_access_token: accessToken,
+                email: 'pending@aditor-ai.com',
+                nombre: 'Usuario Meta'
             }, { onConflict: 'clerk_user_id' })
             .select();
             
-        if (!dbError && (!updatedRecords || updatedRecords.length === 0)) {
+        if (dbError) {
+            console.error("DEBUG - Fallo en UPSERT de token:", { 
+                message: dbError.message, 
+                details: dbError.details, 
+                hint: dbError.hint,
+                code: dbError.code
+            });
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=db_error`);
+        }
+            
+        if (!updatedRecords || updatedRecords.length === 0) {
             console.error("CRITICAL DB ERROR: El UPSERT falló silenciosamente devolviendo cero filas para clerk_user_id:", clerkUserId);
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=db_upsert_failed`);
         }
@@ -63,19 +75,23 @@ export async function GET(request: Request) {
 
         if (adAccounts.length > 0) {
             const selectedAccount = adAccounts[0];
-            await supabaseAdmin
+            const { error: accDbError } = await supabaseAdmin
                 .from('profiles')
                 .upsert({ 
                     clerk_user_id: clerkUserId, 
-                    selected_ad_account_id: selectedAccount.account_id 
+                    selected_ad_account_id: selectedAccount.account_id,
+                    email: 'pending@aditor-ai.com',
+                    nombre: 'Usuario Meta'
                 }, { onConflict: 'clerk_user_id' });
-        }
-
-        if (dbError) {
-            console.log('=== DB ERROR ===');
-            console.log('userId from state:', clerkUserId);
-            console.log('error details:', JSON.stringify(dbError));
-            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=db_error`);
+                
+            if (accDbError) {
+                 console.error("DEBUG - Fallo en UPSERT de ad account:", { 
+                     message: accDbError.message, 
+                     details: accDbError.details, 
+                     hint: accDbError.hint
+                 });
+                 // We don't hard fail here to at least let them connect, but logged it.
+            }
         }
 
         // 6. Redirigir a Selección de Cuentas si se autentico y guardo todo bien.
