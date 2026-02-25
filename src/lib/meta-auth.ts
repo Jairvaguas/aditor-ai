@@ -86,10 +86,12 @@ const GRAPH_API_VERSION = 'v19.0';
 const BASE_URL = `https://graph.facebook.com/${GRAPH_API_VERSION}`;
 
 export async function exchangeCodeForToken(code: string): Promise<string> {
+    console.log("Variables check:", { appId: !!process.env.NEXT_PUBLIC_FACEBOOK_APP_ID, secret: !!process.env.FACEBOOK_APP_SECRET });
+
     const params = new URLSearchParams({
         client_id: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID!,
         client_secret: process.env.FACEBOOK_APP_SECRET!,
-        redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/meta/callback`,
+        redirect_uri: `https://www.aditor-ai.com/api/meta/callback`,
         code,
     });
 
