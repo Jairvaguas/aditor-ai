@@ -18,6 +18,40 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing adAccountId' }, { status: 400 });
         }
 
+        // 0. Extract current profile to check lock status (Limit = 1)
+        const { data: currentProfile, error: profileFetchError } = await supabaseAdmin
+            .from('profiles')
+            .select('meta_access_token, selected_ad_account_id, ad_accounts_count')
+            .eq('clerk_user_id', clerkUserId)
+            .single();
+
+        if (profileFetchError || !currentProfile) {
+            console.error('Error fetching profile for lock check:', profileFetchError);
+            return NextResponse.json({ error: 'Profile not found' }, { status: 500 });
+        }
+
+        const currentLockedAccount = currentProfile.selected_ad_account_id;
+        const limitCount = currentProfile.ad_accounts_count || 1;
+
+        // If limit is 1 and already locked to a different account, block it.
+        if (limitCount <= 1 && currentLockedAccount && currentLockedAccount !== adAccountId) {
+            console.warn(`User ${clerkUserId} attempted to change locked account. Rejected.`);
+            return NextResponse.json({ error: 'already_locked' }, { status: 403 });
+        }
+
+        // 0.5. Check Global Uniqueness - Is this account claimed by someone else?
+        const { data: globalCheck, error: globalCheckError } = await supabaseAdmin
+            .from('profiles')
+            .select('clerk_user_id')
+            .eq('selected_ad_account_id', adAccountId)
+            .neq('clerk_user_id', clerkUserId)
+            .limit(1);
+
+        if (globalCheck && globalCheck.length > 0) {
+            console.warn(`Account ${adAccountId} is already claimed by ${globalCheck[0].clerk_user_id}`);
+            return NextResponse.json({ error: 'account_already_in_use' }, { status: 403 });
+        }
+
         // 1. Save selected account to profiles via UPSERT for safety and log thoroughly
         const { error: profileError } = await supabaseAdmin
             .from('profiles')
@@ -33,12 +67,9 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Database error storing selection' }, { status: 500 });
         }
 
-        // 2. Extract token from profiles (legacy code queried connected_accounts)
-        const { data: profileData, error: tokenError } = await supabaseAdmin
-            .from('profiles')
-            .select('meta_access_token')
-            .eq('clerk_user_id', clerkUserId)
-            .single();
+        // 2. We already extracted token in step 0, reuse it.
+        const tokenError = null;
+        const profileData = currentProfile;
 
         if (tokenError || !profileData || !profileData.meta_access_token) {
             console.error('Error fetching meta token from profiles:', tokenError);

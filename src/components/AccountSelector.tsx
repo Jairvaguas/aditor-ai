@@ -11,8 +11,8 @@ interface AdAccount {
     currency: string;
 }
 
-export default function AccountSelector({ accounts }: { accounts: AdAccount[] }) {
-    const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
+export default function AccountSelector({ accounts, currentSelection }: { accounts: AdAccount[], currentSelection?: string | null }) {
+    const [selectedAccount, setSelectedAccount] = useState<string | null>(currentSelection || null);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
@@ -39,7 +39,13 @@ const acc = accounts.find(a => a.account_id === accountId);
                 router.push(`/teaser?auditId=${data.auditId}`);
             } else {
                 console.error("Error creating audit:", data.error);
-                router.push('/conectar?error=selection_failed');
+                if (data.error === 'account_already_in_use') {
+                    router.push('/conectar?error=account_already_in_use');
+                } else if (data.error === 'already_locked') {
+                    router.push('/conectar?error=account_locked');
+                } else {
+                    router.push('/conectar?error=selection_failed');
+                }
             }
         } catch (error) {
             console.error("Selection error:", error);
@@ -58,7 +64,7 @@ const acc = accounts.find(a => a.account_id === accountId);
                 <button
                     key={acc.id}
                     onClick={() => handleSelect(acc.account_id)}
-                    disabled={isLoading}
+                    disabled={isLoading || (!!currentSelection && currentSelection !== acc.account_id)}
                     className={`flex items-center justify-between p-5 rounded-2xl border transition-all duration-300 text-left cursor-pointer shadow-lg
                         ${selectedAccount === acc.account_id
                             ? 'bg-[#1877F2]/20 border-[#1877F2] transform scale-[1.02]'
@@ -70,6 +76,11 @@ const acc = accounts.find(a => a.account_id === accountId);
                     <div>
                         <div className="font-bold text-lg text-white mb-1">{acc.name}</div>
                         <div className="text-sm text-gray-400">ID: {acc.account_id} • Moneda: {acc.currency}</div>
+                        {currentSelection === acc.account_id && (
+                            <div className="text-xs font-semibold text-[#00D4AA] mt-1 uppercase tracking-wide">
+                                Cuenta Vinculada a tu Plan
+                            </div>
+                        )}
                     </div>
 
                     <div className="text-[#1877F2]">

@@ -17,7 +17,7 @@ export default async function SelectAccountPage() {
     // Obtenemos el token del usuario para llamar a Meta
     const { data: profile, error } = await supabaseAdmin
         .from('profiles')
-        .select('meta_access_token')
+        .select('meta_access_token, selected_ad_account_id')
         .eq('clerk_user_id', userId)
         .single();
 
@@ -48,7 +48,7 @@ export default async function SelectAccountPage() {
                     Elige con qué cuenta publicitaria de Meta quieres realizar la auditoría gratuita.
                 </p>
 
-                <AccountSelector accounts={adAccounts} />
+                <AccountSelector accounts={adAccounts} currentSelection={profile.selected_ad_account_id} />
             </main>
             <Footer />
         </div>
