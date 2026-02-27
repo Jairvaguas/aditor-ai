@@ -1,11 +1,25 @@
 import Link from "next/link";
 import { ArrowRight, Search, TrendingUp, Clock, AlertTriangle, CheckCircle2, Zap, Repeat } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
+import DynamicPricingForm from "@/components/DynamicPricingForm";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-export default function Home() {
-  const t = useTranslations("Landing");
+export default async function Home() {
+  const t = await getTranslations("Landing");
+
+  let estimatedCop = 185000;
+  try {
+      const copRes = await fetch("https://api.exchangerate-api.com/v4/latest/USD", { next: { revalidate: 3600 } });
+      if (copRes.ok) {
+          const data = await copRes.json();
+          if (data && data.rates && data.rates.COP) {
+              estimatedCop = Math.round(47 * data.rates.COP);
+          }
+      }
+  } catch (e) {
+      console.error("Error fetching exchange rate:", e);
+  }
 
   return (
     <main className="flex min-h-screen flex-col bg-[#0B1120] text-[#F0F0F0] font-sans selection:bg-[#FF6B6B]/30">
@@ -169,42 +183,10 @@ export default function Home() {
             <p className="text-gray-400 text-xl">{t("pricingSubtitle")}</p>
           </div>
 
-          <div className="max-w-xl mx-auto bg-[#131D2E] rounded-3xl border border-[#FF6B6B]/30 p-10 shadow-2xl relative">
-            <div className="absolute top-0 right-8 transform -translate-y-1/2">
-              <span className="bg-gradient-to-r from-[#FF6B6B] to-[#ff8e53] text-white text-sm font-bold uppercase tracking-wider py-1.5 px-4 rounded-full shadow-lg">
-                {t("popular")}
-              </span>
-            </div>
+          <DynamicPricingForm copRate={estimatedCop / 47} isLanding={true} />
 
-            <h3 className="text-3xl font-bold mb-3">{t("planName")}</h3>
-            <p className="text-gray-400 text-lg mb-8">{t("planDesc")}</p>
-            <div className="mb-10 border-b border-white/10 pb-10">
-              <div className="flex items-baseline gap-3">
-                <span className="text-6xl font-extrabold text-white">{t("price")}</span>
-                <span className="text-gray-500 font-medium text-xl">{t("period")}</span>
-              </div>
-              <div className="text-sm font-medium text-gray-400 mt-2">{t("includesCount")}</div>
-              <p className="text-base text-[#00D4AA] font-medium mt-3 flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5" /> {t("trial")}
-              </p>
-            </div>
-
-            <ul className="space-y-5 mb-10">
-              {[t("perk1"), t("perk2"), t("perk3"), t("perk4"), t("perk5")].map((feature, i) => (
-                <li key={i} className="flex items-start gap-4 text-gray-300 text-lg">
-                  <CheckCircle2 className="w-6 h-6 text-[#00D4AA] flex-shrink-0 mt-0.5" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-
-            <Link href="/conectar" className="block w-full text-center bg-[#FF6B6B] hover:bg-[#ff5252] text-white px-8 py-5 rounded-xl text-xl font-bold transition-all shadow-[0_4px_14px_0_rgba(255,107,107,0.39)] hover:shadow-[0_6px_20px_rgba(255,107,107,0.23)] hover:-translate-y-0.5">
-              {t("pricingCta")}
-            </Link>
-          </div>
         </div>
       </section>
-
 
       {/* 5.5 FAQs */}
       <section id="faq" className="py-24 w-full">

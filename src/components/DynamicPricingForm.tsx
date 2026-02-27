@@ -1,13 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import SubscribeButton from './SubscribeButton';
 
 interface DynamicPricingFormProps {
     copRate: number;
+    isLanding?: boolean;
 }
 
-export default function DynamicPricingForm({ copRate }: DynamicPricingFormProps) {
+export default function DynamicPricingForm({ copRate, isLanding = false }: DynamicPricingFormProps) {
     const [accountsCount, setAccountsCount] = useState<number>(1);
 
     let usdPrice = 47;
@@ -103,6 +105,13 @@ export default function DynamicPricingForm({ copRate }: DynamicPricingFormProps)
                     >
                         Hablar con ventas
                     </a>
+                ) : isLanding ? (
+                    <Link
+                        href="/conectar"
+                        className="px-8 py-4 bg-gradient-to-r from-[#FF6B6B] to-[#ff8e53] text-white font-bold rounded-xl shadow-[0_6px_20px_rgba(255,107,107,0.35)] hover:shadow-[0_8px_25px_rgba(255,107,107,0.5)] transition-all duration-300 transform hover:-translate-y-1 w-full text-center"
+                    >
+                        Iniciar prueba gratis
+                    </Link>
                 ) : (
                     <SubscribeButton accountsCount={accountsCount} formattedCop={formattedCop} />
                 )}
