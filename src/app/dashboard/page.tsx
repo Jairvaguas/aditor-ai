@@ -7,6 +7,7 @@ import AuditTriggerButton from "@/components/AuditTriggerButton";
 import ClientTableRow from "@/components/ClientTableRow";
 import { checkSubscription } from "@/lib/checkSubscription";
 import { supabaseAdmin } from "@/lib/supabase";
+import { getTranslations } from "next-intl/server";
 import {
     Bell,
     Search,
@@ -18,8 +19,10 @@ import {
     CheckCircle2,
     ChevronRight
 } from "lucide-react";
+import LanguageSelector from "@/components/LanguageSelector";
 
 export default async function DashboardPage() {
+    const t = await getTranslations("Dashboard");
     const user = await currentUser();
 
     if (!user) {
@@ -139,21 +142,21 @@ export default async function DashboardPage() {
 
                 {/* Navegación */}
                 <div className="flex-1 py-8 px-4 flex flex-col gap-2">
-                    <div className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Menú Principal</div>
+                    <div className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{t("menuTitle")}</div>
 
                     <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#FF6B6B]/10 text-[#FF6B6B] font-medium transition-colors">
                         <BarChart2 className="w-5 h-5" />
-                        <span>Dashboard</span>
+                        <span>{t("menu1")}</span>
                     </Link>
 
                     <Link href="/dashboard/auditorias" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors">
                         <Search className="w-5 h-5" />
-                        <span>Auditorías</span>
+                        <span>{t("menu2")}</span>
                     </Link>
 
                     <Link href="/dashboard/config" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors mt-auto">
                         <Settings className="w-5 h-5" />
-                        <span>Configuración</span>
+                        <span>{t("menu3")}</span>
                     </Link>
                 </div>
             </aside>
@@ -164,13 +167,14 @@ export default async function DashboardPage() {
                 {/* Header Superior */}
                 <header className="h-20 px-8 flex items-center justify-between border-b border-slate-800/50 bg-[#0B1120]/80 backdrop-blur-md sticky top-0 z-30">
                     <div className="flex items-center gap-4">
-                        <h1 className="text-2xl font-bold font-syne text-white">Hola, {displayName} 👋</h1>
+                        <h1 className="text-2xl font-bold font-syne text-white">{t("hello", { name: displayName })}</h1>
                         <div className="hidden sm:flex px-3 py-1 bg-gradient-to-r from-[#FF6B6B]/20 to-[#ff8e53]/20 border border-[#FF6B6B]/30 rounded-full text-[#FF6B6B] text-xs font-bold tracking-wide shadow-[0_0_10px_rgba(255,107,107,0.1)]">
-                            PLAN PRO
+                            {t("plan")}
                         </div>
                     </div>
 
                     <div className="flex items-center gap-4">
+                        <LanguageSelector />
                         <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center relative cursor-pointer hover:bg-slate-700 transition-colors">
                             <Bell className="w-5 h-5 text-slate-300" />
                             <div className="absolute top-2 right-2.5 w-2 h-2 bg-[#FF6B6B] rounded-full ring-2 ring-slate-800"></div>
@@ -194,13 +198,13 @@ export default async function DashboardPage() {
                         {/* ROAS */}
                         <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col relative overflow-hidden group">
                             <div className="flex justify-between items-start mb-4">
-                                <div className="text-slate-400 font-medium text-sm">ROAS Global</div>
+                                <div className="text-slate-400 font-medium text-sm">{t("roasGlobal")}</div>
                                 <div className="p-2 bg-[#ffe66d]/10 rounded-lg"><div className="text-lg">💰</div></div>
                             </div>
                             <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#ffe66d] transition-colors">{isZeroState ? "--" : metrics.roas}</div>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="flex items-center text-[#FF6B6B] font-bold"><TrendingDown className="w-3 h-3 mr-0.5" /> -0.3 </span>
-                                <span className="text-slate-500">vs semana ant.</span>
+                                <span className="text-slate-500">{t("vsPrev")}</span>
                             </div>
                             {/* Mini SVG Graph */}
                             <svg className="absolute bottom-0 left-0 w-full h-12 opacity-30 text-[#ffe66d]" viewBox="0 0 100 30" preserveAspectRatio="none">
@@ -211,13 +215,13 @@ export default async function DashboardPage() {
                         {/* CTR */}
                         <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col relative overflow-hidden group">
                             <div className="flex justify-between items-start mb-4">
-                                <div className="text-slate-400 font-medium text-sm">CTR Promedio</div>
+                                <div className="text-slate-400 font-medium text-sm">{t("ctrAvg")}</div>
                                 <div className="p-2 bg-[#00D4AA]/10 rounded-lg"><div className="text-lg">🖱️</div></div>
                             </div>
                             <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#00D4AA] transition-colors">{isZeroState ? "--" : metrics.ctr}</div>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="flex items-center text-[#00D4AA] font-bold"><TrendingUp className="w-3 h-3 mr-0.5" /> +0.2% </span>
-                                <span className="text-slate-500">vs semana ant.</span>
+                                <span className="text-slate-500">{t("vsPrev")}</span>
                             </div>
                             {/* Mini SVG Graph */}
                             <svg className="absolute bottom-0 left-0 w-full h-12 opacity-30 text-[#00D4AA]" viewBox="0 0 100 30" preserveAspectRatio="none">
@@ -228,13 +232,13 @@ export default async function DashboardPage() {
                         {/* CPM */}
                         <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col relative overflow-hidden group">
                             <div className="flex justify-between items-start mb-4">
-                                <div className="text-slate-400 font-medium text-sm">CPM Promedio</div>
+                                <div className="text-slate-400 font-medium text-sm">{t("cpmAvg")}</div>
                                 <div className="p-2 bg-[#FF6B6B]/10 rounded-lg"><div className="text-lg">📣</div></div>
                             </div>
                             <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#FF6B6B] transition-colors">{isZeroState ? "$0" : metrics.cpm}</div>
                             <div className="flex items-center gap-1.5 text-xs">
-                                <span className="flex items-center text-[#FF6B6B] font-bold">ALTO</span>
-                                <span className="text-slate-500">Requiere atención</span>
+                                <span className="flex items-center text-[#FF6B6B] font-bold">{t("high")}</span>
+                                <span className="text-slate-500">{t("attention")}</span>
                             </div>
                             {/* Mini SVG Graph */}
                             <svg className="absolute bottom-0 left-0 w-full h-12 opacity-30 text-[#FF6B6B]" viewBox="0 0 100 30" preserveAspectRatio="none">
@@ -245,13 +249,13 @@ export default async function DashboardPage() {
                         {/* Spend */}
                         <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col relative overflow-hidden group">
                             <div className="flex justify-between items-start mb-4">
-                                <div className="text-slate-400 font-medium text-sm">Gasto 7 días</div>
+                                <div className="text-slate-400 font-medium text-sm">{t("spend7d")}</div>
                                 <div className="p-2 bg-[#74B9FF]/10 rounded-lg"><div className="text-lg">💸</div></div>
                             </div>
                             <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#74B9FF] transition-colors">{isZeroState ? "$0" : metrics.spend}</div>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="flex items-center text-[#00D4AA] font-bold"><TrendingUp className="w-3 h-3 mr-0.5" /> +15% </span>
-                                <span className="text-slate-500">vs semana ant.</span>
+                                <span className="text-slate-500">{t("vsPrev")}</span>
                             </div>
                             {/* Mini SVG Graph */}
                             <svg className="absolute bottom-0 left-0 w-full h-12 opacity-30 text-[#74B9FF]" viewBox="0 0 100 30" preserveAspectRatio="none">
@@ -267,11 +271,11 @@ export default async function DashboardPage() {
                         <div className="lg:col-span-2 bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden flex flex-col">
                             <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
                                 <div>
-                                    <h2 className="text-lg font-bold font-syne text-white">Rendimiento de Campañas</h2>
-                                    <p className="text-sm text-slate-400 mt-1">Monitoreo activo por la IA.</p>
+                                    <h2 className="text-lg font-bold font-syne text-white">{t("tableTitle")}</h2>
+                                    <p className="text-sm text-slate-400 mt-1">{t("tableDesc")}</p>
                                 </div>
                                 <Link href="/dashboard/auditorias" className="text-[#FF6B6B] bg-[#FF6B6B]/10 hover:bg-[#FF6B6B]/20 text-sm font-bold py-2 px-4 rounded-lg transition-colors flex items-center gap-1">
-                                    Ver todas <ChevronRight className="w-4 h-4" />
+                                    {t("viewAll")} <ChevronRight className="w-4 h-4" />
                                 </Link>
                             </div>
 
@@ -279,17 +283,17 @@ export default async function DashboardPage() {
                                 <table className="w-full text-left border-collapse">
                                     <thead>
                                         <tr className="bg-slate-900/50 text-xs text-slate-400 uppercase tracking-wider border-b border-slate-800">
-                                            <th className="py-4 px-6 font-medium">Campaña</th>
-                                            <th className="py-4 px-6 font-medium">Estado</th>
-                                            <th className="py-4 px-6 font-medium">Gasto</th>
-                                            <th className="py-4 px-6 font-medium text-right">ROAS</th>
+                                            <th className="py-4 px-6 font-medium">{t("thCamp")}</th>
+                                            <th className="py-4 px-6 font-medium">{t("thStatus")}</th>
+                                            <th className="py-4 px-6 font-medium">{t("thSpend")}</th>
+                                            <th className="py-4 px-6 font-medium text-right">{t("thRoas")}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-800/60">
                                         {isZeroState ? (
                                             <tr>
                                                 <td colSpan={4} className="py-12 px-6 text-center text-slate-500">
-                                                    Aún no hay datos. Conecta Meta e inicia tu primera auditoría interactiva.
+                                                    {t("emptyTable")}
                                                 </td>
                                             </tr>
                                         ) : (
@@ -312,8 +316,8 @@ export default async function DashboardPage() {
                                 {/* Decoración fondo */}
                                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FF6B6B]/10 rounded-full blur-[40px]"></div>
 
-                                <h3 className="text-lg font-bold font-syne text-white mb-2 relative z-10">Análisis bajo demanda</h3>
-                                <p className="text-sm text-slate-400 mb-6 relative z-10">Genera una auditoría instantánea de tus campañas activas.</p>
+                                <h3 className="text-lg font-bold font-syne text-white mb-2 relative z-10">{t("onDemandTitle")}</h3>
+                                <p className="text-sm text-slate-400 mb-6 relative z-10">{t("onDemandDesc")}</p>
 
                                 <AuditTriggerButton />
                             </div>
@@ -324,10 +328,11 @@ export default async function DashboardPage() {
                                     <div className="w-10 h-10 rounded-full bg-[#00D4AA]/20 flex items-center justify-center">
                                         <span className="text-lg">🤖</span>
                                     </div>
-                                    <span className="bg-[#00D4AA]/10 text-[#00D4AA] text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border border-[#00D4AA]/20">Programado</span>
+                                    <span className="bg-[#00D4AA]/10 text-[#00D4AA] text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border border-[#00D4AA]/20">{t("scheduled")}</span>
                                 </div>
-                                <h4 className="text-base font-bold text-white mb-2">Auditoría Semanal</h4>
-                                <p className="text-sm text-slate-400 mb-0">La IA analizará tus campañas el próximo <strong className="text-white">Lunes a las 09:00 AM</strong>. Recibirás un correo con el PDF.</p>
+                                <h4 className="text-base font-bold text-white mb-2">{t("weeklyAudit")}</h4>
+                                <p className="text-sm text-slate-400 mb-0" dangerouslySetInnerHTML={{ __html: t.raw("weeklyAuditDesc") || "" }}>
+                                </p>
                             </div>
 
                             {/* Meta Connect Card */}
@@ -336,12 +341,12 @@ export default async function DashboardPage() {
                                     <div className="w-14 h-14 bg-[#00D4AA]/10 border border-[#00D4AA]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                                         <CheckCircle2 className="w-7 h-7 text-[#00D4AA]" />
                                     </div>
-                                    <h3 className="text-base font-bold text-white mb-2 font-syne">Meta Ads Conectado</h3>
+                                    <h3 className="text-base font-bold text-white mb-2 font-syne">{t("metaConnected")}</h3>
                                     <p className="text-xs text-slate-400 mb-5">
-                                        Analizando campañas en tiempo real de forma segura.
+                                        {t("metaConnectedDesc")}
                                     </p>
                                     <Link href="/conectar" className="inline-block text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium py-2.5 px-5 rounded-lg transition-colors border border-slate-700">
-                                        Reconectar cuenta
+                                        {t("reconnect")}
                                     </Link>
                                 </div>
                             ) : (
@@ -349,13 +354,13 @@ export default async function DashboardPage() {
                                     {/* Subtly glow from border */}
                                     <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-[#FF6B6B]/15 rounded-full blur-[30px]"></div>
 
-                                    <h3 className="text-base font-bold text-white mb-2 font-syne relative z-10">Conectar Meta Ads</h3>
+                                    <h3 className="text-base font-bold text-white mb-2 font-syne relative z-10">{t("connectMeta")}</h3>
                                     <p className="text-xs text-slate-400 mb-5 relative z-10">
-                                        Habilita la lectura para iniciar tu primera auditoría automática.
+                                        {t("connectMetaDesc")}
                                     </p>
                                     <Link href="/conectar" className="w-full relative z-10 flex items-center justify-center gap-2 bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-[14px] py-3.5 rounded-xl transition-transform hover:scale-[1.02] shadow-[0_4px_14px_rgba(24,119,242,0.3)]">
                                         <span className="font-bold text-lg leading-none mb-0.5">f</span>
-                                        Conectar Cuenta
+                                        {t("connectBtn")}
                                     </Link>
                                 </div>
                             )}

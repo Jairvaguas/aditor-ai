@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import LanguageSelector from "./LanguageSelector";
 
 export default function Navbar() {
     return (
@@ -18,6 +19,7 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-6">
+                    <LanguageSelector />
                     <Link href="/registro" className="hidden sm:block text-base font-medium text-gray-300 hover:text-white transition-colors">
                         Iniciar sesión
                     </Link>

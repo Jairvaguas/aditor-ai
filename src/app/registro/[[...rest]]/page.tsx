@@ -1,7 +1,9 @@
 
 import { SignUp } from "@clerk/nextjs";
+import { getTranslations } from "next-intl/server";
 
-export default function RegistroPage() {
+export default async function RegistroPage() {
+    const t = await getTranslations("Registro");
     return (
         <main className="min-h-screen bg-[#1A1A2E] text-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
             {/* Background Gradients */}
@@ -15,15 +17,15 @@ export default function RegistroPage() {
                 <div className="bg-gradient-to-r from-[#4ECDC4]/10 to-[#74B9FF]/10 border border-[#4ECDC4]/20 rounded-2xl p-4 flex items-center justify-center gap-3 w-fit mx-auto">
                     <div className="text-2xl">🎁</div>
                     <div>
-                        <div className="text-sm font-bold text-[#4ECDC4]">7 días completamente gratis</div>
-                        <div className="text-xs text-gray-400">Sin tarjeta · Cancelá cuando quieras</div>
+                        <div className="text-sm font-bold text-[#4ECDC4]">{t("trialBadge")}</div>
+                        <div className="text-xs text-gray-400">{t("trialDesc")}</div>
                     </div>
                 </div>
 
                 {/* Header */}
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold font-syne mb-1">Crear cuenta gratis</h1>
-                    <p className="text-sm text-gray-400">Para ver el reporte completo y activar tu trial</p>
+                    <h1 className="text-2xl font-bold font-syne mb-1">{t("title")}</h1>
+                    <p className="text-sm text-gray-400">{t("subtitle")}</p>
                 </div>
 
                 {/* Clerk SignUp */}
@@ -55,7 +57,7 @@ export default function RegistroPage() {
                 </div>
 
                 <p className="text-center text-[10px] text-gray-500 px-4">
-                    Al registrarte aceptás los Términos de servicio y la Política de privacidad.
+                    {t("terms")}
                 </p>
 
             </div>

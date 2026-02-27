@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { XMLParser } from "fast-xml-parser";
 import { Link } from "lucide-react"; // Wait, using Next Link, not lucide
 import NextLink from "next/link";
+import { getTranslations } from "next-intl/server";
 import {
     AlertTriangle,
     ArrowRight,
@@ -20,6 +21,7 @@ interface PageProps {
 }
 
 export default async function ReportePage(props: PageProps) {
+    const t = await getTranslations("Reporte");
     const params = await props.params;
     const { id } = params;
 
@@ -34,10 +36,10 @@ export default async function ReportePage(props: PageProps) {
         return (
             <div className="min-h-screen bg-[#1A1A2E] text-white flex items-center justify-center p-4">
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold mb-2">Auditoría no encontrada</h1>
-                    <p className="text-gray-400">No pudimos encontrar el reporte que estás buscando.</p>
+                    <h1 className="text-2xl font-bold mb-2">{t("notFoundTitle")}</h1>
+                    <p className="text-gray-400">{t("notFoundDesc")}</p>
                     <NextLink href="/dashboard" className="mt-4 inline-block text-[#E94560] hover:underline">
-                        Volver al Dashboard
+                        {t("backToDashboard")}
                     </NextLink>
                 </div>
             </div>
@@ -52,7 +54,7 @@ export default async function ReportePage(props: PageProps) {
         parsedData = result.auditoria;
     } catch (e) {
         console.error("XML Parse Error", e);
-        return <div className="text-white p-10">Error al procesar el reporte.</div>;
+        return <div className="text-white p-10">{t("errorParsing")}</div>;
     }
 
     const { score_cuenta, hallazgos, redistribucion_presupuesto } = parsedData;
@@ -87,9 +89,9 @@ export default async function ReportePage(props: PageProps) {
                 {/* Header */}
                 <div className="flex items-start justify-between mb-6">
                     <div>
-                        <NextLink href="/dashboard" className="text-xs text-gray-400 mb-1 block hover:text-white">← Volver</NextLink>
+                        <NextLink href="/dashboard" className="text-xs text-gray-400 mb-1 block hover:text-white">{t("back")}</NextLink>
                         <h1 className="text-2xl font-bold font-syne flex items-center gap-2">
-                            Auditoría IA 🔍
+                            {t("title")}
                         </h1>
                         <p className="text-xs text-[#8892A4] mt-1">
                             {formatDate(audit.created_at)}
@@ -97,7 +99,7 @@ export default async function ReportePage(props: PageProps) {
                     </div>
                     {audit.tipo === 'automatica' && (
                         <span className="px-2 py-1 rounded-md bg-[#4ECDC4]/10 text-[#4ECDC4] text-[10px] font-bold border border-[#4ECDC4]/20">
-                            Generada automáticamente
+                            {t("autoBadge")}
                         </span>
                     )}
                 </div>
@@ -116,7 +118,7 @@ export default async function ReportePage(props: PageProps) {
                         />
                         <div className="flex flex-col items-center">
                             <span className="text-5xl font-extrabold font-syne" style={{ color: scoreColor }}>{score}</span>
-                            <span className="text-xs text-gray-400 uppercase tracking-widest mt-1">Score</span>
+                            <span className="text-xs text-gray-400 uppercase tracking-widest mt-1">{t("scoreBox")}</span>
                         </div>
                     </div>
                 </div>
@@ -128,7 +130,7 @@ export default async function ReportePage(props: PageProps) {
 
                 {/* Hallazgos */}
                 <div className="space-y-4 mb-8">
-                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Hallazgos Detectados</h3>
+                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">{t("findingsTitle")}</h3>
 
                     {findingsList.map((finding: any, i: number) => {
                         const type = (finding.tipo || '').toUpperCase();
@@ -166,7 +168,7 @@ export default async function ReportePage(props: PageProps) {
                                 <div className="flex items-start gap-3 bg-black/20 p-3 rounded-xl">
                                     <div className="mt-0.5" style={{ color: colors.text }}><ArrowRight className="w-4 h-4" /></div>
                                     <div>
-                                        <span className="text-xs font-bold block mb-0.5" style={{ color: colors.text }}>ACCIÓN RECOMENDADA</span>
+                                        <span className="text-xs font-bold block mb-0.5" style={{ color: colors.text }}>{t("recommendedAction")}</span>
                                         <p className="text-xs text-white">{finding.accion_concreta}</p>
                                     </div>
                                 </div>
@@ -177,14 +179,14 @@ export default async function ReportePage(props: PageProps) {
 
                 {/* Redistribución de Presupuesto */}
                 <div className="mb-8">
-                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Presupuesto</h3>
+                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">{t("budgetTitle")}</h3>
                     <div className="bg-[#1877F2]/10 border border-[#1877F2]/30 rounded-2xl p-5">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="p-2 rounded-full bg-[#1877F2]/20 text-[#1877F2]">
                                 <DollarSign className="w-5 h-5" />
                             </div>
                             <div>
-                                <div className="text-sm text-[#1877F2] font-bold">Presupuesto Liberado</div>
+                                <div className="text-sm text-[#1877F2] font-bold">{t("budgetLiberated")}</div>
                                 <div className="text-2xl font-bold text-white">{redistribucion_presupuesto?.presupuesto_liberado}</div>
                             </div>
                         </div>

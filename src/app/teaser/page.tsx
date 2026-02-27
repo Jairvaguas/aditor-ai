@@ -1,7 +1,7 @@
-
 import Link from 'next/link';
 import { supabaseAdmin } from '@/lib/supabase';
 import { redirect } from 'next/navigation';
+import { getTranslations } from "next-intl/server";
 
 async function getAuditData(auditId: string) {
     const { data, error } = await supabaseAdmin
@@ -52,6 +52,7 @@ function parseAuditXML(xml: string) {
 }
 
 export default async function TeaserPage(props: { searchParams: Promise<{ auditId?: string }> }) {
+    const t = await getTranslations("Teaser");
     const searchParams = await props.searchParams;
     const auditId = searchParams?.auditId;
 
@@ -73,9 +74,9 @@ export default async function TeaserPage(props: { searchParams: Promise<{ auditI
             return (
                 <div className="min-h-screen bg-[#1A1A2E] text-white flex items-center justify-center p-4">
                     <div className="text-center">
-                        <h1 className="text-2xl font-bold mb-2">Auditoría no encontrada 😕</h1>
-                        <p className="text-[#8892A4] mb-4">No pudimos encontrar el reporte solicitado.</p>
-                        <Link href="/conectar" className="text-[#E94560] underline">Volver a intentar</Link>
+                        <h1 className="text-2xl font-bold mb-2">{t("notFoundTitle")}</h1>
+                        <p className="text-[#8892A4] mb-4">{t("notFoundDesc")}</p>
+                        <Link href="/conectar" className="text-[#E94560] underline">{t("retry")}</Link>
                     </div>
                 </div>
             );
@@ -124,8 +125,8 @@ export default async function TeaserPage(props: { searchParams: Promise<{ auditI
 
                 {/* Header */}
                 <div className="pt-12 px-5 pb-4">
-                    <h2 className="text-[19px] font-extrabold font-syne mb-1">Tu análisis está listo 🎉</h2>
-                    <p className="text-[11px] text-[#8892A4]">Analizamos tus campañas recientes · Hace un momento</p>
+                    <h2 className="text-[19px] font-extrabold font-syne mb-1">{t("readyTitle")}</h2>
+                    <p className="text-[11px] text-[#8892A4]">{t("readyDesc")}</p>
                 </div>
 
                 {/* Score Card */}
@@ -140,7 +141,7 @@ export default async function TeaserPage(props: { searchParams: Promise<{ auditI
                     </div>
 
                     <div className="flex-1">
-                        <h3 className="text-[15px] font-extrabold font-syne mb-1">Salud de cuenta: {nivel}</h3>
+                        <h3 className="text-[15px] font-extrabold font-syne mb-1">{t("health", { nivel })}</h3>
                         <p className="text-[11px] text-[#8892A4] leading-snug">
                             {resumen.substring(0, 120)}...
                         </p>
@@ -149,7 +150,7 @@ export default async function TeaserPage(props: { searchParams: Promise<{ auditI
 
                 {/* Findings List */}
                 <div className="px-5 pb-4">
-                    <div className="text-[11px] font-bold text-[#8892A4] tracking-widest uppercase mb-2.5">Hallazgos Principales ({hallazgos.length})</div>
+                    <div className="text-[11px] font-bold text-[#8892A4] tracking-widest uppercase mb-2.5">{t("findingsPrefix")} ({hallazgos.length})</div>
 
                     {visibleHallazgos.map((hallazgo, idx) => {
                         const styles = getColors(hallazgo.tipo, hallazgo.urgencia);
@@ -172,24 +173,24 @@ export default async function TeaserPage(props: { searchParams: Promise<{ auditI
                             {/* Lock Overlay Banner */}
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] bg-[#1A1A2E]/95 backdrop-blur-md border border-[#FF6B6B]/30 rounded-[16px] p-4 text-center z-20 shadow-2xl">
                                 <div className="text-2xl mb-2">🔒</div>
-                                <h3 className="text-[15px] font-extrabold font-syne mb-1 text-white">+{hiddenHallazgosCount} hallazgos más</h3>
+                                <h3 className="text-[15px] font-extrabold font-syne mb-1 text-white">{t("lockedTitle", { count: hiddenHallazgosCount })}</h3>
                                 <p className="text-[11px] text-[#8892A4] mb-3 leading-snug">
-                                    Creá tu cuenta gratis para ver todas las recomendaciones y activar la auditoría semanal.
+                                    {t("lockedDesc")}
                                 </p>
                                 <Link href="/conectar" className="block w-full py-3 bg-gradient-to-br from-[#E94560] to-[#ff8e53] rounded-[14px] text-white text-[14px] font-bold shadow-[0_6px_20px_rgba(255,107,107,0.35)] hover:scale-[1.02] transition-transform">
-                                    Ver reporte completo gratis →
+                                    {t("lockedCta")}
                                 </Link>
-                                <div className="text-[10px] text-[#8892A4] mt-2">7 días gratis · Sin tarjeta de crédito</div>
+                                <div className="text-[10px] text-[#8892A4] mt-2">{t("lockedFooter")}</div>
                             </div>
 
                             {/* Fake Blurred Content for visual effect */}
                             <div className="opacity-50 filter blur-[4px] pointer-events-none select-none">
                                 <div className="bg-[#4ECDC4]/8 border border-[#4ECDC4]/20 rounded-[14px] p-3 mb-2">
                                     <div className="flex items-center gap-2 mb-1.5">
-                                        <div className="px-2 py-0.5 rounded-[5px] bg-[#4ECDC4]/20 text-[#4ECDC4] text-[9px] font-bold tracking-wider uppercase">🟢 Escalar</div>
-                                        <div className="text-[12px] font-semibold flex-1">Retargeting 3 días</div>
+                                        <div className="px-2 py-0.5 rounded-[5px] bg-[#4ECDC4]/20 text-[#4ECDC4] text-[9px] font-bold tracking-wider uppercase">{t("fakeTag")}</div>
+                                        <div className="text-[12px] font-semibold flex-1">{t("fakeCamp")}</div>
                                     </div>
-                                    <div className="text-[11px] text-[#8892A4]">ROAS 3.8x con frecuencia baja. Listo para escalar.</div>
+                                    <div className="text-[11px] text-[#8892A4]">{t("fakeDesc")}</div>
                                 </div>
                             </div>
                         </div>

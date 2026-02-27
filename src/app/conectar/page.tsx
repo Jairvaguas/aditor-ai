@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export default function ConnectPage() {
   const { userId, isLoaded } = useAuth();
   const router = useRouter();
+  const t = useTranslations("Conectar");
 
   useEffect(() => {
     if (isLoaded && !userId) {
@@ -34,12 +36,12 @@ export default function ConnectPage() {
 
           {/* Title */}
           <h1 className="text-[28px] font-bold font-syne mb-3 leading-tight">
-            Conectá tu cuenta de Meta Ads
+            {t("title")}
           </h1>
 
           {/* Subtitle */}
           <p className="text-[#8892A4] text-[15px] leading-relaxed mb-8">
-            Solo necesitás un clic. Vas a ver los primeros hallazgos gratis, sin registrarte.
+            {t("subtitle")}
           </p>
 
           {/* Permissions List */}
@@ -47,23 +49,23 @@ export default function ConnectPage() {
             <ul className="space-y-2.5">
               <li className="flex items-start gap-3 text-[13px] text-gray-300">
                 <span className="text-[#4ECDC4] mt-0.5">✅</span>
-                <span>Leer campañas y métricas (ROAS, CTR, CPM, CPC)</span>
+                <span>{t("perm1")}</span>
               </li>
               <li className="flex items-start gap-3 text-[13px] text-gray-300">
                 <span className="text-[#4ECDC4] mt-0.5">✅</span>
-                <span>Ver creativos activos</span>
+                <span>{t("perm2")}</span>
               </li>
               <li className="flex items-start gap-3 text-[13px] text-gray-300">
                 <span className="text-[#4ECDC4] mt-0.5">✅</span>
-                <span>Analizar frecuencia e impresiones</span>
+                <span>{t("perm3")}</span>
               </li>
               <li className="flex items-start gap-3 text-[13px] text-gray-400">
                 <span className="text-[#EE5253] mt-0.5">❌</span>
-                <span>Modificar campañas — <span className="text-white font-semibold">nunca</span></span>
+                <span dangerouslySetInnerHTML={{ __html: t.raw("perm4") || "" }} />
               </li>
               <li className="flex items-start gap-3 text-[13px] text-gray-400">
                 <span className="text-[#EE5253] mt-0.5">❌</span>
-                <span>Acceder a datos de pago — <span className="text-white font-semibold">nunca</span></span>
+                <span dangerouslySetInnerHTML={{ __html: t.raw("perm5") || "" }} />
               </li>
             </ul>
           </div>
@@ -83,14 +85,14 @@ export default function ConnectPage() {
           >
             {/* Facebook "f" icon */}
             <span className="font-bold text-[20px] leading-none mb-0.5">f</span>
-            Conectar con Facebook
+            {t("connectBtn")}
           </button>
 
 
 
           {/* Footer Text */}
           <p className="text-[#8892A4] text-[11px] mt-6">
-            Conexión encriptada vía OAuth 2.0 · Nunca modificamos tus campañas
+            {t("footer")}
           </p>
 
         </div>
