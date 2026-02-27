@@ -205,6 +205,52 @@ export default function Home() {
         </div>
       </section>
 
+
+      {/* 5.5 FAQs */}
+      <section id="faq" className="py-24 w-full">
+        <div className="max-w-4xl mx-auto px-6 w-full">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold">{t("faqTitle")}</h2>
+          </div>
+          <div className="space-y-4">
+            {[1, 2, 3, 4, 5, 6].map((num) => (
+              <details key={num} className="group bg-slate-900 rounded-2xl border border-slate-700 shadow-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex items-center justify-between cursor-pointer p-6 sm:p-8 font-bold text-lg sm:text-xl text-white">
+                  <span>{t(`faq${num}Q` as any)}</span>
+                  <span className="transition group-open:rotate-180">
+                    <svg fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </span>
+                </summary>
+                <div className="px-6 pb-6 text-gray-400 text-base sm:text-lg leading-relaxed">
+                  {t(`faq${num}A` as any)}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 5.6 Final CTA */}
+      <section id="cta" className="relative py-24 bg-[#080D18] border-y border-white/5 w-full overflow-hidden text-center">
+        {/* Glow Effects */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-[#FF6B6B]/20 to-[#00D4AA]/10 rounded-full blur-[120px] pointer-events-none z-0" />
+
+        <div className="relative z-10 max-w-3xl mx-auto px-6 w-full">
+          <h2 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
+            {t("ctaSectionTitle")}
+          </h2>
+          <p className="text-xl md:text-2xl text-gray-400 mb-10">
+            {t("ctaSectionSubtitle")}
+          </p>
+          <Link href="/conectar" className="inline-flex bg-[#FF6B6B] hover:bg-[#ff5252] text-white px-10 py-5 rounded-full text-xl font-bold transition-all items-center gap-3 shadow-[0_8px_24px_rgba(255,107,107,0.25)] hover:shadow-[0_12px_32px_rgba(255,107,107,0.4)] hover:-translate-y-1">
+            {t("ctaSectionBtn")} <ArrowRight className="w-6 h-6" />
+          </Link>
+          <p className="mt-6 text-sm text-gray-500 font-medium">
+            {t("ctaSectionMicrocopy")}
+          </p>
+        </div>
+      </section>
+
       {/* 6. Footer */}
       <Footer />
     </main>
