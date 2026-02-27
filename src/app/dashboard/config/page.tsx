@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { CancelSubscriptionCard } from "@/components/CancelSubscriptionCard";
 import { getTranslations } from "next-intl/server";
+import { DisconnectMetaButton } from "@/components/DisconnectMetaButton";
 
 export default async function ConfigPage() {
     const tHeader = await getTranslations("Header");
@@ -180,9 +181,7 @@ export default async function ConfigPage() {
                             </p>
                         </div>
                         {isConnectedToMeta ? (
-                            <button className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-medium text-sm py-3 px-6 rounded-xl transition-colors border border-slate-700 whitespace-nowrap">
-                                <Unplug className="w-4 h-4" /> Desconectar Meta Ads
-                            </button>
+                            <DisconnectMetaButton />
                         ) : hasActivePlan ? (
                             <Link href="/conectar" className="flex items-center gap-2 bg-[#1877F2] hover:bg-[#166fe5] text-white font-medium text-sm py-3 px-6 rounded-xl transition-colors whitespace-nowrap">
                                 <span className="font-bold text-lg leading-none mb-0.5">f</span> Conectar Meta Ads
