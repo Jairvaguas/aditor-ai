@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { preapproval } from '@/lib/mercadopago';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 
 export async function POST(req: Request) {
     try {
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
         }
 
         // Update user profile with the requested ad accounts count
-        await supabaseAdmin
+        await getSupabaseAdmin()
             .from('profiles')
             .update({ ad_accounts_count: accountsCount })
             .eq('clerk_user_id', userId);

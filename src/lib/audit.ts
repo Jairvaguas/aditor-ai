@@ -1,9 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+
 
 const SYSTEM_PROMPT = `Eres AditorAI, un auditor experto en campañas de Meta Ads especializado en e-commerce de LATAM y España. Tu único objetivo es analizar métricas publicitarias y devolver un diagnóstico claro, accionable y honesto.
 
@@ -23,6 +21,10 @@ REGLAS ABSOLUTAS:
 - Prioriza hallazgos por impacto económico, de mayor a menor.`;
 
 export async function generateAudit(campaigns: any[], userId: string, moneda: string = 'USD', pais: string = 'AR') {
+  const client = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+
   const userPrompt = `Analizá las siguientes campañas de Meta Ads de una tienda de e-commerce.
 
 PERÍODO: Últimos 30 días con tendencia semanal

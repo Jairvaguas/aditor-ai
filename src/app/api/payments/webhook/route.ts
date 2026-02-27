@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { preapproval } from '@/lib/mercadopago';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 import { sendSubscriptionActiveEmail } from '@/lib/emails';
 
 export async function POST(req: Request) {
@@ -28,13 +28,13 @@ export async function POST(req: Request) {
                 }
                 
                 // Get pre-existing data
-                const { data: profile } = await supabaseAdmin
+                const { data: profile } = await getSupabaseAdmin()
                     .from('profiles')
                     .select('ad_accounts_count, email, is_subscribed')
                     .eq('clerk_user_id', external_reference)
                     .single();
 
-                await supabaseAdmin
+                await getSupabaseAdmin()
                     .from('profiles')
                     .update({
                         is_subscribed,

@@ -6,7 +6,7 @@ import Image from "next/image";
 import AuditTriggerButton from "@/components/AuditTriggerButton";
 import ClientTableRow from "@/components/ClientTableRow";
 import { checkSubscription } from "@/lib/checkSubscription";
-import { supabaseAdmin } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { getTranslations } from "next-intl/server";
 import {
     Bell,
@@ -37,7 +37,7 @@ export default async function DashboardPage() {
 
     const displayName = user.firstName || user.username || "Usuario";
 
-    const { data: profile } = await supabaseAdmin
+    const { data: profile } = await getSupabaseAdmin()
         .from('profiles')
         .select('meta_access_token')
         .eq('clerk_user_id', user.id)
@@ -45,7 +45,7 @@ export default async function DashboardPage() {
 
     const isConnectedToMeta = !!profile?.meta_access_token;
 
-    const { data: lastAudit } = await supabaseAdmin
+    const { data: lastAudit } = await getSupabaseAdmin()
         .from('auditorias')
         .select('*')
         .eq('user_id', user.id)

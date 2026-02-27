@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { exchangeCodeForToken, getAdAccounts, getCampaignInsights, getMetaUser } from '@/lib/meta-auth';
 import { generateAudit } from '@/lib/audit';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 import { clerkClient } from '@clerk/nextjs/server';
 
 export async function GET(request: Request) {
@@ -56,7 +56,7 @@ export async function GET(request: Request) {
             console.log(`DEBUG - Email real obtenido de Clerk: ${userEmail}`);
             
             if (userEmail !== 'pending@aditor-ai.com') {
-                const { data: existingProfile } = await supabaseAdmin
+                const { data: existingProfile } = await getSupabaseAdmin()
                     .from('profiles')
                     .select('id, clerk_user_id')
                     .eq('email', userEmail)
@@ -65,7 +65,7 @@ export async function GET(request: Request) {
                     
                 if (existingProfile) {
                     console.log(`DEBUG - Resolviendo duplicado: Actualizando clerk_user_id de ${existingProfile.clerk_user_id} a ${clerkUserId} para el email ${userEmail}`);
-                    await supabaseAdmin
+                    await getSupabaseAdmin()
                         .from('profiles')
                         .update({ clerk_user_id: clerkUserId })
                         .eq('id', existingProfile.id);
@@ -94,7 +94,7 @@ export async function GET(request: Request) {
 
         // 3. Guardar Token en Supabase (tabla profiles)
         console.log("DEBUG - Intentando UPSERT de token para clerkUserId:", clerkUserId);
-        const { data: updatedRecords, error: dbError } = await supabaseAdmin
+        const { data: updatedRecords, error: dbError } = await getSupabaseAdmin()
             .from('profiles')
             .upsert({ 
                 clerk_user_id: clerkUserId, 

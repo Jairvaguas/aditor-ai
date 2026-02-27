@@ -1,10 +1,10 @@
-import { supabaseAdmin } from './supabase';
+import { getSupabaseAdmin } from './supabase';
 
 export async function checkSubscription(userId: string): Promise<boolean> {
     if (!userId) return false;
 
     try {
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await getSupabaseAdmin()
             .from('profiles')
             .select('is_subscribed, trial_ends_at, plan')
             .eq('clerk_user_id', userId)

@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 import { redirect } from 'next/navigation';
 import { getTranslations } from "next-intl/server";
 
 async function getAuditData(auditId: string) {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await getSupabaseAdmin()
         .from('auditorias')
         .select('*')
         .eq('id', auditId)

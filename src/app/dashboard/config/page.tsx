@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { checkSubscription } from "@/lib/checkSubscription";
-import { supabaseAdmin } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import {
     Bell,
     Search,
@@ -38,7 +38,7 @@ export default async function ConfigPage() {
     const displayName = user.firstName || user.username || "Usuario";
     const email = user.emailAddresses[0]?.emailAddress || "No email";
 
-    const { data: profile } = await supabaseAdmin
+    const { data: profile } = await getSupabaseAdmin()
         .from('profiles')
         .select('meta_access_token, is_subscribed, trial_ends_at')
         .eq('clerk_user_id', user.id)

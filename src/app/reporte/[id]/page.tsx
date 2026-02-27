@@ -1,5 +1,5 @@
 
-import { supabaseAdmin } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { XMLParser } from "fast-xml-parser";
 import { Link } from "lucide-react"; // Wait, using Next Link, not lucide
 import NextLink from "next/link";
@@ -26,7 +26,7 @@ export default async function ReportePage(props: PageProps) {
     const { id } = params;
 
     // 1. Fetch Audit
-    const { data: audit, error } = await supabaseAdmin
+    const { data: audit, error } = await getSupabaseAdmin()
         .from('auditorias')
         .select('*')
         .eq('id', id)

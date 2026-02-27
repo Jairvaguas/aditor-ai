@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 import { getCampaignInsights } from '@/lib/meta-auth';
 import { generateAudit } from '@/lib/audit';
 
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
         }
 
         // 1. Obtener Perfil (Tokens, Moneda, Plan)
-        const { data: profile, error: profileError } = await supabaseAdmin
+        const { data: profile, error: profileError } = await getSupabaseAdmin()
             .from('profiles')
             .select('meta_access_token, selected_ad_account_id, moneda, plan')
             .eq('clerk_user_id', clerkUserId)
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
 
         // 2. Regla de Trial a Conversión
         if (plan === 'trial') {
-            const { count, error: countError } = await supabaseAdmin
+            const { count, error: countError } = await getSupabaseAdmin()
                 .from('auditorias')
                 .select('*', { count: 'exact', head: true })
                 .eq('user_id', clerkUserId);

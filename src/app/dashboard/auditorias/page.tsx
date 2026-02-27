@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { checkSubscription } from "@/lib/checkSubscription";
-import { supabaseAdmin } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import {
     Bell,
     Search,
@@ -34,7 +34,7 @@ export default async function AuditoriasPage() {
     const displayName = user.firstName || user.username || "Usuario";
 
     // Fetch audits for this user from Supabase
-    const { data: auditsList, error: auditsError } = await supabaseAdmin
+    const { data: auditsList, error: auditsError } = await getSupabaseAdmin()
         .from('auditorias')
         .select('*')
         .eq('user_id', user.id)

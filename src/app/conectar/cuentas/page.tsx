@@ -1,7 +1,7 @@
 import React from 'react';
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 import { getAdAccounts } from '@/lib/meta-auth';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -15,7 +15,7 @@ export default async function SelectAccountPage() {
     }
 
     // Obtenemos el token del usuario para llamar a Meta
-    const { data: profile, error } = await supabaseAdmin
+    const { data: profile, error } = await getSupabaseAdmin()
         .from('profiles')
         .select('meta_access_token, selected_ad_account_id')
         .eq('clerk_user_id', userId)

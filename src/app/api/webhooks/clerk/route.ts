@@ -1,7 +1,7 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
-import { supabaseAdmin } from '@/lib/supabase'
+import { getSupabaseAdmin } from '@/lib/supabase'
 import { NextResponse } from 'next/server'
 import { sendWelcomeEmail } from '@/lib/emails'
 
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
         const primaryEmail = email_addresses?.find((email: any) => email.id === evt.data.primary_email_address_id)?.email_address || email_addresses?.[0]?.email_address || 'default@email.com';
         const nombre = [first_name, last_name].filter(Boolean).join(' ') || 'User';
 
-        const { error } = await supabaseAdmin
+        const { error } = await getSupabaseAdmin()
             .from('profiles')
             .insert({
                 clerk_user_id: id,

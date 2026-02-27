@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 
 export async function GET(req: Request) {
     // Solo permitir en desarrollo
@@ -19,7 +19,7 @@ export async function GET(req: Request) {
         const mockSubscriptionId = `test_sub_${Date.now()}`;
 
         // 1. Revisar si el usuario existe en profiles
-        const { data: profile } = await supabaseAdmin
+        const { data: profile } = await getSupabaseAdmin()
             .from('profiles')
             .select('id')
             .eq('clerk_user_id', userId)
@@ -27,7 +27,7 @@ export async function GET(req: Request) {
 
         if (!profile) {
             // No existe, crearlo con datos base
-            await supabaseAdmin
+            await getSupabaseAdmin()
                 .from('profiles')
                 .insert({
                     clerk_user_id: userId,
@@ -38,7 +38,7 @@ export async function GET(req: Request) {
         }
 
         // 2. Actualizar Supabase (ya sea que existía o se acaba de crear)
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await getSupabaseAdmin()
             .from('profiles')
             .update({
                 is_subscribed: true,

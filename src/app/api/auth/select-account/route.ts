@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 
 
 export async function POST(request: Request) {
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
         }
 
         // 0. Extract current profile to check lock status (Limit = 1)
-        const { data: currentProfile, error: profileFetchError } = await supabaseAdmin
+        const { data: currentProfile, error: profileFetchError } = await getSupabaseAdmin()
             .from('profiles')
             .select('meta_access_token, selected_ad_account_id, ad_accounts_count')
             .eq('clerk_user_id', clerkUserId)
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         }
 
         // 0.5. Check Global Uniqueness - Is this account claimed by someone else?
-        const { data: globalCheck, error: globalCheckError } = await supabaseAdmin
+        const { data: globalCheck, error: globalCheckError } = await getSupabaseAdmin()
             .from('profiles')
             .select('clerk_user_id')
             .eq('selected_ad_account_id', adAccountId)
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
         // Re-vinculación/Éxito: Si todo está en orden y ya le pertenece a este mismo usuario, se permite continuar sin generar error.
 
         // 1. Save selected account to profiles via UPSERT for safety and log thoroughly
-        const { error: profileError } = await supabaseAdmin
+        const { error: profileError } = await getSupabaseAdmin()
             .from('profiles')
             .upsert({ 
                 clerk_user_id: clerkUserId, 

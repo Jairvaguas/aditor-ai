@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { Users, CreditCard, Activity, DollarSign, LogOut, Search, Settings, Sparkles, BarChart2, Bell } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,7 +7,7 @@ import UserGrowthChart from "./UserGrowthChart";
 export const dynamic = "force-dynamic";
 
 async function getStats() {
-    const { data: profiles, error } = await supabaseAdmin
+    const { data: profiles, error } = await getSupabaseAdmin()
         .from("profiles")
         .select("*")
         .order("created_at", { ascending: false });

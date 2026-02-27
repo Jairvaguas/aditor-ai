@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 import { currentUser } from '@clerk/nextjs/server';
 
 export async function POST() {
@@ -11,7 +11,7 @@ export async function POST() {
         }
 
         // Cancel subscription by setting is_subscribed to false and clearing subscription_id
-        const { error } = await supabaseAdmin
+        const { error } = await getSupabaseAdmin()
             .from('profiles')
             .update({
                 is_subscribed: false,

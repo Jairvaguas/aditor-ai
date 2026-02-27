@@ -1,5 +1,5 @@
 
-import { supabaseAdmin } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { XMLParser } from "fast-xml-parser";
 import HooksView from "./hooks-view";
 import Link from "next/link";
@@ -15,7 +15,7 @@ export default async function HooksPage(props: PageProps) {
     const { id } = params;
 
     // 1. Fetch Audit using params.id
-    const { data: audit, error } = await supabaseAdmin
+    const { data: audit, error } = await getSupabaseAdmin()
         .from('auditorias')
         .select('*')
         .eq('id', id)

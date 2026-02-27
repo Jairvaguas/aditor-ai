@@ -1,4 +1,4 @@
-import { supabaseAdmin } from './supabase';
+import { getSupabaseAdmin } from './supabase';
 
 export interface TrialCheckResult {
     allowed: boolean;
@@ -13,7 +13,7 @@ export interface TrialCheckResult {
 export async function checkAdAccountTrial(adAccountId: string): Promise<TrialCheckResult> {
     try {
         // 1. Check if the ad account exists in connected_accounts
-        const { data: accountData, error: accountError } = await supabaseAdmin
+        const { data: accountData, error: accountError } = await getSupabaseAdmin()
             .from('connected_accounts')
             .select('user_id')
             .eq('ad_account_id', adAccountId)
@@ -30,7 +30,7 @@ export async function checkAdAccountTrial(adAccountId: string): Promise<TrialChe
         }
 
         // 2. Account exists, check the associated user's profile for trial status
-        const { data: profileData, error: profileError } = await supabaseAdmin
+        const { data: profileData, error: profileError } = await getSupabaseAdmin()
             .from('profiles')
             .select('plan, trial_start')
             .eq('clerk_user_id', accountData.user_id)

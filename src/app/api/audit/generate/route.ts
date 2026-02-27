@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { generateAudit } from '@/lib/audit';
 import { sendAuditReadyEmail } from '@/lib/emails';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 import { XMLParser } from 'fast-xml-parser';
 
 export async function POST(req: Request) {
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
         
         // Post Generation processing to send Email
         try {
-             const { data: profile } = await supabaseAdmin.from('profiles').select('email').eq('clerk_user_id', userId).single();
+             const { data: profile } = await getSupabaseAdmin().from('profiles').select('email').eq('clerk_user_id', userId).single();
              if (profile?.email) {
                  const parser = new XMLParser();
                  const parsed = parser.parse(xml);
