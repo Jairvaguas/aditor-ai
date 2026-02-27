@@ -16,8 +16,10 @@ import {
     ArrowRight,
     SearchX
 } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 export default async function AuditoriasPage() {
+    const tHeader = await getTranslations("Header");
     const user = await currentUser();
 
     if (!user) {
@@ -66,18 +68,18 @@ export default async function AuditoriasPage() {
 
                     <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors">
                         <BarChart2 className="w-5 h-5" />
-                        <span>Dashboard</span>
+                        <span>{tHeader("dashboard")}</span>
                     </Link>
 
                     <Link href="/dashboard/auditorias" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#FF6B6B]/10 text-[#FF6B6B] font-medium transition-colors">
                         <Search className="w-5 h-5" />
-                        <span>Auditorías</span>
+                        <span>{tHeader("audits")}</span>
                     </Link>
 
 
                     <Link href="/dashboard/config" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors mt-auto">
                         <Settings className="w-5 h-5" />
-                        <span>Configuración</span>
+                        <span>{tHeader("configuration")}</span>
                     </Link>
                 </div>
             </aside>
@@ -180,17 +182,17 @@ export default async function AuditoriasPage() {
             <div className="lg:hidden fixed bottom-0 left-0 w-full bg-slate-900 border-t border-slate-800 pb-5 pt-3 flex justify-around items-center z-50 px-2 transition-transform">
                 <Link href="/dashboard" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
                     <BarChart2 className="w-5 h-5" />
-                    <span className="text-[10px] font-medium">Dashboard</span>
+                    <span className="text-[10px] font-medium">{tHeader("dashboard")}</span>
                 </Link>
 
                 <Link href="/dashboard/auditorias" className="flex flex-col items-center gap-1 text-[#FF6B6B] w-16">
                     <Search className="w-5 h-5" />
-                    <span className="text-[10px] font-medium">Auditorías</span>
+                    <span className="text-[10px] font-medium">{tHeader("audits")}</span>
                 </Link>
 
                 <Link href="/dashboard/config" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
                     <Settings className="w-5 h-5" />
-                    <span className="text-[10px] font-medium">Config</span>
+                    <span className="text-[10px] font-medium">{tHeader("configuration")}</span>
                 </Link>
             </div>
         </main>

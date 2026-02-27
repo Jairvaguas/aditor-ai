@@ -128,5 +128,24 @@
         "fakeTag": "🟢 Escalar",
         "fakeCamp": "Retargeting 3 días",
         "fakeDesc": "ROAS 3.8x con frecuencia baja. Listo para escalar."
+    },
+    "Header": {
+        "dashboard": "Dashboard",
+        "audits": "Auditorías",
+        "configuration": "Configuración",
+        "logout": "Cerrar sesión"
+    },
+    "Footer": {
+        "privacy": "Privacidad",
+        "terms": "Términos",
+        "dataDelete": "Eliminar Datos",
+        "contact": "Contacto"
+    },
+    "Nav": {
+        "startFree": "Empezar gratis",
+        "login": "Iniciar sesión",
+        "howItWorks": "Cómo funciona",
+        "features": "Beneficios",
+        "pricing": "Precios"
     }
 }

@@ -128,5 +128,24 @@
         "fakeTag": "🟢 Scale",
         "fakeCamp": "Retargeting 3 days",
         "fakeDesc": "3.8x ROAS with low frequency. Ready to scale."
+    },
+    "Header": {
+        "dashboard": "Dashboard",
+        "audits": "Audits",
+        "configuration": "Configuration",
+        "logout": "Log out"
+    },
+    "Footer": {
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service",
+        "dataDelete": "Delete Data",
+        "contact": "Contact"
+    },
+    "Nav": {
+        "startFree": "Start for free",
+        "login": "Log in",
+        "howItWorks": "How it works",
+        "features": "Features",
+        "pricing": "Pricing"
     }
 }
