@@ -40,7 +40,7 @@ export default async function Home() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#00D4AA]/30 bg-[#00D4AA]/10 text-[#00D4AA] text-sm font-bold uppercase tracking-widest mb-6">
               <Zap className="w-4 h-4" /> {t("heroBadge")}
             </div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight" style={{ animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0, animationDelay: '0ms' }}>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight font-display" style={{ animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0, animationDelay: '0ms' }}>
               {t("heroTitle")} <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B6B] to-[#ff8e53]">
                 {t("heroTitleHighlight")}
@@ -112,7 +112,7 @@ export default async function Home() {
       <section id="como-funciona" className="py-24 bg-[#080D18] border-y border-white/5 w-full animate-on-scroll">
         <div className="max-w-7xl mx-auto px-6 w-full">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">{t("painTitle")}</h2>
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 font-display">{t("painTitle")}</h2>
             <p className="text-slate-400 text-xl">{t("painSubtitle")}</p>
           </div>
 
@@ -146,7 +146,7 @@ export default async function Home() {
       <section id="caracteristicas" className="py-24 w-full">
         <div className="max-w-7xl mx-auto px-6 w-full">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold">{t("featTitle")}</h2>
+            <h2 className="text-3xl md:text-5xl font-bold font-display">{t("featTitle")}</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -181,7 +181,7 @@ export default async function Home() {
 
         <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">{t("pricingTitle")}</h2>
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 font-display">{t("pricingTitle")}</h2>
             <p className="text-gray-400 text-xl">{t("pricingSubtitle")}</p>
           </div>
 
@@ -194,7 +194,7 @@ export default async function Home() {
       <section id="faq" className="py-24 w-full">
         <div className="max-w-4xl mx-auto px-6 w-full">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold">{t("faqTitle")}</h2>
+            <h2 className="text-3xl md:text-5xl font-bold font-display">{t("faqTitle")}</h2>
           </div>
           <div className="space-y-4">
             {[1, 2, 3, 4, 5, 6].map((num) => (
@@ -220,7 +220,7 @@ export default async function Home() {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-[#FF6B6B]/20 to-[#00D4AA]/10 rounded-full blur-[120px] pointer-events-none z-0" />
 
         <div className="relative z-10 max-w-3xl mx-auto px-6 w-full">
-          <h2 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
+          <h2 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight font-display">
             {t("ctaSectionTitle")}
           </h2>
           <p className="text-xl md:text-2xl text-gray-400 mb-10">
