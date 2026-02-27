@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import DynamicPricingForm from "@/components/DynamicPricingForm";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ScrollAnimations from "@/components/ScrollAnimations";
 
 export default async function Home() {
   const t = await getTranslations("Landing");
@@ -23,6 +24,7 @@ export default async function Home() {
 
   return (
     <main className="flex min-h-screen flex-col bg-[#0B1120] text-[#F0F0F0] font-sans selection:bg-[#FF6B6B]/30">
+      <ScrollAnimations />
       {/* 1. Navbar Fija */}
       <Navbar />
 
@@ -38,16 +40,16 @@ export default async function Home() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#00D4AA]/30 bg-[#00D4AA]/10 text-[#00D4AA] text-sm font-bold uppercase tracking-widest mb-6">
               <Zap className="w-4 h-4" /> {t("heroBadge")}
             </div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight" style={{ animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0, animationDelay: '0ms' }}>
               {t("heroTitle")} <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B6B] to-[#ff8e53]">
                 {t("heroTitleHighlight")}
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-400 mb-8 leading-relaxed max-w-xl">
+            <p className="text-lg md:text-xl text-gray-400 mb-8 leading-relaxed max-w-xl" style={{ animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0, animationDelay: '150ms' }}>
               {t("heroDesc")}
             </p>
-            <div className="flex justify-start">
+            <div className="flex justify-start" style={{ animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0, animationDelay: '300ms' }}>
               <Link href="/conectar" className="inline-flex bg-[#FF6B6B] hover:bg-[#ff5252] text-white px-8 py-4 rounded-full text-lg font-bold transition-all text-center items-center justify-center gap-3 shadow-[0_8px_24px_rgba(255,107,107,0.25)] hover:shadow-[0_12px_32px_rgba(255,107,107,0.4)] hover:-translate-y-1">
                 {t("cta")} <ArrowRight className="w-6 h-6" />
               </Link>
@@ -56,7 +58,7 @@ export default async function Home() {
           </div>
 
           {/* Columna Derecha: Mockup Animado */}
-          <div className="relative animate-in fade-in slide-in-from-right-8 duration-1000 delay-200 w-full max-w-lg mx-auto lg:mr-0 lg:ml-auto">
+          <div className="relative w-full max-w-lg mx-auto lg:mr-0 lg:ml-auto" style={{ animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0, animationDelay: '450ms' }}>
             <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6 shadow-2xl relative transform lg:rotate-2 lg:hover:rotate-0 transition-transform duration-500">
               <div className="flex items-center gap-2 mb-4 pb-4 border-b border-slate-800">
                 <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
@@ -107,7 +109,7 @@ export default async function Home() {
       </section>
 
       {/* 3. Pain Points (3 Columnas) */}
-      <section id="como-funciona" className="py-24 bg-[#080D18] border-y border-white/5 w-full">
+      <section id="como-funciona" className="py-24 bg-[#080D18] border-y border-white/5 w-full animate-on-scroll">
         <div className="max-w-7xl mx-auto px-6 w-full">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-6">{t("painTitle")}</h2>
@@ -148,21 +150,21 @@ export default async function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center">
+            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center animate-on-scroll" style={{ transitionDelay: '0ms' }}>
               <div className="w-20 h-20 bg-[#131D2E] border border-white/10 rounded-3xl flex items-center justify-center mb-6 text-[#FF6B6B] shadow-lg">
                 <Search className="w-10 h-10" />
               </div>
               <h3 className="text-2xl font-bold mb-4">{t("feat1Title")}</h3>
               <p className="text-gray-400 text-lg">{t("feat1Desc")}</p>
             </div>
-            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center">
+            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center animate-on-scroll" style={{ transitionDelay: '100ms' }}>
               <div className="w-20 h-20 bg-[#131D2E] border border-white/10 rounded-3xl flex items-center justify-center mb-6 text-[#00D4AA] shadow-lg">
                 <TrendingUp className="w-10 h-10" />
               </div>
               <h3 className="text-2xl font-bold mb-4">{t("feat2Title")}</h3>
               <p className="text-gray-400 text-lg">{t("feat2Desc")}</p>
             </div>
-            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center">
+            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center animate-on-scroll" style={{ transitionDelay: '200ms' }}>
               <div className="w-20 h-20 bg-[#131D2E] border border-white/10 rounded-3xl flex items-center justify-center mb-6 text-yellow-400 shadow-lg">
                 <Repeat className="w-10 h-10" />
               </div>
@@ -174,7 +176,7 @@ export default async function Home() {
       </section>
 
       {/* 5. Precios */}
-      <section id="precios" className="py-24 bg-[#080D18] border-y border-white/5 relative overflow-hidden w-full">
+      <section id="precios" className="py-24 bg-[#080D18] border-y border-white/5 relative overflow-hidden w-full animate-on-scroll">
         <div className="absolute top-[20%] right-[-10%] w-[400px] h-[400px] bg-[#FF6B6B]/10 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
@@ -196,7 +198,7 @@ export default async function Home() {
           </div>
           <div className="space-y-4">
             {[1, 2, 3, 4, 5, 6].map((num) => (
-              <details key={num} className="group bg-slate-900 rounded-2xl border border-slate-700 shadow-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+              <details key={num} className="group bg-slate-900 rounded-2xl border border-slate-700 shadow-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden animate-on-scroll" style={{ transitionDelay: `${num * 100}ms` }}>
                 <summary className="flex items-center justify-between cursor-pointer p-6 sm:p-8 font-bold text-lg sm:text-xl text-white">
                   <span>{t(`faq${num}Q` as any)}</span>
                   <span className="transition group-open:rotate-180">
@@ -213,7 +215,7 @@ export default async function Home() {
       </section>
 
       {/* 5.6 Final CTA */}
-      <section id="cta" className="relative py-24 bg-[#080D18] border-y border-white/5 w-full overflow-hidden text-center">
+      <section id="cta" className="relative py-24 bg-[#080D18] border-y border-white/5 w-full overflow-hidden text-center animate-on-scroll">
         {/* Glow Effects */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-[#FF6B6B]/20 to-[#00D4AA]/10 rounded-full blur-[120px] pointer-events-none z-0" />
 
