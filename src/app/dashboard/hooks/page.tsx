@@ -42,7 +42,7 @@ export default async function HooksPage() {
                 <div className="h-20 flex items-center px-8 border-b border-slate-800">
                     <Link href="/" className="flex items-center gap-3">
                         <Image src="/favicon.ico" alt="Aditor AI" width={32} height={32} />
-                        <span className="text-xl font-bold font-syne text-white tracking-tight">Aditor AI</span>
+                        <span className="text-xl font-bold font-display text-white tracking-tight">Aditor AI</span>
                     </Link>
                 </div>
 
@@ -77,7 +77,7 @@ export default async function HooksPage() {
                 {/* Header Superior */}
                 <header className="h-20 px-8 flex items-center justify-between border-b border-slate-800/50 bg-[#0B1120]/80 backdrop-blur-md sticky top-0 z-30">
                     <div className="flex items-center gap-4">
-                        <h1 className="text-2xl font-bold font-syne text-white">Laboratorio de Hooks</h1>
+                        <h1 className="text-2xl font-bold font-display text-white">Laboratorio de Hooks</h1>
                     </div>
 
                     <div className="flex items-center gap-4">

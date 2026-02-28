@@ -77,7 +77,7 @@ export function HooksGenerator() {
             <div className="bg-gradient-to-r from-slate-900 to-[#131D2E] border border-slate-800 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
                 <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#00D4AA]/10 rounded-full blur-[40px] pointer-events-none"></div>
                 <div className="relative z-10 max-w-xl">
-                    <h2 className="text-xl font-bold font-syne text-white mb-2 flex items-center gap-2">
+                    <h2 className="text-xl font-bold font-display text-white mb-2 flex items-center gap-2">
                         <Wand2 className="w-6 h-6 text-[#00D4AA]" />
                         Ideación de Copywriting Creativo
                     </h2>
@@ -107,7 +107,7 @@ export function HooksGenerator() {
                     <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#0B1120]/60 backdrop-blur-sm rounded-3xl">
                         <div className="flex flex-col items-center gap-3">
                             <RefreshCw className="w-8 h-8 text-[#00D4AA] animate-spin" />
-                            <p className="text-sm font-bold text-[#00D4AA] font-syne animate-pulse">Claude está escribiendo...</p>
+                            <p className="text-sm font-bold text-[#00D4AA] font-display animate-pulse">Claude está escribiendo...</p>
                         </div>
                     </div>
                 )}

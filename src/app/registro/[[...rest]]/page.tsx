@@ -24,7 +24,7 @@ export default async function RegistroPage() {
 
                 {/* Header */}
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold font-syne mb-1">{t("title")}</h1>
+                    <h1 className="text-2xl font-bold font-display mb-1">{t("title")}</h1>
                     <p className="text-sm text-gray-400">{t("subtitle")}</p>
                 </div>
 

@@ -90,7 +90,7 @@ export default async function ReportePage(props: PageProps) {
                 <div className="flex items-start justify-between mb-6">
                     <div>
                         <NextLink href="/dashboard" className="text-xs text-gray-400 mb-1 block hover:text-white">{t("back")}</NextLink>
-                        <h1 className="text-2xl font-bold font-syne flex items-center gap-2">
+                        <h1 className="text-2xl font-bold font-display flex items-center gap-2">
                             {t("title")}
                         </h1>
                         <p className="text-xs text-[#8892A4] mt-1">
@@ -117,7 +117,7 @@ export default async function ReportePage(props: PageProps) {
                             }}
                         />
                         <div className="flex flex-col items-center">
-                            <span className="text-5xl font-extrabold font-syne" style={{ color: scoreColor }}>{score}</span>
+                            <span className="text-5xl font-extrabold font-display" style={{ color: scoreColor }}>{score}</span>
                             <span className="text-xs text-gray-400 uppercase tracking-widest mt-1">{t("scoreBox")}</span>
                         </div>
                     </div>
@@ -160,7 +160,7 @@ export default async function ReportePage(props: PageProps) {
                                     </span>
                                 </div>
 
-                                <h4 className="font-bold text-base mb-2">{finding.campana_nombre}</h4>
+                                <h4 className="font-bold text-base mb-2 break-all overflow-hidden text-ellipsis">{finding.campana_nombre}</h4>
                                 <p className="text-sm text-gray-300 mb-4 leading-relaxed">
                                     {finding.diagnostico}
                                 </p>

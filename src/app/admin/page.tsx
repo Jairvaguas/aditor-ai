@@ -90,7 +90,7 @@ export default async function AdminDashboard() {
                 <div className="h-20 flex items-center px-8 border-b border-slate-800">
                     <Link href="/" className="flex items-center gap-3">
                         <Image src="/favicon.ico" alt="Aditor AI" width={32} height={32} />
-                        <span className="text-xl font-bold font-syne text-white tracking-tight">Aditor AI</span>
+                        <span className="text-xl font-bold font-display text-white tracking-tight">Aditor AI</span>
                     </Link>
                 </div>
 
@@ -128,7 +128,7 @@ export default async function AdminDashboard() {
                 {/* Header Superior */}
                 <header className="h-20 px-8 flex items-center justify-between border-b border-slate-800/50 bg-[#0B1120]/80 backdrop-blur-md sticky top-0 z-30">
                     <div className="flex items-center gap-4">
-                        <h1 className="text-2xl font-bold font-syne text-white">Administración</h1>
+                        <h1 className="text-2xl font-bold font-display text-white">Administración</h1>
                     </div>
 
                     <div className="flex items-center gap-4">
@@ -150,7 +150,7 @@ export default async function AdminDashboard() {
                                 <div className="text-slate-400 font-medium text-sm">Registrados</div>
                                 <div className="p-2 bg-blue-500/10 rounded-lg"><Users className="w-5 h-5 text-blue-400" /></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-blue-400 transition-colors">{stats.total}</div>
+                            <div className="text-3xl font-extrabold font-display text-white mb-2 group-hover:text-blue-400 transition-colors">{stats.total}</div>
                         </div>
 
                         <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col relative overflow-hidden group">
@@ -158,7 +158,7 @@ export default async function AdminDashboard() {
                                 <div className="text-slate-400 font-medium text-sm">Activos</div>
                                 <div className="p-2 bg-green-500/10 rounded-lg"><Activity className="w-5 h-5 text-green-400" /></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-green-400 transition-colors">{stats.active}</div>
+                            <div className="text-3xl font-extrabold font-display text-white mb-2 group-hover:text-green-400 transition-colors">{stats.active}</div>
                         </div>
 
                         <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col relative overflow-hidden group">
@@ -166,7 +166,7 @@ export default async function AdminDashboard() {
                                 <div className="text-slate-400 font-medium text-sm">En Trial</div>
                                 <div className="p-2 bg-amber-500/10 rounded-lg"><CreditCard className="w-5 h-5 text-amber-400" /></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-amber-400 transition-colors">{stats.trial}</div>
+                            <div className="text-3xl font-extrabold font-display text-white mb-2 group-hover:text-amber-400 transition-colors">{stats.trial}</div>
                         </div>
 
                         <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col relative overflow-hidden group">
@@ -174,7 +174,7 @@ export default async function AdminDashboard() {
                                 <div className="text-slate-400 font-medium text-sm">Inactivos</div>
                                 <div className="p-2 bg-red-500/10 rounded-lg"><Users className="w-5 h-5 text-red-400" /></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-red-400 transition-colors">{stats.inactive}</div>
+                            <div className="text-3xl font-extrabold font-display text-white mb-2 group-hover:text-red-400 transition-colors">{stats.inactive}</div>
                         </div>
 
                         <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col relative overflow-hidden group">
@@ -182,7 +182,7 @@ export default async function AdminDashboard() {
                                 <div className="text-slate-400 font-medium text-sm">MRR (USD)</div>
                                 <div className="p-2 bg-[#4ECDC4]/10 rounded-lg"><DollarSign className="w-5 h-5 text-[#4ECDC4]" /></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#4ECDC4] transition-colors">${stats.mrr}</div>
+                            <div className="text-3xl font-extrabold font-display text-white mb-2 group-hover:text-[#4ECDC4] transition-colors">${stats.mrr}</div>
                         </div>
                     </div>
 
@@ -193,7 +193,7 @@ export default async function AdminDashboard() {
                     <div className="bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden flex flex-col mt-4">
                         <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
                             <div>
-                                <h2 className="text-lg font-bold font-syne text-white">Listado de Usuarios</h2>
+                                <h2 className="text-lg font-bold font-display text-white">Listado de Usuarios</h2>
                             </div>
                         </div>
                         <div className="overflow-x-auto">

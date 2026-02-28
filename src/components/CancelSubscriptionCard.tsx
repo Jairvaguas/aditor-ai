@@ -55,7 +55,7 @@ export function CancelSubscriptionCard() {
 
                         {/* Header Modal */}
                         <div className="flex justify-between items-center p-5 border-b border-slate-800">
-                            <h3 className="text-lg font-bold font-syne text-white flex items-center gap-2">
+                            <h3 className="text-lg font-bold font-display text-white flex items-center gap-2">
                                 <AlertTriangle className="w-5 h-5 text-red-500" />
                                 Confirmar Cancelación
                             </h3>

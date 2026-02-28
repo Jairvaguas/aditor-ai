@@ -125,7 +125,7 @@ export default async function TeaserPage(props: { searchParams: Promise<{ auditI
 
                 {/* Header */}
                 <div className="pt-12 px-5 pb-4">
-                    <h2 className="text-[19px] font-extrabold font-syne mb-1">{t("readyTitle")}</h2>
+                    <h2 className="text-[19px] font-extrabold font-display mb-1">{t("readyTitle")}</h2>
                     <p className="text-[11px] text-[#8892A4]">{t("readyDesc")}</p>
                 </div>
 
@@ -135,13 +135,13 @@ export default async function TeaserPage(props: { searchParams: Promise<{ auditI
                     <div className="w-16 h-16 rounded-full flex items-center justify-center shrink-0 relative"
                         style={{ background: `conic-gradient(${score > 70 ? '#4ECDC4' : score > 40 ? '#FFE66D' : '#FF6B6B'} 0deg ${score * 3.6}deg, rgba(255,255,255,0.08) ${score * 3.6}deg 360deg)` }}>
                         <div className="w-[46px] h-[46px] bg-[#16213E] rounded-full flex flex-col items-center justify-center">
-                            <span className={`text-base font-extrabold font-syne leading-none ${score > 70 ? 'text-[#4ECDC4]' : score > 40 ? 'text-[#FFE66D]' : 'text-[#FF6B6B]'}`}>{score}</span>
+                            <span className={`text-base font-extrabold font-display leading-none ${score > 70 ? 'text-[#4ECDC4]' : score > 40 ? 'text-[#FFE66D]' : 'text-[#FF6B6B]'}`}>{score}</span>
                             <span className="text-[8px] text-[#8892A4]">/100</span>
                         </div>
                     </div>
 
                     <div className="flex-1">
-                        <h3 className="text-[15px] font-extrabold font-syne mb-1">{t("health", { nivel })}</h3>
+                        <h3 className="text-[15px] font-extrabold font-display mb-1">{t("health", { nivel })}</h3>
                         <p className="text-[11px] text-[#8892A4] leading-snug">
                             {resumen.substring(0, 120)}...
                         </p>
@@ -173,7 +173,7 @@ export default async function TeaserPage(props: { searchParams: Promise<{ auditI
                             {/* Lock Overlay Banner */}
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] bg-[#1A1A2E]/95 backdrop-blur-md border border-[#FF6B6B]/30 rounded-[16px] p-4 text-center z-20 shadow-2xl">
                                 <div className="text-2xl mb-2">🔒</div>
-                                <h3 className="text-[15px] font-extrabold font-syne mb-1 text-white">{t("lockedTitle", { count: hiddenHallazgosCount })}</h3>
+                                <h3 className="text-[15px] font-extrabold font-display mb-1 text-white">{t("lockedTitle", { count: hiddenHallazgosCount })}</h3>
                                 <p className="text-[11px] text-[#8892A4] mb-3 leading-snug">
                                     {t("lockedDesc")}
                                 </p>

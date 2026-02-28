@@ -27,7 +27,7 @@ export default function ClientTableRow({ auditId, item }: Props) {
             </td>
             <td className="py-4 px-6 text-sm text-slate-300 font-medium">--</td>
             <td className="py-4 px-6 text-right">
-                <div className={`font-bold font-syne ${item.styles.text} text-base`}>{item.roi}</div>
+                <div className={`font-bold font-display ${item.styles.text} text-base`}>{item.roi}</div>
             </td>
         </tr>
     );

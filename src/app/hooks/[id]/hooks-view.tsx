@@ -41,7 +41,7 @@ export default function HooksView({ hooks, auditId }: HooksViewProps) {
                 <Link href={`/reporte/${auditId}`} className="text-xs text-gray-400 mb-2 flex items-center gap-1 hover:text-white transition-colors">
                     <ArrowLeft className="w-3 h-3" /> Volver al reporte
                 </Link>
-                <h1 className="text-2xl font-bold font-syne">Hooks y Ángulos 🎣</h1>
+                <h1 className="text-2xl font-bold font-display">Hooks y Ángulos 🎣</h1>
                 <p className="text-xs text-[#8892A4] mt-1">Mejores ángulos creativos para tus anuncios.</p>
             </div>
 

@@ -59,7 +59,7 @@ export default async function AuditoriasPage() {
                 <div className="h-20 flex items-center px-8 border-b border-slate-800">
                     <Link href="/" className="flex items-center gap-3">
                         <Image src="/favicon.ico" alt="Aditor AI" width={32} height={32} />
-                        <span className="text-xl font-bold font-syne text-white tracking-tight">Aditor AI</span>
+                        <span className="text-xl font-bold font-display text-white tracking-tight">Aditor AI</span>
                     </Link>
                 </div>
 
@@ -90,7 +90,7 @@ export default async function AuditoriasPage() {
                 {/* Header Superior */}
                 <header className="h-20 px-8 flex items-center justify-between border-b border-slate-800/50 bg-[#0B1120]/80 backdrop-blur-md sticky top-0 z-30">
                     <div className="flex items-center gap-4">
-                        <h1 className="text-2xl font-bold font-syne text-white">Historial de Auditorías</h1>
+                        <h1 className="text-2xl font-bold font-display text-white">Historial de Auditorías</h1>
                     </div>
 
                     <div className="flex items-center gap-4">
@@ -134,14 +134,14 @@ export default async function AuditoriasPage() {
                                         )}
                                     </div>
 
-                                    <h3 className="text-base font-bold text-white mb-2 font-syne">
+                                    <h3 className="text-base font-bold text-white mb-2 font-display">
                                         {new Date(audit.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
                                     </h3>
 
                                     <div className="flex items-center gap-2 mb-6">
                                         <div className="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/50 flex items-center gap-1.5">
                                             <span className="text-xs text-slate-400 font-medium">Score:</span>
-                                            <span className={`text-sm font-extrabold font-syne ${audit.score >= 80 ? 'text-[#00D4AA]' : audit.score >= 50 ? 'text-[#ffe66d]' : 'text-[#FF6B6B]'}`}>
+                                            <span className={`text-sm font-extrabold font-display ${audit.score >= 80 ? 'text-[#00D4AA]' : audit.score >= 50 ? 'text-[#ffe66d]' : 'text-[#FF6B6B]'}`}>
                                                 {audit.score || '--'}/100
                                             </span>
                                         </div>
@@ -165,7 +165,7 @@ export default async function AuditoriasPage() {
                             <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4">
                                 <SearchX className="w-8 h-8 text-slate-500" />
                             </div>
-                            <h3 className="text-lg font-bold font-syne text-white mb-2">Aún no tienes auditorías</h3>
+                            <h3 className="text-lg font-bold font-display text-white mb-2">Aún no tienes auditorías</h3>
                             <p className="text-sm text-slate-400 max-w-sm mb-6">
                                 Conecta tu cuenta publicitaria de Meta Ads y activa la IA para generar tu primer reporte de rendimiento.
                             </p>

@@ -35,7 +35,7 @@ export default function ConnectPage() {
         <div className="w-full max-w-[480px] mx-auto px-6 py-10 flex flex-col items-center text-center">
 
           {/* Title */}
-          <h1 className="text-[28px] font-bold font-syne mb-3 leading-tight">
+          <h1 className="text-[28px] font-bold font-display mb-3 leading-tight">
             {t("title")}
           </h1>
 

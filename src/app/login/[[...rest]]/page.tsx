@@ -22,7 +22,7 @@ export default function LoginPage() {
 
                 {/* Header */}
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold font-syne mb-1">Iniciar sesión</h1>
+                    <h1 className="text-2xl font-bold font-display mb-1">Iniciar sesión</h1>
                     <p className="text-sm text-gray-400">Accede a tus auditorías y aumenta tu ROAS</p>
                 </div>
 

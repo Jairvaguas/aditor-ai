@@ -16,7 +16,7 @@ export default function UserGrowthChart({ data }: { data: ChartDataPoint[] }) {
         <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 flex flex-col mt-4">
             <div className="mb-6 flex items-center justify-between">
                 <div>
-                    <h2 className="text-lg font-bold font-syne text-white">Crecimiento Mensual</h2>
+                    <h2 className="text-lg font-bold font-display text-white">Crecimiento Mensual</h2>
                     <p className="text-slate-400 text-sm mt-1">Evolución de usuarios en los últimos 6 meses</p>
                 </div>
             </div>

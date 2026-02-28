@@ -137,7 +137,7 @@ export default async function DashboardPage() {
                 <div className="h-20 flex items-center px-8 border-b border-slate-800">
                     <Link href="/" className="flex items-center gap-3">
                         <Image src="/favicon.ico" alt="Aditor AI" width={32} height={32} />
-                        <span className="text-xl font-bold font-syne text-white tracking-tight">Aditor AI</span>
+                        <span className="text-xl font-bold font-display text-white tracking-tight">Aditor AI</span>
                     </Link>
                 </div>
 
@@ -168,7 +168,7 @@ export default async function DashboardPage() {
                 {/* Header Superior */}
                 <header className="h-20 px-8 flex items-center justify-between border-b border-slate-800/50 bg-[#0B1120]/80 backdrop-blur-md sticky top-0 z-30">
                     <div className="flex items-center gap-4">
-                        <h1 className="text-2xl font-bold font-syne text-white">{t("hello", { name: displayName })}</h1>
+                        <h1 className="text-2xl font-bold font-display text-white">{t("hello", { name: displayName })}</h1>
                         <div className="hidden sm:flex px-3 py-1 bg-gradient-to-r from-[#FF6B6B]/20 to-[#ff8e53]/20 border border-[#FF6B6B]/30 rounded-full text-[#FF6B6B] text-xs font-bold tracking-wide shadow-[0_0_10px_rgba(255,107,107,0.1)]">
                             {t("plan")}
                         </div>
@@ -202,7 +202,7 @@ export default async function DashboardPage() {
                                 <div className="text-slate-400 font-medium text-sm">{t("roasGlobal")}</div>
                                 <div className="p-2 bg-[#ffe66d]/10 rounded-lg"><div className="text-lg">💰</div></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#ffe66d] transition-colors">{isZeroState ? "--" : metrics.roas}</div>
+                            <div className="text-3xl font-extrabold font-display text-white mb-2 group-hover:text-[#ffe66d] transition-colors">{isZeroState ? "--" : metrics.roas}</div>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="flex items-center text-[#FF6B6B] font-bold"><TrendingDown className="w-3 h-3 mr-0.5" /> -0.3 </span>
                                 <span className="text-slate-500">{t("vsPrev")}</span>
@@ -219,7 +219,7 @@ export default async function DashboardPage() {
                                 <div className="text-slate-400 font-medium text-sm">{t("ctrAvg")}</div>
                                 <div className="p-2 bg-[#00D4AA]/10 rounded-lg"><div className="text-lg">🖱️</div></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#00D4AA] transition-colors">{isZeroState ? "--" : metrics.ctr}</div>
+                            <div className="text-3xl font-extrabold font-display text-white mb-2 group-hover:text-[#00D4AA] transition-colors">{isZeroState ? "--" : metrics.ctr}</div>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="flex items-center text-[#00D4AA] font-bold"><TrendingUp className="w-3 h-3 mr-0.5" /> +0.2% </span>
                                 <span className="text-slate-500">{t("vsPrev")}</span>
@@ -236,7 +236,7 @@ export default async function DashboardPage() {
                                 <div className="text-slate-400 font-medium text-sm">{t("cpmAvg")}</div>
                                 <div className="p-2 bg-[#FF6B6B]/10 rounded-lg"><div className="text-lg">📣</div></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#FF6B6B] transition-colors">{isZeroState ? "$0" : metrics.cpm}</div>
+                            <div className="text-3xl font-extrabold font-display text-white mb-2 group-hover:text-[#FF6B6B] transition-colors">{isZeroState ? "$0" : metrics.cpm}</div>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="flex items-center text-[#FF6B6B] font-bold">{t("high")}</span>
                                 <span className="text-slate-500">{t("attention")}</span>
@@ -253,7 +253,7 @@ export default async function DashboardPage() {
                                 <div className="text-slate-400 font-medium text-sm">{t("spend7d")}</div>
                                 <div className="p-2 bg-[#74B9FF]/10 rounded-lg"><div className="text-lg">💸</div></div>
                             </div>
-                            <div className="text-3xl font-extrabold font-syne text-white mb-2 group-hover:text-[#74B9FF] transition-colors">{isZeroState ? "$0" : metrics.spend}</div>
+                            <div className="text-3xl font-extrabold font-display text-white mb-2 group-hover:text-[#74B9FF] transition-colors">{isZeroState ? "$0" : metrics.spend}</div>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="flex items-center text-[#00D4AA] font-bold"><TrendingUp className="w-3 h-3 mr-0.5" /> +15% </span>
                                 <span className="text-slate-500">{t("vsPrev")}</span>
@@ -272,7 +272,7 @@ export default async function DashboardPage() {
                         <div className="lg:col-span-2 bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden flex flex-col">
                             <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
                                 <div>
-                                    <h2 className="text-lg font-bold font-syne text-white">{t("tableTitle")}</h2>
+                                    <h2 className="text-lg font-bold font-display text-white">{t("tableTitle")}</h2>
                                     <p className="text-sm text-slate-400 mt-1">{t("tableDesc")}</p>
                                 </div>
                                 <Link href="/dashboard/auditorias" className="text-[#FF6B6B] bg-[#FF6B6B]/10 hover:bg-[#FF6B6B]/20 text-sm font-bold py-2 px-4 rounded-lg transition-colors flex items-center gap-1">
@@ -317,7 +317,7 @@ export default async function DashboardPage() {
                                 {/* Decoración fondo */}
                                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FF6B6B]/10 rounded-full blur-[40px]"></div>
 
-                                <h3 className="text-lg font-bold font-syne text-white mb-2 relative z-10">{t("onDemandTitle")}</h3>
+                                <h3 className="text-lg font-bold font-display text-white mb-2 relative z-10">{t("onDemandTitle")}</h3>
                                 <p className="text-sm text-slate-400 mb-6 relative z-10">{t("onDemandDesc")}</p>
 
                                 <AuditTriggerButton />
@@ -342,7 +342,7 @@ export default async function DashboardPage() {
                                     <div className="w-14 h-14 bg-[#00D4AA]/10 border border-[#00D4AA]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                                         <CheckCircle2 className="w-7 h-7 text-[#00D4AA]" />
                                     </div>
-                                    <h3 className="text-base font-bold text-white mb-2 font-syne">{t("metaConnected")}</h3>
+                                    <h3 className="text-base font-bold text-white mb-2 font-display">{t("metaConnected")}</h3>
                                     <p className="text-xs text-slate-400 mb-5">
                                         {t("metaConnectedDesc")}
                                     </p>
@@ -355,7 +355,7 @@ export default async function DashboardPage() {
                                     {/* Subtly glow from border */}
                                     <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-[#FF6B6B]/15 rounded-full blur-[30px]"></div>
 
-                                    <h3 className="text-base font-bold text-white mb-2 font-syne relative z-10">{t("connectMeta")}</h3>
+                                    <h3 className="text-base font-bold text-white mb-2 font-display relative z-10">{t("connectMeta")}</h3>
                                     <p className="text-xs text-slate-400 mb-5 relative z-10">
                                         {t("connectMetaDesc")}
                                     </p>
