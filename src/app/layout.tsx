@@ -1,12 +1,12 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import { Syne, DM_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getLocale } from "next-intl/server";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
+const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'], weight: ['700', '800'], variable: '--font-display' });
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
 
 export const metadata: Metadata = {
@@ -30,7 +30,7 @@ export default async function RootLayout({
   return (
     <ClerkProvider>
       <html lang={locale}>
-        <body className={cn(syne.variable, dmSans.variable, "bg-[#1A1A2E] text-white font-sans antialiased")}>
+        <body className={cn(plusJakarta.variable, dmSans.variable, "bg-[#1A1A2E] text-white font-sans antialiased")}>
           <NextIntlClientProvider messages={messages}>
             {children}
           </NextIntlClientProvider>
