@@ -13,6 +13,7 @@ export async function GET(request: Request) {
         scope: 'ads_read,business_management',
         state: state,
         response_type: 'code',
+        auth_type: 'rerequest',
     });
 
     const url = `https://www.facebook.com/v19.0/dialog/oauth?${params}`;
