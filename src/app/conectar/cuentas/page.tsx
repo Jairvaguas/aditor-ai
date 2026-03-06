@@ -9,29 +9,38 @@ import AccountSelector from '@/components/AccountSelector';
 
 export default async function SelectAccountPage() {
     const { userId } = await auth();
-
     if (!userId) {
         redirect('/login?redirect=/conectar');
     }
 
-    // Obtenemos el token del usuario para llamar a Meta
-    const { data: profile, error } = await getSupabaseAdmin()
+    const supabase = getSupabaseAdmin();
+
+    // Obtener perfil con token y límite de cuentas
+    const { data: profile, error } = await supabase
         .from('profiles')
-        .select('meta_access_token, selected_ad_account_id')
+        .select('meta_access_token, selected_ad_account_id, ad_accounts_count')
         .eq('clerk_user_id', userId)
         .single();
 
     if (error || !profile?.meta_access_token) {
-        console.error("DEBUG - Fallo en obtención de token en Supabase:", { error, clerkUserId: userId, profile });
         redirect('/conectar?error=token_exchange_failed');
     }
 
-    // Buscamos las cuentas en Meta
+    // Obtener cuentas ya vinculadas
+    const { data: connectedAccounts } = await supabase
+        .from('connected_accounts')
+        .select('ad_account_id')
+        .eq('user_id', userId)
+        .eq('is_active', true);
+
+    const connectedAccountIds = (connectedAccounts || []).map(a => a.ad_account_id);
+
+    // Obtener todas las cuentas disponibles en Meta
     let adAccounts = [];
     try {
         adAccounts = await getAdAccounts(profile.meta_access_token);
     } catch (e: any) {
-        console.error("Error fetching ad accounts from Meta:", e);
+        console.error('Error fetching ad accounts from Meta:', e);
         redirect('/conectar?error=meta_api_error');
     }
 
@@ -39,16 +48,22 @@ export default async function SelectAccountPage() {
         redirect('/conectar?error=no_ad_accounts');
     }
 
+    const maxAccounts = profile.ad_accounts_count || 1;
+
     return (
         <div className="flex flex-col min-h-screen bg-[#0B1120] text-[#F0F0F0] font-sans selection:bg-[#FF6B6B]/30 pt-32">
             <Navbar />
             <main className="flex-grow max-w-2xl mx-auto px-6 py-12 w-full text-center">
-                <h1 className="text-3xl font-bold mb-4">Selecciona tu Cuenta Publicitaria</h1>
+                <h1 className="text-3xl font-bold mb-4">Selecciona tus Cuentas Publicitarias</h1>
                 <p className="text-gray-400 mb-10">
-                    Elige con qué cuenta publicitaria de Meta quieres realizar la auditoría gratuita.
+                    Tu plan permite hasta {maxAccounts} cuenta{maxAccounts > 1 ? 's' : ''}. 
+                    Selecciona las cuentas que quieres auditar.
                 </p>
-
-                <AccountSelector accounts={adAccounts} currentSelection={profile.selected_ad_account_id} />
+                <AccountSelector 
+                    accounts={adAccounts} 
+                    connectedAccountIds={connectedAccountIds}
+                    maxAccounts={maxAccounts}
+                />
             </main>
             <Footer />
         </div>

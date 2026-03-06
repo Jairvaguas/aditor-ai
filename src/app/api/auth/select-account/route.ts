@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
 
-
 export async function POST(request: Request) {
     try {
         const { userId: clerkUserId } = await auth();
@@ -11,81 +10,101 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { adAccountId, currency = 'COP' } = body;
+        const { adAccountId, accountName, currency = 'USD' } = body;
 
         if (!adAccountId) {
             return NextResponse.json({ error: 'Missing adAccountId' }, { status: 400 });
         }
 
-        // 0. Extract current profile to check lock status (Limit = 1)
-        const { data: currentProfile, error: profileFetchError } = await getSupabaseAdmin()
+        const supabase = getSupabaseAdmin();
+
+        // 1. Obtener perfil del usuario
+        const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('meta_access_token, selected_ad_account_id, ad_accounts_count')
             .eq('clerk_user_id', clerkUserId)
             .single();
 
-        if (profileFetchError || !currentProfile) {
-            console.error('Error fetching profile for lock check:', profileFetchError);
+        if (profileError || !profile) {
             return NextResponse.json({ error: 'Profile not found' }, { status: 500 });
         }
 
-        const currentLockedAccount = currentProfile.selected_ad_account_id;
-        const limitCount = currentProfile.ad_accounts_count || 1;
+        const maxAccounts = profile.ad_accounts_count || 1;
 
-        // If limit is 1 and already locked to a different account, block it.
-        if (limitCount <= 1 && currentLockedAccount && currentLockedAccount !== adAccountId) {
-            console.warn(`User ${clerkUserId} attempted to change locked account. Rejected.`);
-            return NextResponse.json({ error: 'already_locked' }, { status: 403 });
+        // 2. Contar cuentas ya vinculadas por este usuario
+        const { count: currentCount } = await supabase
+            .from('connected_accounts')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', clerkUserId)
+            .eq('is_active', true);
+
+        // 3. Verificar si esta cuenta ya está vinculada por este usuario
+        const { data: existingAccount } = await supabase
+            .from('connected_accounts')
+            .select('id')
+            .eq('user_id', clerkUserId)
+            .eq('ad_account_id', adAccountId)
+            .single();
+
+        if (existingAccount) {
+            // Ya la tiene vinculada, simplemente seleccionarla como activa
+            await supabase
+                .from('profiles')
+                .update({ selected_ad_account_id: adAccountId, moneda: currency })
+                .eq('clerk_user_id', clerkUserId);
+
+            return NextResponse.json({ success: true, redirectUrl: '/dashboard' });
         }
 
-        // 0.5. Check Global Uniqueness - Is this account claimed by someone else?
-        const { data: globalCheck, error: globalCheckError } = await getSupabaseAdmin()
-            .from('profiles')
-            .select('clerk_user_id')
-            .eq('selected_ad_account_id', adAccountId)
-            .neq('clerk_user_id', clerkUserId)
+        // 4. Verificar que no exceda el límite de cuentas
+        if ((currentCount || 0) >= maxAccounts) {
+            return NextResponse.json({ 
+                error: 'account_limit_reached',
+                message: `Tu plan permite ${maxAccounts} cuenta(s). Upgrade para agregar más.`,
+                currentCount,
+                maxAccounts
+            }, { status: 403 });
+        }
+
+        // 5. Verificar que la cuenta no esté reclamada por otro usuario
+        const { data: globalCheck } = await supabase
+            .from('connected_accounts')
+            .select('user_id')
+            .eq('ad_account_id', adAccountId)
+            .eq('is_active', true)
+            .neq('user_id', clerkUserId)
             .limit(1);
 
-        if (globalCheckError) {
-            console.error('DEBUG - Error de BD en verificación de unicidad global:', globalCheckError);
-            return NextResponse.json({ error: 'Database check failed' }, { status: 500 });
-        }
-
         if (globalCheck && globalCheck.length > 0) {
-            console.warn(`DEBUG - Bloqueo por Conflicto de Usuario (Fraude): Account ${adAccountId} ya pertenece a ${globalCheck[0].clerk_user_id}. Intento por ${clerkUserId}`);
             return NextResponse.json({ error: 'account_already_in_use' }, { status: 403 });
         }
-        
-        // Re-vinculación/Éxito: Si todo está en orden y ya le pertenece a este mismo usuario, se permite continuar sin generar error.
 
-        // 1. Save selected account to profiles via UPSERT for safety and log thoroughly
-        const { error: profileError } = await getSupabaseAdmin()
-            .from('profiles')
-            .upsert({ 
-                clerk_user_id: clerkUserId, 
-                selected_ad_account_id: adAccountId,
-                meta_access_token: currentProfile.meta_access_token,
-                email: 'pending@aditor-ai.com',
-                nombre: 'Usuario Meta',
-                moneda: currency || 'COP'
-            }, { onConflict: 'clerk_user_id' });
+        // 6. Insertar nueva cuenta vinculada
+        const { error: insertError } = await supabase
+            .from('connected_accounts')
+            .insert({
+                user_id: clerkUserId,
+                ad_account_id: adAccountId,
+                account_name: accountName || `Cuenta ${adAccountId}`,
+                currency: currency,
+                is_active: true
+            });
 
-        if (profileError) {
-            console.error(`DEBUG - Error de Persistencia: ${profileError.message} - Código: ${profileError.code}`);
-            console.error(`JSON Completo del Error de BD:`, JSON.stringify(profileError));
-            
-            if (profileError.code === '23505' || (profileError.message && profileError.message.includes('unique constraint'))) {
-                return NextResponse.json({ error: 'account_claimed_by_another' }, { status: 409 });
-            }
-            
-            return NextResponse.json({ error: 'Database error storing selection' }, { status: 500 });
+        if (insertError) {
+            console.error('Error inserting connected account:', insertError);
+            return NextResponse.json({ error: 'Database error' }, { status: 500 });
         }
 
-        // Éxito Total: La BD ya tiene vinculado el ID. Todo lo demás se delega al dashboard.
-        return NextResponse.json({
-            success: true,
-            redirectUrl: '/dashboard'
-        });
+        // 7. Actualizar selected_ad_account_id en profiles (cuenta activa en el dashboard)
+        await supabase
+            .from('profiles')
+            .update({ 
+                selected_ad_account_id: adAccountId,
+                moneda: currency
+            })
+            .eq('clerk_user_id', clerkUserId);
+
+        return NextResponse.json({ success: true, redirectUrl: '/dashboard' });
 
     } catch (error: any) {
         console.error('Error in select-account API:', error);
