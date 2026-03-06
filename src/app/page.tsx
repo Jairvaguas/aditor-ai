@@ -46,8 +46,11 @@ export default async function Home() {
                 {t("heroTitleHighlight")}
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-400 mb-8 leading-relaxed max-w-xl" style={{ animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0, animationDelay: '150ms' }}>
+            <p className="text-lg md:text-xl text-gray-400 mb-3 leading-relaxed max-w-xl" style={{ animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0, animationDelay: '150ms' }}>
               {t("heroDesc")}
+            </p>
+            <p className="text-base text-gray-500 mb-8 max-w-xl" style={{ animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0, animationDelay: '200ms' }}>
+              {t("heroDescSub")}
             </p>
             <div className="flex justify-start" style={{ animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0, animationDelay: '300ms' }}>
               <Link href="/conectar" className="inline-flex bg-[#FF6B6B] hover:bg-[#ff5252] text-white px-8 py-4 rounded-full text-lg font-bold transition-all text-center items-center justify-center gap-3 shadow-[0_8px_24px_rgba(255,107,107,0.25)] hover:shadow-[0_12px_32px_rgba(255,107,107,0.4)] hover:-translate-y-1">
