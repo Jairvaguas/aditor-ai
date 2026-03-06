@@ -1,200 +1,113 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { UserButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-import { checkSubscription } from "@/lib/checkSubscription";
+import NextLink from "next/link";
 import { getSupabaseAdmin } from "@/lib/supabase";
-import {
-    Bell,
-    Search,
-    Sparkles,
-    Settings,
-    BarChart2,
-    Calendar,
-    Target,
-    ArrowRight,
-    SearchX
-} from "lucide-react";
+import { checkSubscription } from "@/lib/checkSubscription";
 import { getTranslations } from "next-intl/server";
+import { ArrowLeft, FileText, Calendar, ChevronRight } from "lucide-react";
 
 export default async function AuditoriasPage() {
-    const tHeader = await getTranslations("Header");
+    const t = await getTranslations("Auditorias");
     const user = await currentUser();
-
-    if (!user) {
-        redirect("/registro");
-    }
+    if (!user) redirect("/registro");
 
     const hasAccess = await checkSubscription(user.id);
-    if (!hasAccess) {
-        redirect("/subscribe");
+    if (!hasAccess) redirect("/subscribe");
+
+    // Obtener cuenta seleccionada
+    const { data: profile } = await getSupabaseAdmin()
+        .from('profiles')
+        .select('selected_ad_account_id')
+        .eq('clerk_user_id', user.id)
+        .single();
+
+    const selectedAccount = profile?.selected_ad_account_id;
+
+    // Obtener auditorías filtradas por cuenta
+    let query = getSupabaseAdmin()
+        .from('auditorias')
+        .select('id, created_at, tipo, ad_account_id, score')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+    if (selectedAccount) {
+        query = query.eq('ad_account_id', selectedAccount);
     }
 
-    const displayName = user.firstName || user.username || "Usuario";
+    const { data: auditorias } = await query;
 
-    // Fetch audits for this user from Supabase
-    const { data: auditsList, error: auditsError } = await getSupabaseAdmin()
-        .from('auditorias')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-    console.log('Buscando auditorías para user_id:', user.id);
-    console.log('Auditorías encontradas:', auditsList?.length);
-    if (auditsError) console.error('Error fetching auditorias:', auditsError);
-
-    const audits = auditsList || [];
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('es-AR', {
+            day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+    };
 
     return (
-        <main className="min-h-screen bg-[#0B1120] text-white font-sans flex overflow-hidden">
-            {/* Background Effects */}
-            <div className="fixed top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-[#FF6B6B] opacity-[0.03] rounded-full blur-[150px]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[#00D4AA] opacity-[0.03] rounded-full blur-[150px]" />
-            </div>
-
-            {/* Sidebar Fixa (Desktop) */}
-            <aside className="fixed top-0 left-0 w-64 h-full bg-[#0B1120] border-r border-slate-800 z-40 hidden lg:flex flex-col">
-                <div className="h-20 flex items-center px-8 border-b border-slate-800">
-                    <Link href="/" className="flex items-center gap-3">
-                        <Image src="/favicon.ico" alt="Aditor AI" width={32} height={32} />
-                        <span className="text-xl font-bold font-display text-white tracking-tight">Aditor AI</span>
-                    </Link>
-                </div>
-
-                <div className="flex-1 py-8 px-4 flex flex-col gap-2">
-                    <div className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Menú Principal</div>
-
-                    <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors">
-                        <BarChart2 className="w-5 h-5" />
-                        <span>{tHeader("dashboard")}</span>
-                    </Link>
-
-                    <Link href="/dashboard/auditorias" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#FF6B6B]/10 text-[#FF6B6B] font-medium transition-colors">
-                        <Search className="w-5 h-5" />
-                        <span>{tHeader("audits")}</span>
-                    </Link>
-
-
-                    <Link href="/dashboard/config" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition-colors mt-auto">
-                        <Settings className="w-5 h-5" />
-                        <span>{tHeader("configuration")}</span>
-                    </Link>
-                </div>
-            </aside>
-
-            {/* Main Content Area */}
-            <div className="flex-1 lg:ml-64 relative z-10 flex flex-col h-screen overflow-y-auto w-full">
-
-                {/* Header Superior */}
-                <header className="h-20 px-8 flex items-center justify-between border-b border-slate-800/50 bg-[#0B1120]/80 backdrop-blur-md sticky top-0 z-30">
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-2xl font-bold font-display text-white">Historial de Auditorías</h1>
+        <div className="min-h-screen bg-[#0B1120] text-white font-sans">
+            <div className="max-w-4xl mx-auto px-6 py-8">
+                {/* Header */}
+                <div className="flex items-start gap-4 mb-8">
+                    <NextLink href="/dashboard" className="mt-1 flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
+                        <ArrowLeft className="w-5 h-5" />
+                    </NextLink>
+                    <div>
+                        <h1 className="text-2xl font-bold font-display">{t("title")}</h1>
+                        <p className="text-sm text-slate-400 mt-1">{t("subtitle")}</p>
                     </div>
-
-                    <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center relative cursor-pointer hover:bg-slate-700 transition-colors">
-                            <Bell className="w-5 h-5 text-slate-300" />
-                        </div>
-                        <UserButton
-                            afterSignOutUrl="/"
-                            appearance={{
-                                elements: {
-                                    avatarBox: "w-10 h-10 border-2 border-slate-700 hover:border-[#00D4AA] transition-colors",
-                                }
-                            }}
-                        />
-                    </div>
-                </header>
-
-                {/* Content */}
-                <div className="p-8 pb-32 flex flex-col gap-6 max-w-5xl mx-auto w-full">
-
-                    <p className="text-slate-400 mb-2 text-sm">
-                        Aquí encontrarás el registro histórico de todos los análisis generados por la IA para tus campañas.
-                    </p>
-
-                    {audits.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {audits.map((audit: any) => (
-                                <div key={audit.id} className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 hover:border-slate-600 transition-colors flex flex-col group">
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div className="bg-slate-800/50 p-2.5 rounded-xl border border-slate-700">
-                                            <Calendar className="w-5 h-5 text-slate-300" />
-                                        </div>
-                                        {audit.status === 'completed' || audit.status === 'Completada' ? (
-                                            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-[#00D4AA]/10 text-[#00D4AA] border border-[#00D4AA]/20">
-                                                Completada
-                                            </span>
-                                        ) : (
-                                            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-[#ffe66d]/10 text-[#ffe66d] border border-[#ffe66d]/20">
-                                                Pendiente
-                                            </span>
-                                        )}
-                                    </div>
-
-                                    <h3 className="text-base font-bold text-white mb-2 font-display">
-                                        {new Date(audit.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
-                                    </h3>
-
-                                    <div className="flex items-center gap-2 mb-6">
-                                        <div className="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/50 flex items-center gap-1.5">
-                                            <span className="text-xs text-slate-400 font-medium">Score:</span>
-                                            <span className={`text-sm font-extrabold font-display ${audit.score >= 80 ? 'text-[#00D4AA]' : audit.score >= 50 ? 'text-[#ffe66d]' : 'text-[#FF6B6B]'}`}>
-                                                {audit.score || '--'}/100
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5 text-xs text-slate-500 ml-auto">
-                                            <Target className="w-3.5 h-3.5" />
-                                            <span>IA</span>
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-auto pt-4 border-t border-slate-800/80">
-                                        <Link href={`/reporte/${audit.id}`} className="flex items-center justify-between text-sm font-bold text-[#FF6B6B] group-hover:text-[#ff8e53] transition-colors">
-                                            <span>Ver reporte</span>
-                                            <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="bg-slate-900/40 border border-slate-800 border-dashed rounded-3xl p-12 flex flex-col items-center justify-center text-center mt-4">
-                            <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4">
-                                <SearchX className="w-8 h-8 text-slate-500" />
-                            </div>
-                            <h3 className="text-lg font-bold font-display text-white mb-2">Aún no tienes auditorías</h3>
-                            <p className="text-sm text-slate-400 max-w-sm mb-6">
-                                Conecta tu cuenta publicitaria de Meta Ads y activa la IA para generar tu primer reporte de rendimiento.
-                            </p>
-                            <Link href="/conectar" className="bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-sm py-3 px-6 rounded-xl transition-colors shadow-lg">
-                                Conectar Meta Ads
-                            </Link>
-                        </div>
-                    )}
-
                 </div>
+
+                {/* Lista de auditorías */}
+                {(!auditorias || auditorias.length === 0) ? (
+                    <div className="text-center py-16 text-slate-500">
+                        <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>{t("empty")}</p>
+                    </div>
+                ) : (
+                    <div className="space-y-3">
+                        {auditorias.map((audit: any) => {
+                            const score = audit.score || 0;
+                            let scoreColor = '#FFE66D';
+                            if (score > 70) scoreColor = '#00D4AA';
+                            if (score < 40) scoreColor = '#FF6B6B';
+
+                            return (
+                                <NextLink
+                                    key={audit.id}
+                                    href={`/reporte/${audit.id}`}
+                                    className="flex items-center justify-between p-5 bg-slate-900/80 border border-slate-700/80 rounded-2xl hover:bg-slate-800/80 hover:border-slate-600 transition-all group"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-xl flex items-center justify-center font-bold font-display text-lg" style={{ backgroundColor: `${scoreColor}15`, color: scoreColor }}>
+                                            {score}
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-white group-hover:text-[#FF6B6B] transition-colors">
+                                                {t("auditLabel")} — {formatDate(audit.created_at)}
+                                            </div>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                {audit.tipo === 'automatica' ? (
+                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#00D4AA]/10 text-[#00D4AA] border border-[#00D4AA]/20">
+                                                        AUTO
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                                                        MANUAL
+                                                    </span>
+                                                )}
+                                                {audit.ad_account_id && (
+                                                    <span className="text-xs text-slate-500">ID: {audit.ad_account_id}</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ChevronRight className="w-5 h-5 text-slate-600 group-hover:text-slate-400 transition-colors" />
+                                </NextLink>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
-
-            {/* Mobile Bottom Navigation */}
-            <div className="lg:hidden fixed bottom-0 left-0 w-full bg-slate-900 border-t border-slate-800 pb-5 pt-3 flex justify-around items-center z-50 px-2 transition-transform">
-                <Link href="/dashboard" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
-                    <BarChart2 className="w-5 h-5" />
-                    <span className="text-[10px] font-medium">{tHeader("dashboard")}</span>
-                </Link>
-
-                <Link href="/dashboard/auditorias" className="flex flex-col items-center gap-1 text-[#FF6B6B] w-16">
-                    <Search className="w-5 h-5" />
-                    <span className="text-[10px] font-medium">{tHeader("audits")}</span>
-                </Link>
-
-                <Link href="/dashboard/config" className="flex flex-col items-center gap-1 text-slate-400 hover:text-white w-16 transition-colors">
-                    <Settings className="w-5 h-5" />
-                    <span className="text-[10px] font-medium">{tHeader("configuration")}</span>
-                </Link>
-            </div>
-        </main>
+        </div>
     );
 }
