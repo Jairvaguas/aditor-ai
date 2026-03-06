@@ -19,7 +19,8 @@ import {
     CheckCircle2,
     ChevronRight
 } from "lucide-react";
-import LanguageSelector from "@/components/LanguageSelector";\nimport AccountSwitcher from "@/components/AccountSwitcher";
+import LanguageSelector from "@/components/LanguageSelector";
+import AccountSwitcher from "@/components/AccountSwitcher";
 
 export default async function DashboardPage() {
     const t = await getTranslations("Dashboard");
