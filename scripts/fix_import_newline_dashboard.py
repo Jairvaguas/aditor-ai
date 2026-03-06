@@ -8,19 +8,25 @@ def fix_imports():
         return
 
     with open(FILE_PATH, 'r', encoding='utf-8') as f:
-        content = f.read()
+        lines = f.readlines()
 
-    # The string \\n is literally in the file
-    old_string = 'import LanguageSelector from "@/components/LanguageSelector";\\nimport AccountSwitcher from "@/components/AccountSwitcher";'
-    new_string = 'import LanguageSelector from "@/components/LanguageSelector";\nimport AccountSwitcher from "@/components/AccountSwitcher";'
-
-    if old_string in content:
-        content = content.replace(old_string, new_string)
-        with open(FILE_PATH, 'w', encoding='utf-8') as f:
-            f.write(content)
-        print(f"Successfully fixed imports in {FILE_PATH}")
+    # The user says the error is exactly on line 22.
+    # We will look for LanguageSelector in the line to be absolutely sure.
+    for i, line in enumerate(lines):
+        if 'import LanguageSelector from "@/components/LanguageSelector";' in line and '\\n' in line:
+            parts = line.split('\\n')
+            if len(parts) >= 2:
+                lines[i] = parts[0] + '\n' + parts[1]
+                print(f"Fixed line {i+1} by splitting and inserting real newline.")
+                break
     else:
-        print("Target string not found, it may have been already fixed or formatted differently.")
+        # If not found that way, specifically force line 22 if it matches
+        if len(lines) >= 22 and 'LanguageSelector' in lines[21]:
+            lines[21] = 'import LanguageSelector from "@/components/LanguageSelector";\nimport AccountSwitcher from "@/components/AccountSwitcher";\n'
+            print("Forced replacement on line 22.")
+
+    with open(FILE_PATH, 'w', encoding='utf-8') as f:
+        f.writelines(lines)
 
 if __name__ == "__main__":
     fix_imports()

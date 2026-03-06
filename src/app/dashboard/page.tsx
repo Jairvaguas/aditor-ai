@@ -189,9 +189,9 @@ export default async function DashboardPage() {
                             {t("plan")}
                         </div>
                         {connectedAccounts && connectedAccounts.length > 0 && (
-                            <AccountSwitcher 
-                                accounts={connectedAccounts} 
-                                selectedAccountId={selectedAccountId || null} 
+                            <AccountSwitcher
+                                accounts={connectedAccounts}
+                                selectedAccountId={selectedAccountId || null}
                             />
                         )}
                     </div>
