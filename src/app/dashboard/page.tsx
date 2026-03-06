@@ -19,7 +19,7 @@ import {
     CheckCircle2,
     ChevronRight
 } from "lucide-react";
-import LanguageSelector from "@/components/LanguageSelector";
+import LanguageSelector from "@/components/LanguageSelector";\nimport AccountSwitcher from "@/components/AccountSwitcher";
 
 export default async function DashboardPage() {
     const t = await getTranslations("Dashboard");
@@ -39,19 +39,34 @@ export default async function DashboardPage() {
 
     const { data: profile } = await getSupabaseAdmin()
         .from('profiles')
-        .select('meta_access_token')
+        .select('meta_access_token, selected_ad_account_id, ad_accounts_count')
         .eq('clerk_user_id', user.id)
         .single();
 
     const isConnectedToMeta = !!profile?.meta_access_token;
+    const selectedAccountId = profile?.selected_ad_account_id;
 
-    const { data: lastAudit } = await getSupabaseAdmin()
+    // Obtener cuentas vinculadas del usuario
+    const { data: connectedAccounts } = await getSupabaseAdmin()
+        .from('connected_accounts')
+        .select('ad_account_id, account_name, currency')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .order('connected_at', { ascending: true });
+
+    let auditQuery = getSupabaseAdmin()
         .from('auditorias')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+        .limit(1);
+
+    // Si hay cuenta seleccionada, filtrar auditorías por esa cuenta
+    if (selectedAccountId) {
+        auditQuery = auditQuery.eq('ad_account_id', selectedAccountId);
+    }
+
+    const { data: lastAudit } = await auditQuery.single();
 
     const isZeroState = !lastAudit;
 
@@ -172,6 +187,12 @@ export default async function DashboardPage() {
                         <div className="hidden sm:flex px-3 py-1 bg-gradient-to-r from-[#FF6B6B]/20 to-[#ff8e53]/20 border border-[#FF6B6B]/30 rounded-full text-[#FF6B6B] text-xs font-bold tracking-wide shadow-[0_0_10px_rgba(255,107,107,0.1)]">
                             {t("plan")}
                         </div>
+                        {connectedAccounts && connectedAccounts.length > 0 && (
+                            <AccountSwitcher 
+                                accounts={connectedAccounts} 
+                                selectedAccountId={selectedAccountId || null} 
+                            />
+                        )}
                     </div>
 
                     <div className="flex items-center gap-4">

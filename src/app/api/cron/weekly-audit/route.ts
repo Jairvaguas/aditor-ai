@@ -31,63 +31,76 @@ export async function GET(request: Request) {
 
     for (const user of users) {
         try {
-            if (!user.connected_accounts?.length) continue;
+            // Obtener todas las cuentas vinculadas y activas
+            const { data: accounts } = await supabase
+                .from('connected_accounts')
+                .select('ad_account_id, currency')
+                .eq('user_id', user.clerk_user_id)
+                .eq('is_active', true);
 
-            const account = user.connected_accounts[0];
+            if (!accounts || accounts.length === 0) continue;
 
-            // Por ahora usar datos de prueba hasta tener Meta API real
-            const mockCampaigns = [{
-                id: 'auto_001',
-                nombre: 'Auditoría automática semanal',
-                ad_account_id: account.ad_account_id,
-                estado: 'activa',
-                presupuesto_diario: 50,
-                metricas_30d: {
-                    roas: 2.1, ctr: 1.2, cpm: 12.5, cpc: 1.04,
-                    frecuencia: 3.2, gasto_total: 1400,
-                    conversiones: 45, valor_conversiones: 2940,
-                    pagos_iniciados: 58, visitas_landing: 1680
+            for (const account of accounts) {
+                try {
+                    // Por ahora usar datos de prueba hasta tener Meta API real
+                    const mockCampaigns = [{
+                        id: `auto_${account.ad_account_id}`,
+                        nombre: 'Auditoría automática semanal',
+                        ad_account_id: account.ad_account_id,
+                        estado: 'activa',
+                        presupuesto_diario: 50,
+                        metricas_30d: {
+                            roas: 2.1, ctr: 1.2, cpm: 12.5, cpc: 1.04,
+                            frecuencia: 3.2, gasto_total: 1400,
+                            conversiones: 45, valor_conversiones: 2940,
+                            pagos_iniciados: 58, visitas_landing: 1680
+                        }
+                    }];
+
+                    const audit = await generateAudit(
+                        mockCampaigns,
+                        user.clerk_user_id,
+                        user.moneda || account.currency || 'USD',
+                        user.pais
+                    );
+
+                    // Actualizar tipo a automatica
+                    await supabase
+                        .from('auditorias')
+                        .update({ tipo: 'automatica' })
+                        .eq('id', audit.id);
+
+                    // Parse XML to get score and findings count for email
+                    let score = 0;
+                    let hallazgosCount = 0;
+                    try {
+                        const parsed = parser.parse(audit.xml);
+                        const scoreVal = parsed.auditoria?.score_cuenta?.valor;
+                        score = parseInt(scoreVal) || 0;
+
+                        const findings = parsed.auditoria?.hallazgos?.hallazgo;
+                        hallazgosCount = Array.isArray(findings) ? findings.length : (findings ? 1 : 0);
+                    } catch (e) {
+                        console.error('Error parsing XML for email:', e);
+                    }
+
+                    // Send Weekly Email
+                    await sendWeeklyAuditEmail(
+                        user.email,
+                        audit.id,
+                        score,
+                        hallazgosCount,
+                        mockCampaigns[0].metricas_30d.roas,
+                        mockCampaigns[0].metricas_30d.gasto_total
+                    );
+
+                    results.push({ userId: user.clerk_user_id, adAccountId: account.ad_account_id, auditId: audit.id, status: 'ok', emailSent: true });
+
+                } catch (accError) {
+                    console.error(`Error processing account ${account.ad_account_id} for user ${user.clerk_user_id}:`, accError);
+                    results.push({ userId: user.clerk_user_id, adAccountId: account.ad_account_id, status: 'error', error: accError });
                 }
-            }];
-
-            const audit = await generateAudit(
-                mockCampaigns,
-                user.clerk_user_id,
-                user.moneda,
-                user.pais
-            );
-
-            // Actualizar tipo a automatica
-            await supabase
-                .from('auditorias')
-                .update({ tipo: 'automatica' })
-                .eq('id', audit.id);
-
-            // Parse XML to get score and findings count for email
-            let score = 0;
-            let hallazgosCount = 0;
-            try {
-                const parsed = parser.parse(audit.xml);
-                const scoreVal = parsed.auditoria?.score_cuenta?.valor;
-                score = parseInt(scoreVal) || 0;
-
-                const findings = parsed.auditoria?.hallazgos?.hallazgo;
-                hallazgosCount = Array.isArray(findings) ? findings.length : (findings ? 1 : 0);
-            } catch (e) {
-                console.error('Error parsing XML for email:', e);
             }
-
-            // Send Weekly Email
-            await sendWeeklyAuditEmail(
-                user.email,
-                audit.id,
-                score,
-                hallazgosCount,
-                mockCampaigns[0].metricas_30d.roas,
-                mockCampaigns[0].metricas_30d.gasto_total
-            );
-
-            results.push({ userId: user.clerk_user_id, auditId: audit.id, status: 'ok', emailSent: true });
 
         } catch (error) {
             console.error(`Error processing user ${user.clerk_user_id}:`, error);

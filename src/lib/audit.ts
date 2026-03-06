@@ -137,11 +137,18 @@ Devuelve ÚNICAMENTE el XML con este schema exacto:
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
+  const { data: userProfile } = await supabase
+    .from('profiles')
+    .select('selected_ad_account_id')
+    .eq('clerk_user_id', userId)
+    .single();
+  const selectedAdAccountId = campaigns[0]?.ad_account_id || userProfile?.selected_ad_account_id || 'unknown';
+
   const { data, error } = await supabase
     .from('auditorias')
     .insert({
       user_id: userId,
-      ad_account_id: campaigns[0]?.ad_account_id || 'unknown',
+      ad_account_id: selectedAdAccountId,
       tipo: 'manual',
       xml_raw: cleanXml,
       score: score,
