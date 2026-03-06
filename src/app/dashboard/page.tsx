@@ -342,7 +342,7 @@ export default async function DashboardPage() {
                                 <h3 className="text-lg font-bold font-display text-white mb-2 relative z-10">{t("onDemandTitle")}</h3>
                                 <p className="text-sm text-slate-400 mb-6 relative z-10">{t("onDemandDesc")}</p>
 
-                                <AuditTriggerButton />
+                                <AuditTriggerButton label={t("startAudit")} />
                             </div>
 
                             {/* Próxima auditoría automática */}

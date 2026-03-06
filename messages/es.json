@@ -146,7 +146,8 @@
     "reconnect": "Reconectar cuenta",
     "connectMeta": "Conectar Meta Ads",
     "connectMetaDesc": "Habilita la lectura para iniciar tu primera auditoría automática.",
-    "connectBtn": "Conectar Cuenta"
+    "connectBtn": "Conectar Cuenta",
+    "startAudit": "Iniciar Auditoría"
   },
   "Conectar": {
     "title": "Conectá tu cuenta de Meta Ads",

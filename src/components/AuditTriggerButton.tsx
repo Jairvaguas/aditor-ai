@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sparkles, Loader2 } from 'lucide-react';
 
-export default function AuditTriggerButton() {
+export default function AuditTriggerButton({ label }: { label?: string }) {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
@@ -53,7 +53,7 @@ export default function AuditTriggerButton() {
                 </>
             ) : (
                 <>
-                    <Sparkles className="w-5 h-5" /> Iniciar Auditoría
+                    <Sparkles className="w-5 h-5" /> {label || "Start Audit"}
                 </>
             )}
         </button>

@@ -146,7 +146,8 @@
     "reconnect": "Reconnect account",
     "connectMeta": "Connect Meta Ads",
     "connectMetaDesc": "Enable read access to start your first automatic audit.",
-    "connectBtn": "Connect Account"
+    "connectBtn": "Connect Account",
+    "startAudit": "Start Audit"
   },
   "Conectar": {
     "title": "Connect your Meta Ads account",
@@ -202,7 +203,7 @@
   "Header": {
     "dashboard": "Dashboard",
     "audits": "Audits",
-    "configuration": "Configuration",
+    "configuration": "Settings",
     "logout": "Log out"
   },
   "Footer": {
