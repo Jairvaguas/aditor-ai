@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Search, TrendingUp, Clock, AlertTriangle, CheckCircle2, Zap, Repeat } from "lucide-react";
+import { ArrowRight, Search, TrendingUp, Clock, AlertTriangle, CheckCircle2, Zap, Repeat, Shield, Users, ShoppingCart, Briefcase, Eye, Brain, BarChart3, Mail } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import DynamicPricingForm from "@/components/DynamicPricingForm";
 import Navbar from "@/components/Navbar";
@@ -170,6 +170,176 @@ export default async function Home() {
               </div>
               <h3 className="text-2xl font-bold mb-4">{t("feat3Title")}</h3>
               <p className="text-gray-400 text-lg">{t("feat3Desc")}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+            {/* Security & Trust */}
+      <section id="seguridad" className="py-24 bg-[#080D18] border-y border-white/5 w-full animate-on-scroll">
+        <div className="max-w-7xl mx-auto px-6 w-full">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 font-display">{t("securityTitle")}</h2>
+            <p className="text-slate-400 text-xl">{t("securitySubtitle")}</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="bg-slate-900 p-6 rounded-2xl border border-slate-700 text-center">
+              <div className="w-14 h-14 bg-[#00D4AA]/10 rounded-xl flex items-center justify-center mb-4 text-[#00D4AA] mx-auto">
+                <Eye className="w-7 h-7" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">{t("sec1Title")}</h3>
+              <p className="text-slate-400 text-sm">{t("sec1Desc")}</p>
+            </div>
+            <div className="bg-slate-900 p-6 rounded-2xl border border-slate-700 text-center">
+              <div className="w-14 h-14 bg-[#00D4AA]/10 rounded-xl flex items-center justify-center mb-4 text-[#00D4AA] mx-auto">
+                <Shield className="w-7 h-7" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">{t("sec2Title")}</h3>
+              <p className="text-slate-400 text-sm">{t("sec2Desc")}</p>
+            </div>
+            <div className="bg-slate-900 p-6 rounded-2xl border border-slate-700 text-center">
+              <div className="w-14 h-14 bg-[#00D4AA]/10 rounded-xl flex items-center justify-center mb-4 text-[#00D4AA] mx-auto">
+                <Clock className="w-7 h-7" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">{t("sec3Title")}</h3>
+              <p className="text-slate-400 text-sm">{t("sec3Desc")}</p>
+            </div>
+            <div className="bg-slate-900 p-6 rounded-2xl border border-slate-700 text-center">
+              <div className="w-14 h-14 bg-[#00D4AA]/10 rounded-xl flex items-center justify-center mb-4 text-[#00D4AA] mx-auto">
+                <Brain className="w-7 h-7" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">{t("sec4Title")}</h3>
+              <p className="text-slate-400 text-sm">{t("sec4Desc")}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Who is it for */}
+      <section id="perfiles" className="py-24 w-full animate-on-scroll">
+        <div className="max-w-7xl mx-auto px-6 w-full">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 font-display">{t("profilesTitle")}</h2>
+            <p className="text-slate-400 text-xl">{t("profilesSubtitle")}</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl animate-on-scroll" style={{ transitionDelay: '0ms' }}>
+              <div className="w-14 h-14 bg-[#FF6B6B]/10 rounded-xl flex items-center justify-center mb-6 text-[#FF6B6B]">
+                <Briefcase className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">{t("profile1Title")}</h3>
+              <p className="text-slate-400 leading-relaxed mb-4">{t("profile1Desc")}</p>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] flex-shrink-0" /> {t("profile1Perk1")}</li>
+                <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] flex-shrink-0" /> {t("profile1Perk2")}</li>
+                <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] flex-shrink-0" /> {t("profile1Perk3")}</li>
+              </ul>
+            </div>
+            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl animate-on-scroll" style={{ transitionDelay: '100ms' }}>
+              <div className="w-14 h-14 bg-[#00D4AA]/10 rounded-xl flex items-center justify-center mb-6 text-[#00D4AA]">
+                <Users className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">{t("profile2Title")}</h3>
+              <p className="text-slate-400 leading-relaxed mb-4">{t("profile2Desc")}</p>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] flex-shrink-0" /> {t("profile2Perk1")}</li>
+                <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] flex-shrink-0" /> {t("profile2Perk2")}</li>
+                <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] flex-shrink-0" /> {t("profile2Perk3")}</li>
+              </ul>
+            </div>
+            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl animate-on-scroll" style={{ transitionDelay: '200ms' }}>
+              <div className="w-14 h-14 bg-yellow-400/10 rounded-xl flex items-center justify-center mb-6 text-yellow-400">
+                <ShoppingCart className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">{t("profile3Title")}</h3>
+              <p className="text-slate-400 leading-relaxed mb-4">{t("profile3Desc")}</p>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] flex-shrink-0" /> {t("profile3Perk1")}</li>
+                <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] flex-shrink-0" /> {t("profile3Perk2")}</li>
+                <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] flex-shrink-0" /> {t("profile3Perk3")}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Weekly Ritual */}
+      <section id="semanal" className="py-24 bg-[#080D18] border-y border-white/5 w-full animate-on-scroll">
+        <div className="max-w-4xl mx-auto px-6 w-full">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 font-display">{t("weeklyTitle")}</h2>
+            <p className="text-slate-400 text-xl">{t("weeklySubtitle")}</p>
+          </div>
+          <div className="relative">
+            {/* Timeline line */}
+            <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-[#FF6B6B] via-[#00D4AA] to-[#00D4AA] hidden md:block" />
+            <div className="space-y-8">
+              <div className="flex gap-6 items-start animate-on-scroll">
+                <div className="w-12 h-12 bg-[#FF6B6B]/10 rounded-full flex items-center justify-center text-[#FF6B6B] flex-shrink-0 border border-[#FF6B6B]/30">
+                  <BarChart3 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold mb-1">{t("week1Title")}</h3>
+                  <p className="text-slate-400">{t("week1Desc")}</p>
+                </div>
+              </div>
+              <div className="flex gap-6 items-start animate-on-scroll">
+                <div className="w-12 h-12 bg-yellow-500/10 rounded-full flex items-center justify-center text-yellow-500 flex-shrink-0 border border-yellow-500/30">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold mb-1">{t("week2Title")}</h3>
+                  <p className="text-slate-400">{t("week2Desc")}</p>
+                </div>
+              </div>
+              <div className="flex gap-6 items-start animate-on-scroll">
+                <div className="w-12 h-12 bg-[#00D4AA]/10 rounded-full flex items-center justify-center text-[#00D4AA] flex-shrink-0 border border-[#00D4AA]/30">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold mb-1">{t("week3Title")}</h3>
+                  <p className="text-slate-400">{t("week3Desc")}</p>
+                </div>
+              </div>
+              <div className="flex gap-6 items-start animate-on-scroll">
+                <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-500 flex-shrink-0 border border-blue-500/30">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold mb-1">{t("week4Title")}</h3>
+                  <p className="text-slate-400">{t("week4Desc")}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* What makes us different */}
+      <section id="diferencial" className="py-24 w-full animate-on-scroll">
+        <div className="max-w-7xl mx-auto px-6 w-full">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 font-display">{t("diffTitle")}</h2>
+            <p className="text-slate-400 text-xl">{t("diffSubtitle")}</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="bg-slate-900 p-8 rounded-2xl border border-red-500/20">
+              <h3 className="text-lg font-bold mb-4 text-red-400">{t("diffOthersTitle")}</h3>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3 text-slate-400 text-sm"><span className="text-red-400 mt-0.5">✕</span> {t("diffOthers1")}</li>
+                <li className="flex items-start gap-3 text-slate-400 text-sm"><span className="text-red-400 mt-0.5">✕</span> {t("diffOthers2")}</li>
+                <li className="flex items-start gap-3 text-slate-400 text-sm"><span className="text-red-400 mt-0.5">✕</span> {t("diffOthers3")}</li>
+                <li className="flex items-start gap-3 text-slate-400 text-sm"><span className="text-red-400 mt-0.5">✕</span> {t("diffOthers4")}</li>
+              </ul>
+            </div>
+            <div className="bg-slate-900 p-8 rounded-2xl border border-[#00D4AA]/30">
+              <h3 className="text-lg font-bold mb-4 text-[#00D4AA]">{t("diffAditorTitle")}</h3>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3 text-slate-300 text-sm"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] mt-0.5 flex-shrink-0" /> {t("diffAditor1")}</li>
+                <li className="flex items-start gap-3 text-slate-300 text-sm"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] mt-0.5 flex-shrink-0" /> {t("diffAditor2")}</li>
+                <li className="flex items-start gap-3 text-slate-300 text-sm"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] mt-0.5 flex-shrink-0" /> {t("diffAditor3")}</li>
+                <li className="flex items-start gap-3 text-slate-300 text-sm"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] mt-0.5 flex-shrink-0" /> {t("diffAditor4")}</li>
+              </ul>
             </div>
           </div>
         </div>
