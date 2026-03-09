@@ -69,6 +69,7 @@ export async function POST(req: Request) {
                 clerk_user_id: id,
                 email: primaryEmail,
                 nombre: nombre,
+                trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
             })
 
         if (error) {
