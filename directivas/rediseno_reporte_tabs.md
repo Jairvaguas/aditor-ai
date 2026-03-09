@@ -45,7 +45,9 @@
 - **Importaciones:** Cuidado con agregar redundancias al inicio de `page.tsx`.
 
 ## 6. Historial de Aprendizaje
-*Por llenar tras el primer intento de ejecución si surgen fallos.*
+| Fecha | Error Detectado | Causa Raíz | Solución/Parche Aplicado |
+|-------|-----------------|------------|--------------------------|
+| 2026-03-09 | Error de sintaxis en `page.tsx` durante build | El script insertó el import de `FindingsTabs` en medio de un import multilínea de `lucide-react`, rompiendo la sintaxis. | Se modificó el script para identificar y reparar la declaración rota, y para posicionar futuras inserciones de manera segura tras imports de `next-intl`. |
 
 ## 7. Ejemplos de Uso
 ```bash

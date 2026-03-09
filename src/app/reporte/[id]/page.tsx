@@ -2,8 +2,8 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 import { XMLParser } from "fast-xml-parser";
 import NextLink from "next/link";
 import { getTranslations } from "next-intl/server";
-import {
 import FindingsTabs from "@/components/FindingsTabs";
+import {
     AlertTriangle,
     ArrowRight,
     ArrowLeft,

@@ -215,6 +215,7 @@ export default function FindingsTabs({ criticalFindings, warningFindings, opport
             )}
         </div>
     );
+}
 """
     os.makedirs(os.path.dirname(FINDINGS_TAB_PATH), exist_ok=True)
     with open(FINDINGS_TAB_PATH, "w", encoding="utf-8") as f:
@@ -227,16 +228,14 @@ def modify_report_page():
         content = f.read()
 
     # 1. Agregar import
-    if "import FindingsTabs" not in content:
-        import_match = re.search(r'import\s+.*?;?\n', content)
-        if import_match:
-            lines = content.split('\n')
-            last_import_idx = 0
-            for i, line in enumerate(lines):
-                if line.startswith('import '):
-                    last_import_idx = i
-            lines.insert(last_import_idx + 1, 'import FindingsTabs from "@/components/FindingsTabs";')
-            content = '\n'.join(lines)
+    bad_import = 'import {\nimport FindingsTabs from "@/components/FindingsTabs";\n    AlertTriangle,'
+    if bad_import in content:
+        content = content.replace(bad_import, 'import FindingsTabs from "@/components/FindingsTabs";\nimport {\n    AlertTriangle,')
+        print("Import de FindingsTabs reparado.")
+    elif "import FindingsTabs" not in content:
+        target_import = 'import { getTranslations } from "next-intl/server";'
+        if target_import in content:
+            content = content.replace(target_import, target_import + '\nimport FindingsTabs from "@/components/FindingsTabs";')
         else:
             content = 'import FindingsTabs from "@/components/FindingsTabs";\n' + content
         print("Import de FindingsTabs agregado.")

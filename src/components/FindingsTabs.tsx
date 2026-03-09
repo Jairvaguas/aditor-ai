@@ -202,3 +202,4 @@ export default function FindingsTabs({ criticalFindings, warningFindings, opport
             )}
         </div>
     );
+}
