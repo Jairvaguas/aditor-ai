@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { preapproval } from '@/lib/mercadopago';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { sendMetaEvent } from '@/lib/meta-pixel';
 
 export async function POST(req: Request) {
     try {
@@ -74,6 +75,21 @@ export async function POST(req: Request) {
                 external_reference: userId,
                 status: 'pending',
             } as any
+        });
+
+
+        // Enviar evento InitiateCheckout a Meta
+        await sendMetaEvent({
+            eventName: 'InitiateCheckout',
+            eventSourceUrl: 'https://www.aditor-ai.com/subscribe',
+            userData: {
+                externalId: userId,
+            },
+            customData: {
+                value: 47,
+                currency: 'USD',
+                contentName: 'Professional Plan',
+            },
         });
 
         return NextResponse.json({ init_point: response.init_point });

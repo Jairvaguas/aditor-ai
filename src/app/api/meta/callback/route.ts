@@ -4,6 +4,7 @@ import { exchangeCodeForToken, getAdAccounts, getCampaignInsights, getMetaUser }
 import { generateAudit } from '@/lib/audit';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { clerkClient } from '@clerk/nextjs/server';
+import { sendMetaEvent } from '@/lib/meta-pixel';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -121,7 +122,19 @@ export async function GET(request: Request) {
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=db_upsert_failed`);
         }
 
-        // 6. Redirigir a Selección de Cuentas si se autentico y guardo todo bien.
+                // Enviar evento CompleteRegistration a Meta
+        await sendMetaEvent({
+            eventName: 'CompleteRegistration',
+            eventSourceUrl: 'https://www.aditor-ai.com/conectar',
+            userData: {
+                externalId: clerkUserId,
+            },
+            customData: {
+                contentName: 'Meta Ads Connection',
+            },
+        });
+
+// 6. Redirigir a Selección de Cuentas si se autentico y guardo todo bien.
         return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar/cuentas`);
 
     } catch (err: any) {

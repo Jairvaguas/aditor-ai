@@ -4,6 +4,7 @@ import { WebhookEvent } from '@clerk/nextjs/server'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { NextResponse } from 'next/server'
 import { sendWelcomeEmail } from '@/lib/emails'
+import { sendMetaEvent } from '@/lib/meta-pixel';
 
 export async function POST(req: Request) {
     const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET
@@ -79,6 +80,18 @@ export async function POST(req: Request) {
         
         // Dispatch Welcome Email
         await sendWelcomeEmail(primaryEmail, nombre);
+
+        // Enviar evento Lead a Meta
+        await sendMetaEvent({
+            eventName: 'Lead',
+            eventSourceUrl: 'https://www.aditor-ai.com/registro',
+            userData: {
+                email: primaryEmail,
+                firstName: first_name || undefined,
+                lastName: last_name || undefined,
+                externalId: id,
+            },
+        });
     }
 
     return new NextResponse('', { status: 200 })

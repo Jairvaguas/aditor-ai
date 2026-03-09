@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { preapproval } from '@/lib/mercadopago';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { sendSubscriptionActiveEmail } from '@/lib/emails';
+import { sendMetaEvent } from '@/lib/meta-pixel';
 
 export async function POST(req: Request) {
     try {
@@ -53,6 +54,20 @@ export async function POST(req: Request) {
                        accountsLimit,
                        nextPaymentTs
                     );
+
+                    // Enviar evento Purchase a Meta
+                    await sendMetaEvent({
+                        eventName: 'Purchase',
+                        eventSourceUrl: 'https://www.aditor-ai.com/subscribe',
+                        userData: {
+                            externalId: external_reference, 
+                        },
+                        customData: {
+                            value: 47,
+                            currency: 'USD',
+                            contentName: 'Professional Plan',
+                        },
+                    });
                 }
             }
         }

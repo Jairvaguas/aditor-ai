@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { sendMetaEvent } from '@/lib/meta-pixel';
 
 export async function POST(request: Request) {
     try {
@@ -103,6 +104,19 @@ export async function POST(request: Request) {
                 moneda: currency
             })
             .eq('clerk_user_id', clerkUserId);
+
+
+        // Enviar evento StartTrial a Meta
+        await sendMetaEvent({
+            eventName: 'StartTrial',
+            eventSourceUrl: 'https://www.aditor-ai.com/conectar/cuentas',
+            userData: {
+                externalId: clerkUserId,
+            },
+            customData: {
+                contentName: `Ad Account ${adAccountId}`,
+            },
+        });
 
         return NextResponse.json({ success: true, redirectUrl: '/dashboard' });
 
