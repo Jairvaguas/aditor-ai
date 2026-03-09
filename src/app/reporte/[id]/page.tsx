@@ -3,6 +3,7 @@ import { XMLParser } from "fast-xml-parser";
 import NextLink from "next/link";
 import { getTranslations } from "next-intl/server";
 import {
+import FindingsTabs from "@/components/FindingsTabs";
     AlertTriangle,
     ArrowRight,
     ArrowLeft,
@@ -183,85 +184,27 @@ export default async function ReportePage(props: PageProps) {
                         )}
                     </div>
 
-                    {/* Right Column - Findings */}
-                    <div className="lg:col-span-8 flex flex-col gap-6">
-                        {/* Critical Findings */}
-                        {criticalFindings.length > 0 && (
-                            <div>
-                                <h3 className="flex items-center gap-2 text-sm font-bold text-[#FF6B6B] uppercase tracking-wider mb-3">
-                                    <PauseCircle className="w-4 h-4" /> {t("criticalLabel")} ({criticalFindings.length})
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {criticalFindings.map((finding: any, i: number) => (
-                                        <FindingCard key={`critical-${i}`} finding={finding} colors={{
-                                            bg: 'rgba(255,107,107,0.08)', border: 'rgba(255,107,107,0.25)', text: '#FF6B6B', badge: '#FF6B6B'
-                                        }} icon={<PauseCircle className="w-4 h-4" />} t={t} />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Warning Findings */}
-                        {allWarnings.length > 0 && (
-                            <div>
-                                <h3 className="flex items-center gap-2 text-sm font-bold text-[#FFE66D] uppercase tracking-wider mb-3">
-                                    <AlertTriangle className="w-4 h-4" /> {t("warningLabel")} ({allWarnings.length})
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {allWarnings.map((finding: any, i: number) => (
-                                        <FindingCard key={`warning-${i}`} finding={finding} colors={{
-                                            bg: 'rgba(255,230,109,0.08)', border: 'rgba(255,230,109,0.25)', text: '#FFE66D', badge: '#FFE66D'
-                                        }} icon={<AlertTriangle className="w-4 h-4" />} t={t} />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Opportunity Findings */}
-                        {opportunityFindings.length > 0 && (
-                            <div>
-                                <h3 className="flex items-center gap-2 text-sm font-bold text-[#00D4AA] uppercase tracking-wider mb-3">
-                                    <TrendingUp className="w-4 h-4" /> {t("opportunityLabel")} ({opportunityFindings.length})
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {opportunityFindings.map((finding: any, i: number) => (
-                                        <FindingCard key={`opp-${i}`} finding={finding} colors={{
-                                            bg: 'rgba(0,212,170,0.08)', border: 'rgba(0,212,170,0.25)', text: '#00D4AA', badge: '#00D4AA'
-                                        }} icon={<TrendingUp className="w-4 h-4" />} t={t} />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                    {/* Right Column - Findings with Tabs */}
+                    <div className="lg:col-span-8">
+                        <FindingsTabs
+                            criticalFindings={criticalFindings}
+                            warningFindings={allWarnings}
+                            opportunityFindings={opportunityFindings}
+                            labels={{
+                                summary: t("summaryTab"),
+                                critical: t("criticalLabel"),
+                                warnings: t("warningLabel"),
+                                opportunities: t("opportunityLabel"),
+                                recommendedAction: t("recommendedAction"),
+                                campaign: t("campaignCol"),
+                                type: t("typeCol"),
+                                urgency: t("urgencyCol"),
+                                viewDetail: t("viewDetail"),
+                            }}
+                        />
                     </div>
-                </div>
+</div>
             </div>
         </main>
-    );
-}
-
-// Finding Card Component (inline for simplicity)
-function FindingCard({ finding, colors, icon, t }: { finding: any; colors: any; icon: any; t: any }) {
-    return (
-        <div className="rounded-2xl p-5 border backdrop-blur-sm flex flex-col h-full" style={{ backgroundColor: colors.bg, borderColor: colors.border }}>
-            <div className="flex items-center gap-2 mb-3">
-                <div className="p-1 rounded-md bg-black/20" style={{ color: colors.text }}>
-                    {icon}
-                </div>
-                <span className="text-xs font-bold uppercase tracking-wide" style={{ color: colors.badge }}>
-                    {finding.tipo}
-                </span>
-            </div>
-            <h4 className="font-bold text-sm mb-2 text-white break-all overflow-hidden text-ellipsis line-clamp-2">{finding.campana_nombre}</h4>
-            <p className="text-xs text-gray-300 mb-4 leading-relaxed line-clamp-3">
-                {finding.diagnostico}
-            </p>
-            <div className="flex items-start gap-3 bg-black/20 p-3 rounded-xl mt-auto">
-                <div className="mt-0.5 flex-shrink-0" style={{ color: colors.text }}><ArrowRight className="w-3 h-3" /></div>
-                <div>
-                    <span className="text-[10px] font-bold block mb-0.5 uppercase tracking-wider" style={{ color: colors.text }}>{t("recommendedAction")}</span>
-                    <p className="text-xs text-white leading-relaxed">{finding.accion_concreta}</p>
-                </div>
-            </div>
-        </div>
     );
 }
