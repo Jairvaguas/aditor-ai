@@ -124,27 +124,129 @@ export async function getAdAccounts(accessToken: string): Promise<AdAccount[]> {
 export async function getCampaignInsights(accessToken: string, adAccountId: string) {
     const accountId = adAccountId.startsWith('act_') ? adAccountId : `act_${adAccountId}`;
 
-    // Last 30 days explicit fields including name and nested insights
-    const res = await fetch(
-        `${BASE_URL}/${accountId}/campaigns?fields=id,name,status,insights.date_preset(last_30d){spend,impressions,clicks,reach,actions}&access_token=${accessToken}`
+    // Paso 1: Obtener datos de campaña con objetivo, presupuesto y estado
+    const campaignsRes = await fetch(
+        `${BASE_URL}/${accountId}/campaigns?fields=id,name,status,objective,buying_type,daily_budget,lifetime_budget,bid_strategy,configured_status,effective_status&limit=50&access_token=${accessToken}`
     );
-    const data = await res.json();
+    const campaignsData = await campaignsRes.json();
+    if (campaignsData.error) throw new Error(campaignsData.error.message);
 
-    if (data.error) throw new Error(data.error.message);
+    const campaigns = campaignsData.data || [];
 
-    const campaignsData = data.data || [];
+    // Paso 2: Obtener adsets para conocer optimization_goal y destination_type
+    const adsetsRes = await fetch(
+        `${BASE_URL}/${accountId}/adsets?fields=id,name,campaign_id,optimization_goal,destination_type,targeting,daily_budget,lifetime_budget,bid_amount,status&limit=100&access_token=${accessToken}`
+    );
+    const adsetsData = await adsetsRes.json();
+    const adsets = adsetsData.data || [];
 
-    return campaignsData.map((c: any) => {
-        const insights = c.insights?.data?.[0] || {};
+    // Agrupar adsets por campaign_id
+    const adsetsByCampaign: Record<string, any[]> = {};
+    for (const adset of adsets) {
+        const cid = adset.campaign_id;
+        if (!adsetsByCampaign[cid]) adsetsByCampaign[cid] = [];
+        adsetsByCampaign[cid].push({
+            name: adset.name,
+            optimization_goal: adset.optimization_goal,
+            destination_type: adset.destination_type,
+            daily_budget: adset.daily_budget,
+            lifetime_budget: adset.lifetime_budget,
+            bid_amount: adset.bid_amount,
+            status: adset.status,
+        });
+    }
+
+    // Paso 3: Obtener insights con todas las métricas relevantes
+    const insightsRes = await fetch(
+        `${BASE_URL}/${accountId}/insights?fields=campaign_id,campaign_name,spend,impressions,clicks,reach,ctr,cpm,cpc,frequency,actions,action_values,cost_per_action_type,conversions,conversion_values,objective&date_preset=last_30d&level=campaign&limit=50&access_token=${accessToken}`
+    );
+    const insightsData = await insightsRes.json();
+    const insights = insightsData.data || [];
+
+    // Indexar insights por campaign_id
+    const insightsByCampaign: Record<string, any> = {};
+    for (const insight of insights) {
+        insightsByCampaign[insight.campaign_id] = insight;
+    }
+
+    // Paso 4: Combinar todo
+    return campaigns.map((c: any) => {
+        const insight = insightsByCampaign[c.id] || {};
+        const campaignAdsets = adsetsByCampaign[c.id] || [];
+
+        // Determinar el destination_type principal (el más común entre adsets)
+        const destinations = campaignAdsets.map((a: any) => a.destination_type).filter(Boolean);
+        const primaryDestination = destinations.length > 0
+            ? destinations.sort((a: string, b: string) =>
+                destinations.filter((v: string) => v === a).length - destinations.filter((v: string) => v === b).length
+              ).pop()
+            : 'UNKNOWN';
+
+        // Determinar optimization_goal principal
+        const optimizations = campaignAdsets.map((a: any) => a.optimization_goal).filter(Boolean);
+        const primaryOptimization = optimizations.length > 0
+            ? optimizations.sort((a: string, b: string) =>
+                optimizations.filter((v: string) => v === a).length - optimizations.filter((v: string) => v === b).length
+              ).pop()
+            : 'UNKNOWN';
+
+        // Extraer purchase/lead values para calcular ROAS
+        const actionValues = insight.action_values || [];
+        const purchaseValue = actionValues.find((a: any) => a.action_type === 'purchase')?.value || 0;
+        const leadValue = actionValues.find((a: any) => a.action_type === 'lead')?.value || 0;
+
+        const actions = insight.actions || [];
+        const purchases = actions.find((a: any) => a.action_type === 'purchase')?.value || 0;
+        const leads = actions.find((a: any) => a.action_type === 'lead')?.value || 0;
+        const addToCart = actions.find((a: any) => a.action_type === 'add_to_cart')?.value || 0;
+        const initiateCheckout = actions.find((a: any) => a.action_type === 'initiate_checkout')?.value || 0;
+        const linkClicks = actions.find((a: any) => a.action_type === 'link_click')?.value || 0;
+        const landingPageViews = actions.find((a: any) => a.action_type === 'landing_page_view')?.value || 0;
+        const messagingConversations = actions.find((a: any) => 
+            a.action_type === 'onsite_conversion.messaging_conversation_started_7d' || 
+            a.action_type === 'messaging_conversation_started_7d'
+        )?.value || 0;
+        const completeRegistrations = actions.find((a: any) => a.action_type === 'complete_registration')?.value || 0;
+
+        const spend = parseFloat(insight.spend || '0');
+        const roas = spend > 0 && purchaseValue > 0 ? (parseFloat(purchaseValue) / spend).toFixed(2) : null;
+        const costPerLead = spend > 0 && leads > 0 ? (spend / parseInt(leads)).toFixed(2) : null;
+        const costPerMessage = spend > 0 && messagingConversations > 0 ? (spend / parseInt(messagingConversations)).toFixed(2) : null;
+
         return {
             campaign_id: c.id,
             campaign_name: c.name,
             status: c.status,
-            spend: insights.spend || "0",
-            impressions: insights.impressions || "0",
-            clicks: insights.clicks || "0",
-            reach: insights.reach || "0",
-            actions: insights.actions || []
+            effective_status: c.effective_status,
+            objective: c.objective,
+            buying_type: c.buying_type,
+            daily_budget: c.daily_budget,
+            lifetime_budget: c.lifetime_budget,
+            bid_strategy: c.bid_strategy,
+            destination_type: primaryDestination,
+            optimization_goal: primaryOptimization,
+            adsets_count: campaignAdsets.length,
+            spend: insight.spend || '0',
+            impressions: insight.impressions || '0',
+            clicks: insight.clicks || '0',
+            reach: insight.reach || '0',
+            ctr: insight.ctr || '0',
+            cpm: insight.cpm || '0',
+            cpc: insight.cpc || '0',
+            frequency: insight.frequency || '0',
+            purchases,
+            purchase_value: purchaseValue,
+            roas,
+            leads,
+            cost_per_lead: costPerLead,
+            add_to_cart: addToCart,
+            initiate_checkout: initiateCheckout,
+            link_clicks: linkClicks,
+            landing_page_views: landingPageViews,
+            messaging_conversations: messagingConversations,
+            cost_per_message: costPerMessage,
+            complete_registrations: completeRegistrations,
+            actions: insight.actions || [],
         };
     });
 }
