@@ -208,6 +208,15 @@ export async function getCampaignInsights(accessToken: string, adAccountId: stri
         )?.value || 0;
         const completeRegistrations = actions.find((a: any) => a.action_type === 'complete_registration')?.value || 0;
 
+        const follows = actions.find((a: any) => 
+            a.action_type === 'follow' || 
+            a.action_type === 'page_engagement' ||
+            a.action_type === 'like'
+        )?.value || 0;
+
+        const costPerFollower = spend > 0 && follows > 0 ? (spend / parseInt(follows)).toFixed(2) : null;
+
+
         const spend = parseFloat(insight.spend || '0');
         const roas = spend > 0 && purchaseValue > 0 ? (parseFloat(purchaseValue) / spend).toFixed(2) : null;
         const costPerLead = spend > 0 && leads > 0 ? (spend / parseInt(leads)).toFixed(2) : null;
@@ -246,6 +255,8 @@ export async function getCampaignInsights(accessToken: string, adAccountId: stri
             messaging_conversations: messagingConversations,
             cost_per_message: costPerMessage,
             complete_registrations: completeRegistrations,
+            follows,
+            cost_per_follower: costPerFollower,
             actions: insight.actions || [],
         };
     });

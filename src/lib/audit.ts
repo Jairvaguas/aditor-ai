@@ -39,6 +39,8 @@ REGLAS DE ANÁLISIS POR OBJETIVO:
 5. OUTCOME_ENGAGEMENT (Interacción):
    - KPI principal: costo por interacción, CTR
    - Analizar tipo de interacciones conseguidas
+   - Si hay seguidores nuevos (follows > 0): calcular y reportar costo por seguidor
+   - Benchmark costo por seguidor LATAM: bajo < $0.30 / aceptable $0.30-0.80 / alto > $0.80
 
 REGLAS ABSOLUTAS:
 - Responde ÚNICAMENTE en formato XML válido. Sin texto fuera del XML.
@@ -86,6 +88,10 @@ Para campañas de VENTAS vía WhatsApp:
 Para campañas de LEADS:
 - Costo por lead web: bajo < $3 / aceptable $3-8 / alto > $8
 - Costo por lead WhatsApp: bajo < $1.5 / aceptable $1.5-4 / alto > $4
+
+Para campañas de ENGAGEMENT/AWARENESS con objetivo de crecimiento:
+- Costo por seguidor: bajo < $0.30 / aceptable $0.30-0.80 / alto > $0.80
+- Si la campaña tiene follows > 0, reportar el costo por seguidor
 
 Para TODAS las campañas:
 - CTR feed: bajo < 0.8% / aceptable 0.8-1.5% / bueno > 1.5%
