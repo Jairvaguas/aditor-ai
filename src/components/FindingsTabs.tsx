@@ -7,6 +7,7 @@ interface Finding {
     campana_nombre: string;
     diagnostico: string;
     accion_concreta: string;
+    urgencia?: string;
 }
 
 interface FindingsTabsProps {
@@ -44,26 +45,32 @@ export default function FindingsTabs({ criticalFindings, warningFindings, opport
         { key: 'opportunities', label: labels.opportunities, count: opportunityFindings.length, color: '#00D4AA', icon: TrendingUp },
     ];
 
-    const getCategoryStyles = (category: string) => {
-        switch (category) {
-            case 'critical':
-                return { bg: 'rgba(255,107,107,0.08)', border: 'rgba(255,107,107,0.25)', text: '#FF6B6B' };
-            case 'warning':
-                return { bg: 'rgba(255,230,109,0.08)', border: 'rgba(255,230,109,0.25)', text: '#FFE66D' };
-            case 'opportunity':
-                return { bg: 'rgba(0,212,170,0.08)', border: 'rgba(0,212,170,0.25)', text: '#00D4AA' };
-            default:
-                return { bg: 'rgba(255,255,255,0.05)', border: 'rgba(255,255,255,0.1)', text: '#fff' };
+    const getCategoryStyles = (finding: Finding & { category?: string }) => {
+        const type = (finding.tipo || '').toUpperCase();
+        const urgency = (finding.urgencia || '').toUpperCase();
+        
+        const isCritical = finding.category === 'critical' || type.includes('CRÍTICO') || type.includes('PAUSAR') || type.includes('FATIGA') || type.includes('SIN GASTO') || type.includes('ENGAÑOSO') || type.includes('PROBLEMA') || urgency.includes('CRÍTICA') || urgency.includes('ALTA');
+        const isOpportunity = finding.category === 'opportunity' || type.includes('OPORTUNIDAD') || type.includes('ESCALAR') || type.includes('MEJOR RENDIMIENTO') || urgency.includes('OPORTUNIDAD');
+
+        if (isCritical) {
+            return { bg: 'rgba(255,107,107,0.08)', border: 'rgba(255,107,107,0.25)', text: '#FF6B6B' };
+        } else if (isOpportunity) {
+            return { bg: 'rgba(0,212,170,0.08)', border: 'rgba(0,212,170,0.25)', text: '#00D4AA' };
+        } else {
+            return { bg: 'rgba(255,230,109,0.08)', border: 'rgba(255,230,109,0.25)', text: '#FFE66D' };
         }
     };
 
-    const getCategoryIcon = (category: string) => {
-        switch (category) {
-            case 'critical': return <PauseCircle className="w-4 h-4" />;
-            case 'warning': return <AlertTriangle className="w-4 h-4" />;
-            case 'opportunity': return <TrendingUp className="w-4 h-4" />;
-            default: return <List className="w-4 h-4" />;
-        }
+    const getCategoryIcon = (finding: Finding & { category?: string }) => {
+        const type = (finding.tipo || '').toUpperCase();
+        const urgency = (finding.urgencia || '').toUpperCase();
+        
+        const isCritical = finding.category === 'critical' || type.includes('CRÍTICO') || type.includes('PAUSAR') || type.includes('FATIGA') || type.includes('SIN GASTO') || type.includes('ENGAÑOSO') || type.includes('PROBLEMA') || urgency.includes('CRÍTICA') || urgency.includes('ALTA');
+        const isOpportunity = finding.category === 'opportunity' || type.includes('OPORTUNIDAD') || type.includes('ESCALAR') || type.includes('MEJOR RENDIMIENTO') || urgency.includes('OPORTUNIDAD');
+
+        if (isCritical) return <PauseCircle className="w-4 h-4" />;
+        if (isOpportunity) return <TrendingUp className="w-4 h-4" />;
+        return <AlertTriangle className="w-4 h-4" />;
     };
 
     const getActiveFindings = (): (Finding & { category: string })[] => {
@@ -123,7 +130,7 @@ export default function FindingsTabs({ criticalFindings, warningFindings, opport
                         </thead>
                         <tbody className="divide-y divide-slate-800/60">
                             {allFindings.map((finding, i) => {
-                                const styles = getCategoryStyles(finding.category);
+                                const styles = getCategoryStyles(finding);
                                 return (
                                     <tr 
                                         key={i} 
@@ -143,7 +150,7 @@ export default function FindingsTabs({ criticalFindings, warningFindings, opport
                                                     color: styles.text 
                                                 }}
                                             >
-                                                {getCategoryIcon(finding.category)}
+                                                {getCategoryIcon(finding)}
                                                 {finding.tipo}
                                             </span>
                                         </td>
@@ -163,7 +170,7 @@ export default function FindingsTabs({ criticalFindings, warningFindings, opport
                 /* Detail View - Cards */
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {getActiveFindings().map((finding, i) => {
-                        const styles = getCategoryStyles(finding.category);
+                        const styles = getCategoryStyles(finding);
                         return (
                             <div 
                                 key={i} 
@@ -172,7 +179,7 @@ export default function FindingsTabs({ criticalFindings, warningFindings, opport
                             >
                                 <div className="flex items-center gap-2 mb-3">
                                     <div className="p-1 rounded-md bg-black/20" style={{ color: styles.text }}>
-                                        {getCategoryIcon(finding.category)}
+                                        {getCategoryIcon(finding)}
                                     </div>
                                     <span className="text-xs font-bold uppercase tracking-wide" style={{ color: styles.text }}>
                                         {finding.tipo}

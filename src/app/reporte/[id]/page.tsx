@@ -78,20 +78,34 @@ export default async function ReportePage(props: PageProps) {
     // Separar hallazgos por tipo
     const criticalFindings = findingsList.filter((f: any) => {
         const type = (f.tipo || '').toUpperCase();
-        return type.includes('CRÍTICO') || type.includes('PAUSAR') || type.includes('FATIGA');
+        const urgency = (f.urgencia || '').toUpperCase();
+        return type.includes('CRÍTICO') || type.includes('PAUSAR') || type.includes('FATIGA') || 
+               type.includes('SIN GASTO') || type.includes('ENGAÑOSO') || type.includes('PROBLEMA') ||
+               urgency.includes('CRÍTICA') || urgency.includes('ALTA');
     });
-    const warningFindings = findingsList.filter((f: any) => {
-        const type = (f.tipo || '').toUpperCase();
-        return type.includes('ALERTA') || type.includes('ATENCION') || type.includes('ATENCIÓN') || type.includes('OPTIMIZACIÓN') || type.includes('OPTIMIZACION');
-    });
+
     const opportunityFindings = findingsList.filter((f: any) => {
         const type = (f.tipo || '').toUpperCase();
-        return type.includes('OPORTUNIDAD') || type.includes('ESCALAR');
+        const urgency = (f.urgencia || '').toUpperCase();
+        return type.includes('OPORTUNIDAD') || type.includes('ESCALAR') || 
+               type.includes('MEJOR RENDIMIENTO') ||
+               urgency.includes('OPORTUNIDAD');
     });
-    // Anything that doesn't match goes to warnings
-    const categorized = [...criticalFindings, ...warningFindings, ...opportunityFindings];
+
+    const warningFindings = findingsList.filter((f: any) => {
+        const type = (f.tipo || '').toUpperCase();
+        const urgency = (f.urgencia || '').toUpperCase();
+        return type.includes('ALERTA') || type.includes('ATENCION') || type.includes('ATENCIÓN') || 
+               type.includes('OPTIMIZACIÓN') || type.includes('OPTIMIZACION') || type.includes('OPTIMIZAR') ||
+               type.includes('COSTO') || type.includes('ALTO') || type.includes('ESTACIONAL') ||
+               type.includes('DESORDENADA') || type.includes('ESTRUCTURA') ||
+               urgency.includes('MEDIA');
+    });
+
+    // Anything not categorized goes to warnings
+    const categorized = [...criticalFindings, ...opportunityFindings];
     const uncategorized = findingsList.filter((f: any) => !categorized.includes(f));
-    const allWarnings = [...warningFindings, ...uncategorized];
+    const allWarnings = [...warningFindings.filter((f: any) => !categorized.includes(f)), ...uncategorized.filter((f: any) => !warningFindings.includes(f))];
 
     return (
         <main className="min-h-screen bg-[#0B1120] text-white font-sans relative overflow-hidden">

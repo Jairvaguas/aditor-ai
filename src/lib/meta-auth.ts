@@ -214,10 +214,8 @@ export async function getCampaignInsights(accessToken: string, adAccountId: stri
             a.action_type === 'like'
         )?.value || 0;
 
-        const costPerFollower = spend > 0 && follows > 0 ? (spend / parseInt(follows)).toFixed(2) : null;
-
-
         const spend = parseFloat(insight.spend || '0');
+        const costPerFollower = spend > 0 && follows > 0 ? (spend / parseInt(follows)).toFixed(2) : null;
         const roas = spend > 0 && purchaseValue > 0 ? (parseFloat(purchaseValue) / spend).toFixed(2) : null;
         const costPerLead = spend > 0 && leads > 0 ? (spend / parseInt(leads)).toFixed(2) : null;
         const costPerMessage = spend > 0 && messagingConversations > 0 ? (spend / parseInt(messagingConversations)).toFixed(2) : null;
