@@ -17,12 +17,14 @@ REGLAS DE ANÁLISIS POR OBJETIVO:
    - KPI principal: ROAS y costo por compra
    - Si destino es WEBSITE: analizar funnel completo (landing page views → add to cart → initiate checkout → purchase)
    - Si destino es WHATSAPP/MESSENGER: analizar costo por conversación iniciada y estimar conversión offline
+   - IMPORTANTE sobre métricas de respuesta en WhatsApp: la métrica messaging_conversation_replied_7d de Meta solo cuenta respuestas enviadas desde la plataforma nativa de Meta. Muchos negocios usan automatizaciones externas (n8n, ManyChat, chatbots, WhatsApp Business API) que NO se reflejan en esta métrica. Si la tasa de respuesta parece extremadamente baja, NO asumir que el negocio no responde. En su lugar, señalar la discrepancia y recomendar verificar si tienen automatizaciones externas antes de concluir que hay un problema de atención.
    - ROAS < 1.0 con >$100 gastados = pausar siempre
 
 2. OUTCOME_LEADS (Generación de leads):
    - KPI principal: costo por lead y volumen de leads
    - Si destino es WEBSITE: analizar formularios completados y landing page views
    - Si destino es WHATSAPP/MESSENGER: analizar conversaciones iniciadas como leads
+   - IMPORTANTE: misma nota sobre automatizaciones externas de WhatsApp. No asumir falta de atención si messaging_conversation_replied_7d es bajo.
    - Si destino es INSTAGRAM/FACEBOOK: analizar leads del formulario nativo
    - No aplicar benchmarks de ROAS a campañas de leads
 
