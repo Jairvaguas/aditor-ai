@@ -111,6 +111,13 @@ export default async function Home() {
                 </div>
               </div>
 
+              <div className="flex items-center justify-center gap-1.5 mt-3 md:hidden">
+                  <div className="w-5 h-1 rounded-full bg-emerald-400/60" />
+                  <div className="w-1.5 h-1 rounded-full bg-white/20" />
+                  <div className="w-1.5 h-1 rounded-full bg-white/20" />
+                  <span className="text-[10px] text-slate-500 ml-2">Desliza para ver más</span>
+              </div>
+
               {/* Score bar */}
               <div className="mt-4 p-3 rounded-xl bg-emerald-500/[0.06] border border-emerald-500/10 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
