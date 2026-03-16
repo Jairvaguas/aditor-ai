@@ -6,26 +6,25 @@ import { useTranslations } from "next-intl";
 export default function Navbar() {
     const t = useTranslations("Nav");
     return (
-        <nav className="fixed top-0 left-0 w-full z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 py-4">
-            <div className="max-w-7xl mx-auto px-6 h-12 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-3">
-                    <Image src="/favicon.png" alt="Aditor AI" width={32} height={32} />
-                    <span className="text-2xl font-bold tracking-tight text-white">Aditor AI</span>
+        <nav className="fixed top-0 left-0 w-full z-50 bg-[#0a0f1e]/80 backdrop-blur-xl border-b border-white/[0.06] py-3">
+            <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+                <Link href="/" className="flex items-center gap-2.5">
+                    <Image src="/favicon.png" alt="Aditor AI" width={28} height={28} />
+                    <span className="text-xl font-bold tracking-tight text-white">Aditor AI</span>
                 </Link>
 
-                {/* These anchor links work best on the main landing page, but providing them anyway */}
-                <div className="hidden md:flex gap-8 text-base font-medium text-gray-400">
-                    <Link href="/#como-funciona" className="hover:text-white transition-colors">{t("howItWorks")}</Link>
-                    <Link href="/#caracteristicas" className="hover:text-white transition-colors">{t("features")}</Link>
-                    <Link href="/#precios" className="hover:text-white transition-colors">{t("pricing")}</Link>
+                <div className="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+                    <Link href="/#como-funciona" className="hover:text-white transition-colors duration-200">{t("howItWorks")}</Link>
+                    <Link href="/#caracteristicas" className="hover:text-white transition-colors duration-200">{t("features")}</Link>
+                    <Link href="/#precios" className="hover:text-white transition-colors duration-200">{t("pricing")}</Link>
                 </div>
 
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-4">
                     <LanguageSelector />
-                    <Link href="/registro" className="hidden sm:block text-base font-medium text-gray-300 hover:text-white transition-colors">
+                    <Link href="/registro" className="hidden sm:block text-sm font-medium text-slate-300 hover:text-white transition-colors duration-200">
                         {t("login")}
                     </Link>
-                    <Link href="/conectar" className="bg-[#FF6B6B] hover:bg-[#ff5252] text-white px-6 py-3 rounded-full text-base font-bold transition-all shadow-[0_0_15px_rgba(255,107,107,0.3)] hover:shadow-[0_0_25px_rgba(255,107,107,0.5)]">
+                    <Link href="/conectar" className="gradient-btn text-white px-5 py-2.5 rounded-full text-sm font-bold">
                         {t("startFree")}
                     </Link>
                 </div>
