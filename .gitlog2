@@ -1,0 +1,10 @@
+dbb6161 fix: pain points hover logic and hero scroll indicator
+8bdf8d6 feat: landing page redesign part 1 - globals, navbar, hero, footer
+b15155d feat: pricing layout with +/- accounts selector
+d3074ea feat: redesign pricing section with Basic and Pro plans
+2e4ee47 Agregar nota sobre automatizaciones WhatsApp al prompt
+9e09d20 Ajustar max_tokens de auditor??a
+cbbdb54 Fix clasificaci??n de hallazgos en tabs del reporte
+72f17ad feat: agregar metrica de seguidores a la auditoria de Meta
+ac7d7c5 feat: mejorar datos de Meta API y prompt de auditoria
+cedb02b feat: implement Meta Conversions API (server-side tracking)
