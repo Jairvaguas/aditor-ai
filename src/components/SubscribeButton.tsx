@@ -5,11 +5,11 @@ import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
 interface SubscribeButtonProps {
-    accountsCount: number;
-    formattedCop: string;
+    planType: 'basic' | 'pro';
+    extraAccounts: number;
 }
 
-export default function SubscribeButton({ accountsCount, formattedCop }: SubscribeButtonProps) {
+export default function SubscribeButton({ planType, extraAccounts }: SubscribeButtonProps) {
     const [isLoading, setIsLoading] = useState(false);
     const { userId } = useAuth();
     const router = useRouter();
@@ -28,7 +28,7 @@ export default function SubscribeButton({ accountsCount, formattedCop }: Subscri
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ accountsCount })
+                body: JSON.stringify({ planType, extraAccounts })
             });
             const data = await res.json();
 

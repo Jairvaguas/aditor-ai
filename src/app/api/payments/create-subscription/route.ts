@@ -16,35 +16,37 @@ export async function POST(req: Request) {
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
         const email = user.emailAddresses[0]?.emailAddress || 'test@test.com';
 
+        let planType = 'basic';
+        let extraAccounts = 0;
+
         const bodyText = await req.text();
-        let accountsCount = 1;
         if (bodyText) {
             try {
                 const bodyJson = JSON.parse(bodyText);
-                if (bodyJson.accountsCount) {
-                    accountsCount = parseInt(bodyJson.accountsCount) || 1;
-                }
+                planType = bodyJson.planType || 'basic';
+                extraAccounts = parseInt(bodyJson.extraAccounts) || 0;
             } catch (e) {
                 console.error("Error parsing body:", e);
             }
         }
 
-        // Update user profile with the requested ad accounts count
+        // Calcular precio en USD
+        const basePrice = planType === 'pro' ? 39 : 24;
+        const additionalCost = extraAccounts * 15;
+        const usdPrice = basePrice + additionalCost;
+        const totalAccounts = 1 + extraAccounts;
+
+        // Actualizar perfil con plan y cantidad de cuentas
         await getSupabaseAdmin()
             .from('profiles')
-            .update({ ad_accounts_count: accountsCount })
+            .update({ 
+                ad_accounts_count: totalAccounts,
+                plan: planType
+            })
             .eq('clerk_user_id', userId);
 
-        let estimatedCop = 185000;
-        let usdPrice = 47;
-        if (accountsCount === 1) usdPrice = 47;
-        else if (accountsCount === 2) usdPrice = 62;
-        else if (accountsCount === 3) usdPrice = 77;
-        else if (accountsCount === 4) usdPrice = 92;
-        else if (accountsCount === 5) usdPrice = 107;
-        else if (accountsCount === 10) usdPrice = 157; // 6-10 package
-        else if (accountsCount === 15) usdPrice = 197; // 11-15 package
-        else if (accountsCount === 16) usdPrice = 0;   // 16+ package (contact)
+        // Convertir a COP
+        let estimatedCop = Math.round(usdPrice * 4200);
         try {
             const copRes = await fetch("https://api.exchangerate-api.com/v4/latest/USD", { next: { revalidate: 3600 } });
             if (copRes.ok) {
@@ -57,9 +59,11 @@ export async function POST(req: Request) {
             console.error("Error fetching exchange rate:", e);
         }
 
+        const planLabel = planType === 'pro' ? 'Pro' : 'Básico';
+
         const response = await preapproval.create({
             body: {
-                reason: 'Aditor AI - Plan Mensual',
+                reason: `Aditor AI - Plan ${planLabel} (${totalAccounts} cuenta${totalAccounts > 1 ? 's' : ''})`,
                 auto_recurring: {
                     frequency: 1,
                     frequency_type: 'months',
@@ -77,7 +81,6 @@ export async function POST(req: Request) {
             } as any
         });
 
-
         // Enviar evento InitiateCheckout a Meta
         await sendMetaEvent({
             eventName: 'InitiateCheckout',
@@ -86,9 +89,9 @@ export async function POST(req: Request) {
                 externalId: userId,
             },
             customData: {
-                value: 47,
+                value: usdPrice,
                 currency: 'USD',
-                contentName: 'Professional Plan',
+                contentName: `Plan ${planLabel} - ${totalAccounts} cuenta${totalAccounts > 1 ? 's' : ''}`,
             },
         });
 

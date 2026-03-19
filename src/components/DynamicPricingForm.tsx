@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Check, Zap, Crown, Plus, Minus } from 'lucide-react';
+import SubscribeButton from '@/components/SubscribeButton';
 
 interface DynamicPricingFormProps {
     copRate: number;
@@ -109,9 +110,7 @@ export default function DynamicPricingForm({ copRate, isLanding = false }: Dynam
                             Empezar gratis
                         </Link>
                     ) : (
-                        <button className="w-full py-3.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-all text-center border border-slate-600 hover:border-slate-500">
-                            Empezar gratis
-                        </button>
+                        <SubscribeButton planType="basic" extraAccounts={extraAccounts} />
                     )}
                 </div>
 
@@ -183,9 +182,7 @@ export default function DynamicPricingForm({ copRate, isLanding = false }: Dynam
                             Empezar gratis
                         </Link>
                     ) : (
-                        <button className="w-full py-3.5 bg-gradient-to-r from-[#FF6B6B] to-[#ff8e53] text-white font-bold rounded-xl shadow-[0_6px_20px_rgba(255,107,107,0.3)] hover:shadow-[0_8px_25px_rgba(255,107,107,0.5)] transition-all text-center hover:-translate-y-0.5">
-                            Empezar gratis
-                        </button>
+                        <SubscribeButton planType="pro" extraAccounts={extraAccounts} />
                     )}
                 </div>
             </div>
