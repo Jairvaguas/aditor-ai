@@ -42,7 +42,7 @@ export default async function Home() {
             </div>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight font-display" style={{ animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0, animationDelay: '0ms' }}>
               {t("heroTitle")} <br className="hidden md:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B6B] to-[#ff8e53]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#818cf8] via-[#a78bfa] to-[#c084fc]">
                 {t("heroTitleHighlight")}
               </span>
             </h1>
@@ -120,21 +120,21 @@ export default async function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl">
+            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl card-hover-scale">
               <div className="w-14 h-14 bg-red-500/10 rounded-xl flex items-center justify-center mb-6 text-red-500">
                 <AlertTriangle className="w-7 h-7" />
               </div>
               <h3 className="text-xl font-bold mb-4">{t("pain1Title")}</h3>
               <p className="text-slate-400 leading-relaxed">{t("pain1Desc")}</p>
             </div>
-            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl">
+            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl card-hover-scale">
               <div className="w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-6 text-yellow-500">
                 <Search className="w-7 h-7" />
               </div>
               <h3 className="text-xl font-bold mb-4">{t("pain2Title")}</h3>
               <p className="text-slate-400 leading-relaxed">{t("pain2Desc")}</p>
             </div>
-            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl">
+            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl card-hover-scale">
               <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 text-blue-500">
                 <Clock className="w-7 h-7" />
               </div>
@@ -149,25 +149,25 @@ export default async function Home() {
       <section id="caracteristicas" className="py-24 w-full">
         <div className="max-w-7xl mx-auto px-6 w-full">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold font-display">{t("featTitle")}</h2>
+            <h2 className="text-3xl md:text-5xl font-bold font-display"><span className="text-transparent bg-clip-text bg-gradient-to-r from-[#818cf8] via-[#a78bfa] to-[#c084fc]">{t("featTitle")}</span></h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center animate-on-scroll" style={{ transitionDelay: '0ms' }}>
+            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center animate-on-scroll card-hover-scale" style={{ transitionDelay: '0ms' }}>
               <div className="w-20 h-20 bg-[#131D2E] border border-white/10 rounded-3xl flex items-center justify-center mb-6 text-[#FF6B6B] shadow-lg">
                 <Search className="w-10 h-10" />
               </div>
               <h3 className="text-2xl font-bold mb-4">{t("feat1Title")}</h3>
               <p className="text-gray-400 text-lg">{t("feat1Desc")}</p>
             </div>
-            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center animate-on-scroll" style={{ transitionDelay: '100ms' }}>
+            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center animate-on-scroll card-hover-scale" style={{ transitionDelay: '100ms' }}>
               <div className="w-20 h-20 bg-[#131D2E] border border-white/10 rounded-3xl flex items-center justify-center mb-6 text-[#00D4AA] shadow-lg">
                 <TrendingUp className="w-10 h-10" />
               </div>
               <h3 className="text-2xl font-bold mb-4">{t("feat2Title")}</h3>
               <p className="text-gray-400 text-lg">{t("feat2Desc")}</p>
             </div>
-            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center animate-on-scroll" style={{ transitionDelay: '200ms' }}>
+            <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl flex flex-col items-center text-center animate-on-scroll card-hover-scale" style={{ transitionDelay: '200ms' }}>
               <div className="w-20 h-20 bg-[#131D2E] border border-white/10 rounded-3xl flex items-center justify-center mb-6 text-yellow-400 shadow-lg">
                 <Repeat className="w-10 h-10" />
               </div>
@@ -226,7 +226,7 @@ export default async function Home() {
             <p className="text-slate-400 text-xl">{t("profilesSubtitle")}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl animate-on-scroll" style={{ transitionDelay: '0ms' }}>
+            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl animate-on-scroll card-hover-scale" style={{ transitionDelay: '0ms' }}>
               <div className="w-14 h-14 bg-[#FF6B6B]/10 rounded-xl flex items-center justify-center mb-6 text-[#FF6B6B]">
                 <Briefcase className="w-7 h-7" />
               </div>
@@ -238,7 +238,7 @@ export default async function Home() {
                 <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] flex-shrink-0" /> {t("profile1Perk3")}</li>
               </ul>
             </div>
-            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl animate-on-scroll" style={{ transitionDelay: '100ms' }}>
+            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl animate-on-scroll card-hover-scale" style={{ transitionDelay: '100ms' }}>
               <div className="w-14 h-14 bg-[#00D4AA]/10 rounded-xl flex items-center justify-center mb-6 text-[#00D4AA]">
                 <Users className="w-7 h-7" />
               </div>
@@ -250,7 +250,7 @@ export default async function Home() {
                 <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-[#00D4AA] flex-shrink-0" /> {t("profile2Perk3")}</li>
               </ul>
             </div>
-            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl animate-on-scroll" style={{ transitionDelay: '200ms' }}>
+            <div className="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl animate-on-scroll card-hover-scale" style={{ transitionDelay: '200ms' }}>
               <div className="w-14 h-14 bg-yellow-400/10 rounded-xl flex items-center justify-center mb-6 text-yellow-400">
                 <ShoppingCart className="w-7 h-7" />
               </div>
@@ -360,6 +360,24 @@ export default async function Home() {
 
           <DynamicPricingForm copRate={estimatedCop / 47} isLanding={true} />
 
+          <div className="flex flex-wrap items-center justify-center gap-8 mt-8 text-slate-500 text-sm">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#00D4AA]" />
+              <span>Datos encriptados</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#00D4AA]" />
+              <span>OAuth seguro de Meta</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#00D4AA]" />
+              <span>Cancela cuando quieras</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#00D4AA]" />
+              <span>Solo lectura — nunca modificamos tus ads</span>
+            </div>
+          </div>
         </div>
       </section>
 
