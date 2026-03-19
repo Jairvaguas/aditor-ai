@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollAnimations from "@/components/ScrollAnimations";
 import AnimatedStats from "@/components/AnimatedStats";
+import DemoPreview from "@/components/DemoPreview";
 
 export default async function Home() {
   const t = await getTranslations("Landing");
@@ -183,6 +184,19 @@ export default async function Home() {
               <p className="text-gray-400 text-lg">{t("feat3Desc")}</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Demo Preview */}
+      <section className="py-24 bg-[#080D18] border-y border-white/5 w-full animate-on-scroll">
+        <div className="max-w-7xl mx-auto px-6 w-full">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 font-display">
+              Así luce tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#818cf8] via-[#a78bfa] to-[#c084fc]">reporte de auditoría</span>
+            </h2>
+            <p className="text-gray-400 text-lg">Hallazgos claros, priorizados y accionables. Haz clic en las tabs para explorar.</p>
+          </div>
+          <DemoPreview />
         </div>
       </section>
 
@@ -396,7 +410,7 @@ export default async function Home() {
             <h2 className="text-3xl md:text-5xl font-bold font-display">{t("faqTitle")}</h2>
           </div>
           <div className="space-y-4">
-            {[1, 2, 3, 4, 5, 6].map((num) => (
+            {[1, 2, 3, 4, 5, 6, 7].map((num) => (
               <details key={num} className="group bg-slate-900 rounded-2xl border border-slate-700 shadow-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden animate-on-scroll" style={{ transitionDelay: `${num * 100}ms` }}>
                 <summary className="flex items-center justify-between cursor-pointer p-6 sm:p-8 font-bold text-lg sm:text-xl text-white">
                   <span>{t(`faq${num}Q` as any)}</span>
