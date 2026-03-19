@@ -5,6 +5,7 @@ import DynamicPricingForm from "@/components/DynamicPricingForm";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollAnimations from "@/components/ScrollAnimations";
+import AnimatedStats from "@/components/AnimatedStats";
 
 export default async function Home() {
   const t = await getTranslations("Landing");
@@ -61,8 +62,8 @@ export default async function Home() {
           </div>
 
           {/* Columna Derecha: Mockup Animado */}
-          <div className="relative w-full max-w-lg mx-auto lg:mr-0 lg:ml-auto" style={{ animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0, animationDelay: '450ms' }}>
-            <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6 shadow-2xl relative transform lg:rotate-2 lg:hover:rotate-0 transition-transform duration-500">
+          <div className="relative w-full max-w-lg mx-auto lg:mr-0 lg:ml-auto" style={{ animation: 'fadeSlideUp 0.8s ease forwards', animationDelay: '450ms', opacity: 0, perspective: '1200px' }}>
+            <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6 shadow-2xl relative transition-transform duration-500" style={{ transform: 'rotateX(4deg) rotateY(-6deg)', transformStyle: 'preserve-3d' }}>
               <div className="flex items-center gap-2 mb-4 pb-4 border-b border-slate-800">
                 <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
                 <span className="text-green-400 text-sm font-medium">{t("live")}</span>
@@ -109,6 +110,13 @@ export default async function Home() {
             <div className="absolute -inset-4 bg-gradient-to-r from-[#FF6B6B] to-[#00D4AA] opacity-10 blur-2xl -z-10 rounded-3xl" />
           </div>
         </div>
+      </section>
+
+      {/* Animated Stats */}
+      <section className="py-16 bg-[#0B1120] border-b border-white/5 w-full">
+          <div className="max-w-7xl mx-auto px-6">
+              <AnimatedStats />
+          </div>
       </section>
 
       {/* 3. Pain Points (3 Columnas) */}
