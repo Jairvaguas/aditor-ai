@@ -12,7 +12,8 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const testEmail = 'jairvaguas@gmail.com';
+    const sourceEmail = 'contacto@78grados.com'; // cuenta con token de Meta
+    const sendToEmail = 'jairvaguas@gmail.com'; // donde enviar el email de prueba
     
     const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -23,7 +24,7 @@ export async function GET(request: Request) {
     const { data: profile } = await supabase
         .from('profiles')
         .select('clerk_user_id, email, meta_access_token, moneda, pais')
-        .eq('email', testEmail)
+        .eq('email', sourceEmail)
         .single();
 
     if (!profile || !profile.meta_access_token) {
@@ -82,7 +83,7 @@ export async function GET(request: Request) {
 
         // Enviar email de prueba
         await sendWeeklyAuditEmail(
-            testEmail,
+            sendToEmail,
             audit.id,
             score,
             hallazgosCount,
@@ -92,7 +93,7 @@ export async function GET(request: Request) {
 
         return NextResponse.json({ 
             success: true, 
-            message: `Email enviado a ${testEmail}`,
+            message: `Email enviado a ${sendToEmail}`,
             auditId: audit.id,
             score,
             hallazgosCount
