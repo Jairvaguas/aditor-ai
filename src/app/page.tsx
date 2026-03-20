@@ -60,6 +60,19 @@ export default async function Home() {
               </Link>
             </div>
             <p className="mt-6 text-sm text-gray-500 font-medium">{t("readonly")}</p>
+            <div className="mt-4 flex flex-col gap-2">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/50 border border-slate-700 w-fit">
+                    <span className="text-lg">☕</span>
+                    <div>
+                        <span className="text-sm font-bold text-white">Solo $24 USD/mes</span>
+                        <span className="text-xs text-slate-400 ml-1">— El costo de un café diario para salvar miles</span>
+                    </div>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <span>🔒</span>
+                    <span>Conexión 100% segura. Acceso de solo lectura vía Meta API oficial.</span>
+                </div>
+            </div>
           </div>
 
           {/* Columna Derecha: Mockup Animado */}
@@ -68,6 +81,15 @@ export default async function Home() {
               <div className="flex items-center gap-2 mb-4 pb-4 border-b border-slate-800">
                 <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
                 <span className="text-green-400 text-sm font-medium">{t("live")}</span>
+              </div>
+              <div className="mt-3 flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/10 w-fit">
+                  <div className="w-7 h-7 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-blue-400" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="4" r="2"/><circle cx="12" cy="20" r="2"/><circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/><circle cx="6" cy="6" r="1.5"/><circle cx="18" cy="18" r="1.5"/></svg>
+                  </div>
+                  <div>
+                      <div className="text-xs font-bold text-white">Meta Ads Sync</div>
+                      <div className="text-[10px] text-slate-400">Conexión oficial en vivo</div>
+                  </div>
               </div>
 
               <div className="space-y-4">

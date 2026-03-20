@@ -79,9 +79,9 @@ export default function DynamicPricingForm({ copRate, isLanding = false }: Dynam
                             <div className="p-2 bg-[#74B9FF]/10 rounded-lg">
                                 <Zap className="w-5 h-5 text-[#74B9FF]" />
                             </div>
-                            <h3 className="text-xl font-bold text-white">Básico</h3>
+                            <h3 className="text-xl font-bold text-white">Starter</h3>
                         </div>
-                        <p className="text-sm text-slate-400">Perfecto para emprendedores que quieren entender sus campañas.</p>
+                        <p className="text-sm text-slate-400">Detecta campañas que queman tu presupuesto. Menos de un café al día.</p>
                     </div>
 
                     <div className="mb-6">
@@ -149,7 +149,7 @@ export default function DynamicPricingForm({ copRate, isLanding = false }: Dynam
                             </div>
                             <h3 className="text-xl font-bold text-white">Pro</h3>
                         </div>
-                        <p className="text-sm text-slate-400">Para quienes quieren dominar Meta Ads y maximizar cada peso.</p>
+                        <p className="text-sm text-slate-400">Auditorías ilimitadas para dominar Meta Ads. El costo de un almuerzo al mes.</p>
                     </div>
 
                     <div className="mb-6">
