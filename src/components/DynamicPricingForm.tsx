@@ -11,16 +11,18 @@ interface DynamicPricingFormProps {
 
 export default function DynamicPricingForm({ copRate, isLanding = false }: DynamicPricingFormProps) {
     const [extraAccounts, setExtraAccounts] = useState<number>(0);
-    const additionalAccountUsd = 15;
+    const [annual, setAnnual] = useState(false);
 
-    const basicBase = 24;
-    const proBase = 39;
-    const extraCost = extraAccounts * additionalAccountUsd;
-    const basicTotal = basicBase + extraCost;
-    const proTotal = proBase + extraCost;
+    const basicMonthly = 24;
+    const proMonthly = 39;
+    const additionalMonthly = 15;
+    const discount = annual ? 0.8 : 1; // 20% descuento anual
+    const basicBase = Math.round(basicMonthly * discount);
+    const proBase = Math.round(proMonthly * discount);
+    const additionalCost = Math.round(extraAccounts * additionalMonthly * discount);
+    const basicTotal = basicBase + additionalCost;
+    const proTotal = proBase + additionalCost;
 
-    const basicCop = new Intl.NumberFormat('es-CO').format(Math.round(basicTotal * copRate));
-    const proCop = new Intl.NumberFormat('es-CO').format(Math.round(proTotal * copRate));
     const totalAccounts = 1 + extraAccounts;
 
     return (
@@ -49,9 +51,23 @@ export default function DynamicPricingForm({ copRate, isLanding = false }: Dynam
                 </div>
                 {extraAccounts > 0 && (
                     <p className="text-xs text-[#00D4AA] mt-3 font-medium">
-                        1 incluida + {extraAccounts} adicional{extraAccounts > 1 ? 'es' : ''} (${extraCost} USD)
+                        1 incluida + {extraAccounts} adicional{extraAccounts > 1 ? 'es' : ''} (${additionalCost} USD)
                     </p>
                 )}
+            </div>
+
+            {/* Billing Toggle */}
+            <div className="flex items-center justify-center gap-3">
+                <span className={`text-sm font-medium ${!annual ? 'text-white' : 'text-slate-500'}`}>Mensual</span>
+                <button
+                    onClick={() => setAnnual(!annual)}
+                    className={`relative w-12 h-6 rounded-full transition-colors ${annual ? 'bg-[#00D4AA]' : 'bg-slate-700'}`}
+                >
+                    <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all ${annual ? 'left-7' : 'left-1'}`} />
+                </button>
+                <span className={`text-sm font-medium ${annual ? 'text-white' : 'text-slate-500'}`}>
+                    Anual <span className="ml-1 px-1.5 py-0.5 rounded-full bg-[#00D4AA]/10 text-[#00D4AA] text-xs font-bold">-20%</span>
+                </span>
             </div>
 
             {/* Plans Grid */}
@@ -71,11 +87,15 @@ export default function DynamicPricingForm({ copRate, isLanding = false }: Dynam
                     <div className="mb-6">
                         <div className="flex items-baseline gap-1">
                             <span className="text-4xl font-extrabold text-white">${basicTotal}</span>
-                            <span className="text-lg text-slate-400">USD / mes</span>
+                            <span className="text-lg text-slate-400">USD / {annual ? 'mes (facturado anual)' : 'mes'}</span>
                         </div>
-                        <p className="text-xs text-slate-500 mt-1">~${basicCop} COP / mes</p>
+                        {annual && (
+                            <p className="text-xs text-[#00D4AA] mt-1 font-medium">
+                                ${basicTotal * 12} USD facturado anualmente
+                            </p>
+                        )}
                         {extraAccounts > 0 && (
-                            <p className="text-xs text-slate-500 mt-0.5">${basicBase} base + ${extraCost} ({extraAccounts} cuenta{extraAccounts > 1 ? 's' : ''} extra)</p>
+                            <p className="text-xs text-slate-500 mt-0.5">${basicBase} base + ${additionalCost} ({extraAccounts} cuenta{extraAccounts > 1 ? 's' : ''} extra)</p>
                         )}
                     </div>
 
@@ -110,7 +130,7 @@ export default function DynamicPricingForm({ copRate, isLanding = false }: Dynam
                             Empezar gratis
                         </Link>
                     ) : (
-                        <SubscribeButton planType="basic" extraAccounts={extraAccounts} />
+                        <SubscribeButton planType="basic" extraAccounts={extraAccounts} annual={annual} />
                     )}
                 </div>
 
@@ -135,11 +155,15 @@ export default function DynamicPricingForm({ copRate, isLanding = false }: Dynam
                     <div className="mb-6">
                         <div className="flex items-baseline gap-1">
                             <span className="text-4xl font-extrabold text-white">${proTotal}</span>
-                            <span className="text-lg text-slate-400">USD / mes</span>
+                            <span className="text-lg text-slate-400">USD / {annual ? 'mes (facturado anual)' : 'mes'}</span>
                         </div>
-                        <p className="text-xs text-slate-500 mt-1">~${proCop} COP / mes</p>
+                        {annual && (
+                            <p className="text-xs text-[#00D4AA] mt-1 font-medium">
+                                ${proTotal * 12} USD facturado anualmente
+                            </p>
+                        )}
                         {extraAccounts > 0 && (
-                            <p className="text-xs text-slate-500 mt-0.5">${proBase} base + ${extraCost} ({extraAccounts} cuenta{extraAccounts > 1 ? 's' : ''} extra)</p>
+                            <p className="text-xs text-slate-500 mt-0.5">${proBase} base + ${additionalCost} ({extraAccounts} cuenta{extraAccounts > 1 ? 's' : ''} extra)</p>
                         )}
                     </div>
 
@@ -182,7 +206,7 @@ export default function DynamicPricingForm({ copRate, isLanding = false }: Dynam
                             Empezar gratis
                         </Link>
                     ) : (
-                        <SubscribeButton planType="pro" extraAccounts={extraAccounts} />
+                        <SubscribeButton planType="pro" extraAccounts={extraAccounts} annual={annual} />
                     )}
                 </div>
             </div>

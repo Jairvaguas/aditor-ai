@@ -18,6 +18,7 @@ export async function POST(req: Request) {
 
         let planType = 'basic';
         let extraAccounts = 0;
+        let annual = false;
 
         const bodyText = await req.text();
         if (bodyText) {
@@ -25,15 +26,18 @@ export async function POST(req: Request) {
                 const bodyJson = JSON.parse(bodyText);
                 planType = bodyJson.planType || 'basic';
                 extraAccounts = parseInt(bodyJson.extraAccounts) || 0;
+                annual = bodyJson.annual === true;
             } catch (e) {
                 console.error("Error parsing body:", e);
             }
         }
 
         // Calcular precio en USD
-        const basePrice = planType === 'pro' ? 39 : 24;
-        const additionalCost = extraAccounts * 15;
-        const usdPrice = basePrice + additionalCost;
+        const baseMonthly = planType === 'pro' ? 39 : 24;
+        const additionalMonthly = extraAccounts * 15;
+        const monthlyPrice = baseMonthly + additionalMonthly;
+        const discount = annual ? 0.8 : 1;
+        const usdPrice = Math.round(monthlyPrice * discount);
         const totalAccounts = 1 + extraAccounts;
 
         // Actualizar perfil con plan y cantidad de cuentas
@@ -60,12 +64,13 @@ export async function POST(req: Request) {
         }
 
         const planLabel = planType === 'pro' ? 'Pro' : 'Básico';
+        const billingLabel = annual ? 'Anual' : 'Mensual';
 
         const response = await preapproval.create({
             body: {
-                reason: `Aditor AI - Plan ${planLabel} (${totalAccounts} cuenta${totalAccounts > 1 ? 's' : ''})`,
+                reason: `Aditor AI - Plan ${planLabel} ${billingLabel} (${totalAccounts} cuenta${totalAccounts > 1 ? 's' : ''})`,
                 auto_recurring: {
-                    frequency: 1,
+                    frequency: annual ? 12 : 1,
                     frequency_type: 'months',
                     transaction_amount: estimatedCop,
                     currency_id: 'COP',

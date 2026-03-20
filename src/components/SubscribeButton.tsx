@@ -7,9 +7,10 @@ import { useRouter } from 'next/navigation';
 interface SubscribeButtonProps {
     planType: 'basic' | 'pro';
     extraAccounts: number;
+    annual?: boolean;
 }
 
-export default function SubscribeButton({ planType, extraAccounts }: SubscribeButtonProps) {
+export default function SubscribeButton({ planType, extraAccounts, annual = false }: SubscribeButtonProps) {
     const [isLoading, setIsLoading] = useState(false);
     const { userId } = useAuth();
     const router = useRouter();
@@ -28,7 +29,7 @@ export default function SubscribeButton({ planType, extraAccounts }: SubscribeBu
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ planType, extraAccounts })
+                body: JSON.stringify({ planType, extraAccounts, annual })
             });
             const data = await res.json();
 
