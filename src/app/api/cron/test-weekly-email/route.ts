@@ -88,7 +88,8 @@ export async function GET(request: Request) {
             score,
             hallazgosCount,
             roas,
-            gasto
+            gasto,
+            profile.moneda || account.currency || 'USD'
         );
 
         return NextResponse.json({ 

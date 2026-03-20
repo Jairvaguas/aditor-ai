@@ -93,7 +93,7 @@ export async function sendAuditReadyEmail(email: string, auditId: string, score:
                         <p style="margin: 10px 0 0 0; color: #cbd5e1; font-size: 15px;">Hemos detectado <strong>${hallazgosCount} hallazgos</strong> clave sobre tu ROAS, campañas en riesgo y nuevas oportunidades de escala.</p>
                     </div>
                     <div style="${globalStyles.buttonContainer}">
-                        <a href="https://www.aditor-ai.com/dashboard/reporte/${auditId}" style="${globalStyles.button}">Ver reporte completo</a>
+                        <a href="https://www.aditor-ai.com/reporte/${auditId}" style="${globalStyles.button}">Ver reporte completo</a>
                     </div>
                 </div>
                 <div style="${globalStyles.footer}">
@@ -105,7 +105,7 @@ export async function sendAuditReadyEmail(email: string, auditId: string, score:
     } catch (e) { console.error('Error enviando Audit Email', e); }
 }
 
-export async function sendWeeklyAuditEmail(email: string, auditId: string, score: number, numHallazgos: number, roas: number, gasto: number) {
+export async function sendWeeklyAuditEmail(email: string, auditId: string, score: number, numHallazgos: number, roas: number, gasto: number, moneda: string = 'USD') {
     if (!process.env.RESEND_API_KEY) return;
     try {
         const dateStr = new Date().toLocaleDateString();
@@ -124,12 +124,12 @@ export async function sendWeeklyAuditEmail(email: string, auditId: string, score
                          <ul style="list-style: none; padding: 0; margin: 0; color: #cbd5e1; line-height: 1.8;">
                              <li>📈 <strong>Score Semanal:</strong> <span style="color: #FF6B6B">${score}/100</span></li>
                              <li>🚨 <strong>Oportunidades/Riesgos:</strong> ${numHallazgos} hallazgos</li>
-                             <li>💸 <strong>Inversión Base:</strong> $${gasto} USD</li>
+                             <li>💸 <strong>Inversión (30d):</strong> $${new Intl.NumberFormat('es-CO').format(gasto)} ${moneda}</li>
                              <li>🎯 <strong>ROAS Estimado:</strong> ${roas}x</li>
                          </ul>
                     </div>
                     <div style="${globalStyles.buttonContainer}">
-                        <a href="https://www.aditor-ai.com/dashboard/reporte/${auditId}" style="${globalStyles.button}">Ver reporte completo</a>
+                        <a href="https://www.aditor-ai.com/reporte/${auditId}" style="${globalStyles.button}">Ver reporte completo</a>
                     </div>
                 </div>
                 <div style="${globalStyles.footer}">

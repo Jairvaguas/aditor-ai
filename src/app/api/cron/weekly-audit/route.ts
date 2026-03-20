@@ -113,7 +113,8 @@ export async function GET(request: Request) {
                         score,
                         hallazgosCount,
                         roas,
-                        gasto
+                        gasto,
+                        user.moneda || account.currency || 'USD'
                     );
 
                     results.push({ 
