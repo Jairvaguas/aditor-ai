@@ -16,6 +16,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/payments/create-subscription(.*)',
   '/api/payments/webhook(.*)',
   '/api/payments/test-webhook(.*)',
+  '/api/cron/(.*)',
   '/api/admin(.*)',
   '/admin/login(.*)'
 ]);
