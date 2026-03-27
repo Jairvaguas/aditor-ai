@@ -1,4 +1,10 @@
-"""
+import os
+
+def create_teaser_page():
+    os.makedirs(r"src\app\teaser", exist_ok=True)
+    file_path = r"src\app\teaser\page.tsx"
+    
+    content = r'''"""
 Landing Teaser Asilada para Tráfico de Meta Ads.
 """
 "use client";
@@ -274,3 +280,12 @@ export default function TeaserLanding() {
     </main>
   );
 }
+'''
+    
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(content)
+        
+    print(f"File {file_path} created successfully.")
+
+if __name__ == "__main__":
+    create_teaser_page()
