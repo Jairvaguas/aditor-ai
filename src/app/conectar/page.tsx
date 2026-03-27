@@ -3,13 +3,33 @@
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export default function ConnectPage() {
   const { userId, isLoaded } = useAuth();
+  const [loading, setLoading] = useState(false);
+
+  const isInAppBrowser = () => {
+    if (typeof window === 'undefined') return false;
+    const ua = navigator.userAgent || navigator.vendor;
+    return /FBAN|FBAV|Instagram|FB_IAB|FB4A|FBIOS|Twitter|Line\/|musical_ly/i.test(ua);
+  };
+
+  const handleConnectMeta = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/auth/meta-connect-init', { method: 'POST' });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      window.location.href = data.redirectUrl;
+    } catch (err) {
+      console.error('Error iniciando conexión Meta:', err);
+      setLoading(false);
+    }
+  };
   const router = useRouter();
   const t = useTranslations("Conectar");
 
@@ -79,17 +99,29 @@ export default function ConnectPage() {
             </ul>
           </div>
 
+          {isInAppBrowser() && (
+            <div className="bg-yellow-100/10 border border-yellow-500/50 text-yellow-200 text-sm px-4 py-3 rounded-xl mb-6 text-left shadow-lg">
+              ⚠️ <strong>Navegador In-App Detectado:</strong><br/>
+              Para conectar tu cuenta de Meta sin errores, necesitamos que uses Safari o Chrome directamente.<br/><br/>
+              ↳ Toca los 3 puntos (···) y selecciona <strong>"Abrir en navegador externo"</strong>.
+            </div>
+          )}
+
           {/* Facebook Button */}
           <button
-            onClick={() => {
-              window.location.href = '/api/auth/facebook';
-            }}
-            className="w-full flex items-center justify-center gap-3 bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-[16px] py-[14px] rounded-[14px] transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            onClick={handleConnectMeta}
+            disabled={loading}
+            className={`w-full flex items-center justify-center gap-3 bg-[#1877F2] text-white font-bold text-[16px] py-[14px] rounded-[14px] transition-all transform ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#166fe5] hover:scale-[1.02] active:scale-[0.98]'}`}
             style={{ boxShadow: '0 6px 20px rgba(24,119,242,0.35)' }}
           >
-            {/* Facebook "f" icon */}
-            <span className="font-bold text-[20px] leading-none mb-0.5">f</span>
-            {t("connectBtn")}
+            {loading ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            ) : (
+              <>
+                 <span className="font-bold text-[20px] leading-none mb-0.5">f</span>
+                 {t("connectBtn")}
+              </>
+            )}
           </button>
 
 

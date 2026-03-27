@@ -30,8 +30,33 @@ export async function GET(request: Request) {
     // TODO: Validar state cookie (simplificado para MVP, pero recomendado)
 
     try {
-        // Obtenemos user de Clerk actual
-        const clerkUserId = state; // We receive Clerk userId from Meta 'state' param
+        // Buscar el state en Supabase para recuperar el clerkUserId real
+        const { data: oauthState, error: stateError } = await getSupabaseAdmin()
+          .from('meta_oauth_states')
+          .select('clerk_user_id, used, expires_at')
+          .eq('state_token', state)
+          .single();
+
+        if (stateError || !oauthState) {
+          console.error("State invalido o DB error:", stateError);
+          return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=invalid_state`);
+        }
+
+        if (oauthState.used) {
+          return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=state_already_used`);
+        }
+
+        if (new Date(oauthState.expires_at) < new Date()) {
+          return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/conectar?error=state_expired`);
+        }
+
+        // Marcar como usado para evitar replay attacks
+        await getSupabaseAdmin()
+          .from('meta_oauth_states')
+          .update({ used: true })
+          .eq('state_token', state);
+
+        const clerkUserId = oauthState.clerk_user_id;
 
         if (!clerkUserId) {
             // Si no tiene sesion, redirigimos a login, y luego a conectar
