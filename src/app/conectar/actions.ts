@@ -1,11 +1,10 @@
 'use server';
 
-import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import { redirect } from 'next/navigation';
 
-export async function connectMetaAction() {
-  const { userId } = await auth();
+export async function connectMetaAction(formData: FormData) {
+  const userId = formData.get('userId') as string;
   
   if (!userId) {
     redirect('/login?redirect=/conectar');
