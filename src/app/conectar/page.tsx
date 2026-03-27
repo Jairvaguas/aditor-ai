@@ -9,8 +9,15 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export default function ConnectPage() {
-  const { userId, isLoaded } = useAuth();
+  const { userId, isLoaded, getToken } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [metaAuthUrl, setMetaAuthUrl] = useState<string>('');
+
+  useEffect(() => {
+    if (userId) {
+      setMetaAuthUrl(`/api/auth/meta-connect-init`);
+    }
+  }, [userId]);
 
   const isInAppBrowser = () => {
     if (typeof window === 'undefined') return false;
@@ -18,10 +25,6 @@ export default function ConnectPage() {
     return /FBAN|FBAV|Instagram|FB_IAB|FB4A|FBIOS|Twitter|Line\/|musical_ly/i.test(ua);
   };
 
-  const handleConnectMeta = () => {
-    setLoading(true);
-    window.location.href = '/api/auth/meta-connect-init';
-  };
   const router = useRouter();
   const t = useTranslations("Conectar");
 
@@ -100,10 +103,34 @@ export default function ConnectPage() {
           )}
 
           {/* Facebook Button */}
-          <button
-            onClick={handleConnectMeta}
-            disabled={loading}
-            className={`w-full flex items-center justify-center gap-3 bg-[#1877F2] text-white font-bold text-[16px] py-[14px] rounded-[14px] transition-all transform ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#166fe5] hover:scale-[1.02] active:scale-[0.98]'}`}
+          <a
+            href={metaAuthUrl || '#'}
+            onClick={async (e) => {
+              if (!userId) return;
+              e.preventDefault();
+              setLoading(true);
+
+              try {
+                const res = await fetch('/api/auth/meta-connect-init-json', {
+                  method: 'POST',
+                  credentials: 'include',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'x-clerk-user-id': userId,
+                  },
+                });
+                const data = await res.json();
+                if (data.redirectUrl) {
+                  window.location.href = data.redirectUrl;
+                } else {
+                  setLoading(false);
+                }
+              } catch (error) {
+                console.error('Error in mobile redirect loop evasion:', error);
+                setLoading(false);
+              }
+            }}
+            className={`w-full flex items-center justify-center gap-3 bg-[#1877F2] text-white font-bold text-[16px] py-[14px] rounded-[14px] transition-all transform ${loading ? 'opacity-70 cursor-not-allowed pointer-events-none' : 'hover:bg-[#166fe5] hover:scale-[1.02] active:scale-[0.98]'}`}
             style={{ boxShadow: '0 6px 20px rgba(24,119,242,0.35)' }}
           >
             {loading ? (
@@ -114,7 +141,7 @@ export default function ConnectPage() {
                  {t("connectBtn")}
               </>
             )}
-          </button>
+          </a>
 
           {/* Footer Text */}
           <p className="text-[#8892A4] text-[11px] mt-6">

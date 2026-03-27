@@ -1,16 +1,11 @@
-import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
-export async function GET(req: Request) {
-  const { userId: authUserId } = await auth();
-  const headerUserId = req.headers.get('x-clerk-user-id');
-  const userId = authUserId || headerUserId;
-
+export async function POST(req: Request) {
+  const userId = req.headers.get('x-clerk-user-id');
+  
   if (!userId) {
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/login?redirect=/conectar`
-    );
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const supabase = createClient(
@@ -20,10 +15,14 @@ export async function GET(req: Request) {
 
   const stateToken = crypto.randomUUID();
 
-  await supabase.from('meta_oauth_states').insert({
+  const { error } = await supabase.from('meta_oauth_states').insert({
     state_token: stateToken,
     clerk_user_id: userId,
   });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
   const params = new URLSearchParams({
     client_id: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID!,
@@ -33,6 +32,6 @@ export async function GET(req: Request) {
     response_type: 'code',
   });
 
-  const facebookUrl = `https://www.facebook.com/v19.0/dialog/oauth?${params}`;
-  return NextResponse.redirect(facebookUrl);
+  const redirectUrl = `https://www.facebook.com/v19.0/dialog/oauth?${params}`;
+  return NextResponse.json({ redirectUrl });
 }
