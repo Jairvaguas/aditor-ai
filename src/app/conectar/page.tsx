@@ -111,24 +111,22 @@ export default function ConnectPage() {
 
           {/* Action Area based on Mobile/Desktop */}
           {isMobile ? (
-            <div className="w-full bg-blue-900 border border-blue-500 rounded-[14px] p-6 text-center">
-              <div className="text-3xl mb-3">💻</div>
+            <div className="w-full bg-blue-900 border border-blue-500 rounded-xl p-6 text-center">
+              <div className="text-4xl mb-3">💻</div>
               <h3 className="text-white font-semibold text-lg mb-2">
                 Continuá desde tu computadora
               </h3>
               <p className="text-blue-200 text-sm mb-4">
-                Para conectar tu cuenta de Meta Ads necesitás hacerlo desde desktop.
-                Te enviamos un email con el link para continuar.
+                Te enviamos un email con el link para continuar. 
+                Abrilo desde tu computadora para conectar Meta Ads.
               </p>
-              
-              <a
-                href={`mailto:?subject=Completá tu configuración en Aditor AI&body=Hacé click acá para conectar tu cuenta de Meta Ads: ${process.env.NEXT_PUBLIC_APP_URL || 'aditor-ai.com'}/conectar`}
-                className="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-[14px] transition-colors"
-              >
-                Reenviar el link por email
-              </a>
-              <p className="text-blue-300 text-[11px] mt-4">
-                También podés copiar este link: aditor-ai.com/conectar
+              <div className="bg-blue-800 rounded-lg p-3 mb-4">
+                <p className="text-blue-100 text-xs font-mono">
+                  aditor-ai.com/conectar
+                </p>
+              </div>
+              <p className="text-blue-400 text-xs">
+                ¿No recibiste el email? Revisá tu carpeta de spam.
               </p>
             </div>
           ) : (
