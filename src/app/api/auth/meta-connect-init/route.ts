@@ -25,7 +25,7 @@ export async function POST(req: Request) {
   const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/meta/callback`;
 
   const params = new URLSearchParams({
-    client_id: process.env.META_APP_ID || process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || '',
+    client_id: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID!,
     redirect_uri: redirectUri,
     state: stateToken,
     scope: 'ads_read,ads_management,business_management,pages_read_engagement',

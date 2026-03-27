@@ -32,4 +32,5 @@ Cambiar el flujo de conexión de Meta de un `popup` a un `redirect` completo par
 - **In-App Browsers:** Pueden seguir dando problemas con cookies cross-site en algunos casos, por lo que el banner de aviso de "Abrir en navegador externo" es vital.
 - **Expiración de Estado:** Asegurarse de validar `expires_at` para prevenir ataques o estados viejos en caching.
 - **Entorno Vercel:** NEXT_PUBLIC_APP_URL debe ser exacto sin slash final para construir la redirect URI de forma segura.
+- **Entornos Vercel Variables:** Asegurarse de usar `NEXT_PUBLIC_FACEBOOK_APP_ID` y `FACEBOOK_APP_SECRET` consistentemente en todo el flujo OAuth, en vez de META_APP_ID.
 - **Clerk v5:** `auth()` es asíncrono. Debes usar siempre `await auth()` para extraer el `userId`.
