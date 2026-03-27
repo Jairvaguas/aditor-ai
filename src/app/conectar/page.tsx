@@ -11,8 +11,6 @@ import Footer from "@/components/Footer";
 export default function ConnectPage() {
   const { userId, isLoaded } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [debugLogs, setDebugLogs] = useState<string[]>([]);
-  const addLog = (msg: string) => setDebugLogs(prev => [...prev, `${new Date().toISOString().slice(11,19)} ${msg}`]);
 
   const isInAppBrowser = () => {
     if (typeof window === 'undefined') return false;
@@ -20,27 +18,9 @@ export default function ConnectPage() {
     return /FBAN|FBAV|Instagram|FB_IAB|FB4A|FBIOS|Twitter|Line\/|musical_ly/i.test(ua);
   };
 
-  const handleConnectMeta = async () => {
-    try {
-      setLoading(true);
-      addLog('1. Iniciando fetch...');
-      const res = await fetch('/api/auth/meta-connect-init', { method: 'POST' });
-      addLog(`2. Status: ${res.status}`);
-      const data = await res.json();
-      addLog(`3. Data: ${JSON.stringify(data)}`);
-      if (data.error) throw new Error(data.error);
-      addLog(`4. Redirigiendo...`);
-      const a = document.createElement('a');
-      a.href = data.redirectUrl;
-      a.rel = 'noopener noreferrer';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } catch (err) {
-      console.error('Error iniciando conexión Meta:', err);
-      addLog(`Error: ${err instanceof Error ? err.message : String(err)}`);
-      setLoading(false);
-    }
+  const handleConnectMeta = () => {
+    setLoading(true);
+    window.location.href = '/api/auth/meta-connect-init';
   };
   const router = useRouter();
   const t = useTranslations("Conectar");
@@ -135,27 +115,6 @@ export default function ConnectPage() {
               </>
             )}
           </button>
-
-          {debugLogs.length > 0 && (
-            <div style={{
-              background: '#1a1a1a',
-              border: '1px solid #444',
-              borderRadius: '8px',
-              padding: '12px',
-              marginTop: '16px',
-              fontSize: '11px',
-              fontFamily: 'monospace',
-              color: '#00ff00',
-              maxHeight: '200px',
-              overflowY: 'auto',
-              width: '100%',
-              textAlign: 'left'
-            }}>
-              {debugLogs.map((log, i) => (
-                <div key={i}>{log}</div>
-              ))}
-            </div>
-          )}
 
           {/* Footer Text */}
           <p className="text-[#8892A4] text-[11px] mt-6">
