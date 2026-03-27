@@ -3,42 +3,14 @@
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { connectMetaAction } from "./actions";
 
 export default function ConnectPage() {
   const { userId, isLoaded } = useAuth();
-  const [metaUrl, setMetaUrl] = useState<string>('');
-  const [loadingUrl, setLoadingUrl] = useState(true);
-
-  useEffect(() => {
-    if (!userId) return;
-    
-    const prefetchUrl = async () => {
-      try {
-        const res = await fetch('/api/auth/meta-connect-init-json', {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-clerk-user-id': userId,
-          },
-        });
-        const data = await res.json();
-        if (data.redirectUrl) {
-          setMetaUrl(data.redirectUrl);
-        }
-      } catch (err) {
-        console.error('Error pre-fetching meta URL:', err);
-      } finally {
-        setLoadingUrl(false);
-      }
-    };
-    
-    prefetchUrl();
-  }, [userId]);
 
   const isInAppBrowser = () => {
     if (typeof window === 'undefined') return false;
@@ -124,25 +96,16 @@ export default function ConnectPage() {
           )}
 
           {/* Facebook Button */}
-          {loadingUrl ? (
-            <div className="w-full flex items-center justify-center gap-3 bg-[#1877F2]/70 text-white font-bold text-[16px] py-[14px] rounded-[14px] opacity-70 cursor-wait">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              <span>Preparando conexión...</span>
-            </div>
-          ) : metaUrl ? (
-            <a
-              href={metaUrl}
+          <form action={connectMetaAction}>
+            <button
+              type="submit"
               className="w-full flex items-center justify-center gap-3 bg-[#1877F2] text-white font-bold text-[16px] py-[14px] rounded-[14px] transition-all transform hover:bg-[#166fe5] hover:scale-[1.02] active:scale-[0.98]"
               style={{ boxShadow: '0 6px 20px rgba(24,119,242,0.35)' }}
             >
               <span className="font-bold text-[20px] leading-none mb-0.5">f</span>
               {t("connectBtn")}
-            </a>
-          ) : (
-            <div className="w-full bg-red-600/20 border border-red-500/50 text-red-200 text-sm font-semibold py-4 px-6 rounded-[14px] text-center">
-              Error cargando. Recargá la página.
-            </div>
-          )}
+            </button>
+          </form>
 
           {/* Footer Text */}
           <p className="text-[#8892A4] text-[11px] mt-6">
