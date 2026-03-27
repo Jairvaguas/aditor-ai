@@ -132,15 +132,14 @@ export default function ConnectPage() {
               </p>
             </div>
           ) : (
-            <form action={connectMetaAction}>
+            <form action={connectMetaAction} className="w-full mt-8 mb-4">
               <input type="hidden" name="userId" value={userId || ''} />
               <button
                 type="submit"
                 disabled={!userId}
-                className="w-full flex items-center justify-center gap-3 bg-[#1877F2] text-white font-bold text-[16px] py-[14px] rounded-[14px] transition-all transform hover:bg-[#166fe5] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#1877F2] disabled:hover:scale-100 disabled:active:scale-100"
-                style={{ boxShadow: '0 6px 20px rgba(24,119,242,0.35)' }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                <span className="font-bold text-[20px] leading-none mb-0.5">f</span>
+                <span className="font-bold">f</span>
                 {t("connectBtn")}
               </button>
             </form>
