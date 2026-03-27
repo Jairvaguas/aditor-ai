@@ -15,16 +15,25 @@ export default function ConnectPage() {
 
   useEffect(() => {
     if (isLoaded && !userId) {
-      router.push("/login?redirect=/conectar");
+      // Agregar un pequeño delay para que Clerk termine de inicializar en móvil
+      const timer = setTimeout(() => {
+        router.push("/login?redirect=/conectar");
+      }, 1500)
+      return () => clearTimeout(timer)
     }
   }, [isLoaded, userId, router]);
 
-  if (!isLoaded || !userId) {
+  if (!isLoaded) {
     return (
       <div className="flex flex-col min-h-screen bg-[#0B1120] text-[#F0F0F0] items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4ECDC4]"></div>
       </div>
     );
+  }
+
+  // Si ya cargó pero no hay userId, no mostrar nada (el useEffect ya redirige)
+  if (!userId) {
+    return null;
   }
 
   return (
