@@ -1,6 +1,4 @@
-"""
-Landing Teaser Asilada para Tráfico de Meta Ads.
-"""
+// Landing Teaser Asilada para Tráfico de Meta Ads.
 "use client";
 
 import Link from "next/link";

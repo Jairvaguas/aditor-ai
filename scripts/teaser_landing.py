@@ -4,9 +4,7 @@ def create_teaser_page():
     os.makedirs(r"src\app\teaser", exist_ok=True)
     file_path = r"src\app\teaser\page.tsx"
     
-    content = r'''"""
-Landing Teaser Asilada para Tráfico de Meta Ads.
-"""
+    content = r'''// Landing Teaser Asilada para Tráfico de Meta Ads.
 "use client";
 
 import Link from "next/link";
