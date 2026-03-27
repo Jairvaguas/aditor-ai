@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,6 +11,20 @@ import { connectMetaAction } from "./actions";
 
 export default function ConnectPage() {
   const { userId, isLoaded } = useAuth();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userAgent));
+  }, []);
+
+  useEffect(() => {
+    if (isMobile && userId) {
+      fetch('/api/auth/send-desktop-reminder', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    }
+  }, [isMobile, userId]);
 
   const isInAppBrowser = () => {
     if (typeof window === 'undefined') return false;
@@ -95,19 +109,42 @@ export default function ConnectPage() {
             </div>
           )}
 
-          {/* Facebook Button */}
-          <form action={connectMetaAction}>
-            <input type="hidden" name="userId" value={userId || ''} />
-            <button
-              type="submit"
-              disabled={!userId}
-              className="w-full flex items-center justify-center gap-3 bg-[#1877F2] text-white font-bold text-[16px] py-[14px] rounded-[14px] transition-all transform hover:bg-[#166fe5] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#1877F2] disabled:hover:scale-100 disabled:active:scale-100"
-              style={{ boxShadow: '0 6px 20px rgba(24,119,242,0.35)' }}
-            >
-              <span className="font-bold text-[20px] leading-none mb-0.5">f</span>
-              {t("connectBtn")}
-            </button>
-          </form>
+          {/* Action Area based on Mobile/Desktop */}
+          {isMobile ? (
+            <div className="w-full bg-blue-900 border border-blue-500 rounded-[14px] p-6 text-center">
+              <div className="text-3xl mb-3">💻</div>
+              <h3 className="text-white font-semibold text-lg mb-2">
+                Continuá desde tu computadora
+              </h3>
+              <p className="text-blue-200 text-sm mb-4">
+                Para conectar tu cuenta de Meta Ads necesitás hacerlo desde desktop.
+                Te enviamos un email con el link para continuar.
+              </p>
+              
+              <a
+                href={`mailto:?subject=Completá tu configuración en Aditor AI&body=Hacé click acá para conectar tu cuenta de Meta Ads: ${process.env.NEXT_PUBLIC_APP_URL || 'aditor-ai.com'}/conectar`}
+                className="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-[14px] transition-colors"
+              >
+                Reenviar el link por email
+              </a>
+              <p className="text-blue-300 text-[11px] mt-4">
+                También podés copiar este link: aditor-ai.com/conectar
+              </p>
+            </div>
+          ) : (
+            <form action={connectMetaAction}>
+              <input type="hidden" name="userId" value={userId || ''} />
+              <button
+                type="submit"
+                disabled={!userId}
+                className="w-full flex items-center justify-center gap-3 bg-[#1877F2] text-white font-bold text-[16px] py-[14px] rounded-[14px] transition-all transform hover:bg-[#166fe5] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#1877F2] disabled:hover:scale-100 disabled:active:scale-100"
+                style={{ boxShadow: '0 6px 20px rgba(24,119,242,0.35)' }}
+              >
+                <span className="font-bold text-[20px] leading-none mb-0.5">f</span>
+                {t("connectBtn")}
+              </button>
+            </form>
+          )}
 
           {/* Footer Text */}
           <p className="text-[#8892A4] text-[11px] mt-6">
