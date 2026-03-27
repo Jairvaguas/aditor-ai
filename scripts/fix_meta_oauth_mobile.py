@@ -117,12 +117,37 @@ def patch_frontend():
   const handleConnectMeta = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/auth/meta-connect-init', { method: 'POST' });
+      console.log('[Meta Connect] Iniciando fetch...');
+      
+      const res = await fetch('/api/auth/meta-connect-init', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      console.log('[Meta Connect] Status:', res.status);
       const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      window.location.href = data.redirectUrl;
+      console.log('[Meta Connect] Data:', JSON.stringify(data));
+      
+      if (!res.ok || data.error) {
+        alert('Error del servidor: ' + (data.error || `HTTP ${res.status}`));
+        setLoading(false);
+        return;
+      }
+      
+      if (!data.redirectUrl) {
+        alert('Error: redirectUrl vacío. Data: ' + JSON.stringify(data));
+        setLoading(false);
+        return;
+      }
+      
+      console.log('[Meta Connect] Redirigiendo a:', data.redirectUrl);
+      // Usar replace en vez de href para evitar problemas en móvil
+      window.location.replace(data.redirectUrl);
+      
     } catch (err) {
-      console.error('Error iniciando conexión Meta:', err);
+      console.error('[Meta Connect] Error:', err);
+      alert('Error: ' + (err instanceof Error ? err.message : JSON.stringify(err)));
       setLoading(false);
     }
   };'''

@@ -34,3 +34,4 @@ Cambiar el flujo de conexión de Meta de un `popup` a un `redirect` completo par
 - **Entorno Vercel:** NEXT_PUBLIC_APP_URL debe ser exacto sin slash final para construir la redirect URI de forma segura.
 - **Entornos Vercel Variables:** Asegurarse de usar `NEXT_PUBLIC_FACEBOOK_APP_ID` y `FACEBOOK_APP_SECRET` consistentemente en todo el flujo OAuth, en vez de META_APP_ID.
 - **Clerk v5:** `auth()` es asíncrono. Debes usar siempre `await auth()` para extraer el `userId`.
+- **Móvil Chrome Android location mapping:** Algunas veces `window.location.href` falla silenciosamente tras promesas en navegadores móviles para el flujo de OAuth por cuestiones de seguridad de popup/estado, impidiendo enrutar aunque el backend envuelve un HTTP 200 válido. Para redirigir con precisión el `redirectUrl` usar `window.location.replace()` junto a payloads con logs de consola y fallos atrapados exhaustivamente sobre el UI.
