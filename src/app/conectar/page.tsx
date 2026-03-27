@@ -30,7 +30,12 @@ export default function ConnectPage() {
       addLog(`3. Data: ${JSON.stringify(data)}`);
       if (data.error) throw new Error(data.error);
       addLog(`4. Redirigiendo...`);
-      window.location.href = data.redirectUrl;
+      const a = document.createElement('a');
+      a.href = data.redirectUrl;
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     } catch (err) {
       console.error('Error iniciando conexión Meta:', err);
       addLog(`Error: ${err instanceof Error ? err.message : String(err)}`);
