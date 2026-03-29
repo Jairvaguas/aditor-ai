@@ -82,7 +82,7 @@ export async function sendWelcomeEmail(email: string, nombre: string) {
         ${metaRow('✅', 'Análisis de ROAS, CTR, CPM y más')}
         ${metaRow('✅', 'Alertas de campañas en riesgo')}
       </table>
-      ${ctaButton('Conectar Meta Ads', \`${APP_URL}/conectar\`)}
+      ${ctaButton('Conectar Meta Ads', APP_URL + '/conectar')}
       <p style="margin:20px 0 0;font-size:12px;color:#4b5563;text-align:center;">
         Cancelás cuando quieras · Sin permanencia
       </p>
@@ -117,7 +117,7 @@ export async function sendDesktopReminderEmail(email: string) {
         ${metaRow('❌', 'Modificar campañas — nunca', true)}
         ${metaRow('❌', 'Acceder a datos de pago — nunca', true)}
       </table>
-      ${ctaButton('Conectar Meta Ads', \`${APP_URL}/conectar\`)}
+      ${ctaButton('Conectar Meta Ads', APP_URL + '/conectar')}
       <p style="margin:20px 0 0;font-size:12px;color:#4b5563;text-align:center;">
         O copiá este link: <span style="color:#3b82f6;font-family:monospace;">${APP_URL}/conectar</span>
       </p>
@@ -153,17 +153,17 @@ export async function sendSubscriptionActiveEmail(
         Ya podés usar todas las funciones de Aditor AI.
       </p>
       <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0f1e;border-radius:10px;padding:16px 20px;margin-bottom:4px;">
-        ${metaRow('📦', \`Plan: <strong style="color:#ffffff;">${planContratado}</strong>\`)}
-        ${metaRow('🔗', \`Cuentas incluidas: <strong style="color:#ffffff;">${limiteCuentas} Ad Account${limiteCuentas > 1 ? 's' : ''}</strong>\`)}
-        ${metaRow('📅', \`Próxima renovación: <strong style="color:#ffffff;">${proximaRenov}</strong>\`)}
+        ${metaRow('📦', `Plan: <strong style="color:#ffffff;">${planContratado}</strong>`)}
+        ${metaRow('🔗', `Cuentas incluidas: <strong style="color:#ffffff;">${limiteCuentas} Ad Account${limiteCuentas > 1 ? 's' : ''}</strong>`)}
+        ${metaRow('📅', `Próxima renovación: <strong style="color:#ffffff;">${proximaRenov}</strong>`)}
       </table>
-      ${ctaButton('Ir al dashboard', \`${APP_URL}/dashboard\`)}
+      ${ctaButton('Ir al dashboard', APP_URL + '/dashboard')}
     `;
     await getResendClient()?.emails.send({
       from: FROM,
       to: email,
       subject: '¡Tu suscripción a Aditor AI está activa! ✅',
-      html: baseTemplate(content, \`Tu plan ${planContratado} está activo — accedé al dashboard\`),
+      html: baseTemplate(content, `Tu plan ${planContratado} está activo — accedé al dashboard`),
     });
   } catch (e) { console.error('Error sendSubscriptionActiveEmail', e); }
 }
@@ -186,7 +186,7 @@ export async function sendTrialExpiryEmail(email: string, nombre: string) {
         ${metaRow('🚨', 'Reportes completos de campañas')}
         ${metaRow('🚨', 'Alertas de campañas con pérdida activa')}
       </table>
-      ${ctaButton('Activar suscripción', \`${APP_URL}/subscribe\`)}
+      ${ctaButton('Activar suscripción', APP_URL + '/subscribe')}
       <p style="margin:20px 0 0;font-size:12px;color:#4b5563;text-align:center;">
         Cancelás cuando quieras · Sin permanencia
       </p>
@@ -227,13 +227,13 @@ export async function sendAuditReadyEmail(
           Encontramos <strong style="color:#ffffff;">${hallazgosCount} hallazgos</strong> que requieren atención
         </td></tr>
       </table>
-      ${ctaButton('Ver reporte completo', \`${APP_URL}/reporte/${auditId}\`)}
+      ${ctaButton('Ver reporte completo', APP_URL + '/reporte/' + auditId)}
     `;
     await getResendClient()?.emails.send({
       from: FROM,
       to: email,
-      subject: \`Tu auditoría está lista — ${hallazgosCount} hallazgos detectados 📊\`,
-      html: baseTemplate(content, \`Score ${score}/100 · ${hallazgosCount} hallazgos en tus campañas\`),
+      subject: `Tu auditoría está lista — ${hallazgosCount} hallazgos detectados 📊`,
+      html: baseTemplate(content, `Score ${score}/100 · ${hallazgosCount} hallazgos en tus campañas`),
     });
   } catch (e) { console.error('Error sendAuditReadyEmail', e); }
 }
@@ -285,7 +285,7 @@ export async function sendWeeklyAuditEmail(
           </td>
         </tr>
       </table>
-      ${ctaButton('Ver reporte completo', \`${APP_URL}/reporte/${auditId}\`)}
+      ${ctaButton('Ver reporte completo', APP_URL + '/reporte/' + auditId)}
       <p style="margin:20px 0 0;font-size:12px;color:#4b5563;text-align:center;">
         Próxima auditoría automática: el lunes que viene
       </p>
@@ -293,8 +293,8 @@ export async function sendWeeklyAuditEmail(
     await getResendClient()?.emails.send({
       from: FROM,
       to: email,
-      subject: \`Tu reporte semanal está listo — Score ${score}/100 📈\`,
-      html: baseTemplate(content, \`Score ${score}/100 · ROAS ${roas}x · ${numHallazgos} hallazgos esta semana\`),
+      subject: `Tu reporte semanal está listo — Score ${score}/100 📈`,
+      html: baseTemplate(content, `Score ${score}/100 · ROAS ${roas}x · ${numHallazgos} hallazgos esta semana`),
     });
   } catch (e) { console.error('Error sendWeeklyAuditEmail', e); }
 }
