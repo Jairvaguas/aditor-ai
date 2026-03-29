@@ -103,17 +103,24 @@ export async function GET(request: Request) {
         // ---------------------------------------
 
         // --- DYNAMIC GEOLOCATION LOGIC ---
-        const ipCountry = request.headers.get('x-vercel-ip-country');
-        let pais = 'CO';
-        let moneda = 'COP';
+        const ipCountry = request.headers.get('x-vercel-ip-country') || 'CO';
 
-        if (ipCountry === 'MX') {
-            pais = 'MX';
-            moneda = 'MXN';
-        } else if (ipCountry === 'ES') {
-            pais = 'ES';
-            moneda = 'EUR';
-        }
+        const geoMap: Record<string, { pais: string; moneda: string }> = {
+            CO: { pais: 'CO', moneda: 'COP' },
+            AR: { pais: 'AR', moneda: 'ARS' },
+            MX: { pais: 'MX', moneda: 'MXN' },
+            ES: { pais: 'ES', moneda: 'EUR' },
+            US: { pais: 'US', moneda: 'USD' },
+            CL: { pais: 'CL', moneda: 'CLP' },
+            PE: { pais: 'PE', moneda: 'PEN' },
+            EC: { pais: 'EC', moneda: 'USD' },
+            VE: { pais: 'VE', moneda: 'USD' },
+            BO: { pais: 'BO', moneda: 'BOB' },
+            PY: { pais: 'PY', moneda: 'PYG' },
+            UY: { pais: 'UY', moneda: 'UYU' },
+        };
+
+        const { pais, moneda } = geoMap[ipCountry] || { pais: 'CO', moneda: 'COP' };
 
         console.log(`DEBUG - Usuario detectado en: ${ipCountry || 'Desconocido/Local'} - Asignando pais: ${pais}, moneda: ${moneda}`);
         // ---------------------------------
