@@ -18,6 +18,9 @@ export const metadata: Metadata = {
     shortcut: '/favicon.ico',
     apple: '/favicon.png',
   },
+  other: {
+    'facebook-domain-verification': 'y3ck7zfgfqjoum7ds3kqq9igqy7mpi',
+  },
 };
 
 export default async function RootLayout({
