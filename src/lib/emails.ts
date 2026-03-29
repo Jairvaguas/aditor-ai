@@ -52,7 +52,7 @@ function ctaButton(text: string, url: string) {
   return `<table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0 0 0;">
     <tr><td align="center">
       <a href="${url}" style="display:inline-block;background-color:#2563eb;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 36px;border-radius:10px;letter-spacing:0.1px;">
-        ${text}
+        ${text} &#8250;
       </a>
     </td></tr>
   </table>`;
@@ -82,7 +82,7 @@ export async function sendWelcomeEmail(email: string, nombre: string) {
         ${metaRow('✅', 'Análisis de ROAS, CTR, CPM y más')}
         ${metaRow('✅', 'Alertas de campañas en riesgo')}
       </table>
-      ${ctaButton('Conectar Meta Ads →', \`${APP_URL}/conectar\`)}
+      ${ctaButton('Conectar Meta Ads', \`${APP_URL}/conectar\`)}
       <p style="margin:20px 0 0;font-size:12px;color:#4b5563;text-align:center;">
         Cancelás cuando quieras · Sin permanencia
       </p>
@@ -117,7 +117,7 @@ export async function sendDesktopReminderEmail(email: string) {
         ${metaRow('❌', 'Modificar campañas — nunca', true)}
         ${metaRow('❌', 'Acceder a datos de pago — nunca', true)}
       </table>
-      ${ctaButton('Conectar Meta Ads →', \`${APP_URL}/conectar\`)}
+      ${ctaButton('Conectar Meta Ads', \`${APP_URL}/conectar\`)}
       <p style="margin:20px 0 0;font-size:12px;color:#4b5563;text-align:center;">
         O copiá este link: <span style="color:#3b82f6;font-family:monospace;">${APP_URL}/conectar</span>
       </p>
@@ -157,7 +157,7 @@ export async function sendSubscriptionActiveEmail(
         ${metaRow('🔗', \`Cuentas incluidas: <strong style="color:#ffffff;">${limiteCuentas} Ad Account${limiteCuentas > 1 ? 's' : ''}</strong>\`)}
         ${metaRow('📅', \`Próxima renovación: <strong style="color:#ffffff;">${proximaRenov}</strong>\`)}
       </table>
-      ${ctaButton('Ir al dashboard →', \`${APP_URL}/dashboard\`)}
+      ${ctaButton('Ir al dashboard', \`${APP_URL}/dashboard\`)}
     `;
     await getResendClient()?.emails.send({
       from: FROM,
@@ -186,7 +186,7 @@ export async function sendTrialExpiryEmail(email: string, nombre: string) {
         ${metaRow('🚨', 'Reportes completos de campañas')}
         ${metaRow('🚨', 'Alertas de campañas con pérdida activa')}
       </table>
-      ${ctaButton('Activar suscripción →', \`${APP_URL}/subscribe\`)}
+      ${ctaButton('Activar suscripción', \`${APP_URL}/subscribe\`)}
       <p style="margin:20px 0 0;font-size:12px;color:#4b5563;text-align:center;">
         Cancelás cuando quieras · Sin permanencia
       </p>
@@ -227,7 +227,7 @@ export async function sendAuditReadyEmail(
           Encontramos <strong style="color:#ffffff;">${hallazgosCount} hallazgos</strong> que requieren atención
         </td></tr>
       </table>
-      ${ctaButton('Ver reporte completo →', \`${APP_URL}/reporte/${auditId}\`)}
+      ${ctaButton('Ver reporte completo', \`${APP_URL}/reporte/${auditId}\`)}
     `;
     await getResendClient()?.emails.send({
       from: FROM,
@@ -285,7 +285,7 @@ export async function sendWeeklyAuditEmail(
           </td>
         </tr>
       </table>
-      ${ctaButton('Ver reporte completo →', \`${APP_URL}/reporte/${auditId}\`)}
+      ${ctaButton('Ver reporte completo', \`${APP_URL}/reporte/${auditId}\`)}
       <p style="margin:20px 0 0;font-size:12px;color:#4b5563;text-align:center;">
         Próxima auditoría automática: el lunes que viene
       </p>
