@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { sendTrialExpiryEmail } from '@/lib/email'
+import { sendTrialExpiryEmail } from '@/lib/emails'
 
 export async function GET(request: Request) {
     const authHeader = request.headers.get('authorization')
